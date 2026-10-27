@@ -1,14 +1,25 @@
 rules_version = '2';
 
-// Customers read only their own records. Staff access comes from Auth custom
-// claims (role: 'staff' | 'admin') set by the setUserRole function, never from
-// a document field the client can write.
+// Customers read only their own records. Staff access comes from the `role`
+// field on the user's own profile document, which only an admin may write.
+//
+// This project runs on the Spark plan, so there are no Cloud Functions and no
+// Admin SDK. Everything a trusted server used to do is enforced here instead:
+// enquiry validation, field whitelists and role changes. Rules are therefore
+// the only thing standing between a client and the data — keep them strict.
 service cloud.firestore {
   match /databases/{database}/documents {
 
     function signedIn() { return request.auth != null; }
     function uid() { return request.auth.uid; }
-    function role() { return signedIn() ? request.auth.token.get('role', '') : ''; }
+
+    // Roles live in Firestore because custom claims need the Admin SDK.
+    // Grant the first admin by editing users/{uid}.role in the Firebase Console.
+    function role() {
+      return signedIn() && exists(/databases/$(database)/documents/users/$(uid()))
+        ? get(/databases/$(database)/documents/users/$(uid())).data.get('role', '')
+        : '';
+    }
     function isStaff() { return role() in ['staff', 'admin']; }
     function isAdmin() { return role() == 'admin'; }
     function owns(data) { return signedIn() && data.customerId == uid(); }
@@ -37,12 +48,19 @@ service cloud.firestore {
         && request.resource.data.email == request.auth.token.email
         && optStr(request.resource.data, 'phone', 20)
         && request.resource.data.createdAt == request.time;
-      allow update: if signedIn() && uid() == userId
-        && onlyChanges(['name', 'phone', 'company', 'updatedAt'])
-        && str(request.resource.data.name, 2, 80)
-        && optStr(request.resource.data, 'phone', 20)
-        && optStr(request.resource.data, 'company', 120);
-      allow delete: if false; // via deleteAccount function only
+      // Customers edit their own profile but can never touch `role`.
+      // Admins change `role` and nothing else, and never their own.
+      allow update: if (signedIn() && uid() == userId
+            && onlyChanges(['name', 'phone', 'company', 'updatedAt'])
+            && str(request.resource.data.name, 2, 80)
+            && optStr(request.resource.data, 'phone', 20)
+            && optStr(request.resource.data, 'company', 120))
+        || (isAdmin() && userId != uid()
+            && onlyChanges(['role', 'updatedAt'])
+            && request.resource.data.role in ['customer', 'staff', 'admin']);
+      // Account deletion is client-side on Spark: the app clears the
+      // subcollections, deletes this document, then deletes the Auth user.
+      allow delete: if signedIn() && uid() == userId;
 
       match /devices/{token} {
         allow read, delete: if signedIn() && uid() == userId;
@@ -52,19 +70,55 @@ service cloud.firestore {
       }
 
       match /notifications/{id} {
-        allow read: if signedIn() && uid() == userId;
-        // Customers may only mark as read. Functions (Admin SDK) create them.
-        allow update: if signedIn() && uid() == userId
-          && onlyChanges(['read']) && request.resource.data.read == true;
-        allow create, delete: if false;
+        allow read, delete: if signedIn() && uid() == userId;
+        // Customers may only mark as read. Staff raise notifications by hand,
+        // because the Firestore triggers that used to do it need Blaze.
+        allow update: if (signedIn() && uid() == userId
+              && onlyChanges(['read']) && request.resource.data.read == true)
+          || isStaff();
+        allow create: if isStaff()
+          && request.resource.data.keys().hasOnly(['title', 'body', 'route', 'read', 'createdAt'])
+          && str(request.resource.data.title, 1, 120)
+          && str(request.resource.data.body, 1, 500)
+          && optStr(request.resource.data, 'route', 200)
+          && request.resource.data.read == false
+          && request.resource.data.createdAt == request.time;
       }
     }
 
-    // ---------- Enquiries (created only by createEnquiry) ----------
+    // ---------- Enquiries ----------
+    // Created by the signed-in customer. The document id is the client's
+    // idempotency key, so a retried submit collides instead of duplicating.
     match /enquiries/{id} {
-      allow read: if owns(resource.data) || isStaff();
-      allow create, delete: if false;
+      // `resource == null` lets the app check whether its own idempotency key
+      // was already written (safe retry); it reveals nothing.
+      allow get: if signedIn() && (resource == null || owns(resource.data) || isStaff());
+      allow list: if owns(resource.data) || isStaff();
+      allow create: if signedIn()
+        && id.matches('^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')
+        && request.resource.data.customerId == uid()
+        && request.resource.data.keys().hasAll(
+             ['name', 'email', 'subject', 'message', 'source', 'customerId', 'status', 'createdAt', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(
+             ['name', 'email', 'phone', 'company', 'subject', 'message', 'source',
+              'customerId', 'status', 'createdAt', 'updatedAt'])
+        && request.resource.data.status == 'received'
+        && request.resource.data.source == 'mobile_app'
+        && str(request.resource.data.name, 2, 80)
+        && str(request.resource.data.email, 5, 254)
+        && request.resource.data.email.matches('^[^@ ]+@[^@ ]+[.][^@ ]{2,}$')
+        && request.resource.data.subject in [
+             'general', 'web-development', 'wordpress-development', 'shopify-development',
+             'app-development', 'game-design', 'ui-ux-design', 'cms-development',
+             'crm-development', 'erp-development', 'api-development',
+             'ai-agent-development', 'automation-n8n', 'partnership']
+        && str(request.resource.data.message, 10, 3000)
+        && optStr(request.resource.data, 'phone', 20)
+        && optStr(request.resource.data, 'company', 120)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
       allow update: if isStaff() && onlyChanges(['status', 'assignedTo', 'internalNotes', 'updatedAt']);
+      allow delete: if false;
     }
 
     // ---------- Quotations and projects (staff-managed) ----------
@@ -130,7 +184,7 @@ service cloud.firestore {
       }
     }
 
-    // Internal collections (rate limits, audit) are server-only.
+    // Everything else stays closed.
     match /{document=**} {
       allow read, write: if false;
     }

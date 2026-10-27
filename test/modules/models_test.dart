@@ -59,7 +59,7 @@ void main() {
         'message': 'Need an app',
         'status': 'in_review',
         'createdAt': Timestamp.fromDate(DateTime.utc(2026, 1, 2)),
-      }, id: '3b241101-e2bb-4255-8caf-4136c566a962');
+      }, id: '3b241101-e2bb-4255-8caf-4136c566a962',);
       expect(e.status, EnquiryStatus.inReview);
       expect(e.subjectLabel, 'Mobile App Development');
       expect(e.createdAt, DateTime.utc(2026, 1, 2));
@@ -91,7 +91,7 @@ void main() {
           {'description': 'Pages', 'quantity': 5, 'unitPrice': 3000},
         ],
         'tax': 6300,
-      }, id: 'q1');
+      }, id: 'q1',);
       expect(q.subtotal, 35000);
       expect(q.total, 41300);
       expect(q.status, QuotationStatus.sent);

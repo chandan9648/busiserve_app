@@ -40,7 +40,7 @@ class DioClient {
       guard(() async {
         final res = await _dio.get<Object?>(path, queryParameters: query, cancelToken: cancelToken);
         return parse(_asMap(res.data));
-      }, context: 'GET $path');
+      }, context: 'GET $path',);
 
   /// [idempotencyKey] is sent as `Idempotency-Key` so the server can reject
   /// duplicates. Never retry a POST automatically.
@@ -61,7 +61,7 @@ class DioClient {
           ),
         );
         return parse(_asMap(res.data));
-      }, context: 'POST $path');
+      }, context: 'POST $path',);
 
   static Map<String, dynamic> _asMap(Object? data) {
     if (data is Map<String, dynamic>) return data;

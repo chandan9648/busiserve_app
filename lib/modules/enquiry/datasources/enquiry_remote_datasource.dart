@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../../core/config/app_env.dart';
-import '../../../core/constants/app_limits.dart';
 import '../../../core/errors/app_exception.dart';
 import '../models/enquiry_model.dart';
 
@@ -12,28 +10,47 @@ abstract class EnquiryRemoteDataSource {
 }
 
 class FirebaseEnquiryDataSource implements EnquiryRemoteDataSource {
-  FirebaseEnquiryDataSource({FirebaseFunctions? functions, FirebaseFirestore? db})
-      : _functions = functions,
+  FirebaseEnquiryDataSource({FirebaseAuth? auth, FirebaseFirestore? db})
+      : _auth = auth,
         _db = db;
 
-  final FirebaseFunctions? _functions;
+  final FirebaseAuth? _auth;
   final FirebaseFirestore? _db;
 
-  FirebaseFunctions get _fn => _functions ?? FirebaseFunctions.instanceFor(region: AppEnv.functionsRegion);
+  FirebaseAuth get _signIn => _auth ?? FirebaseAuth.instance;
   FirebaseFirestore get _store => _db ?? FirebaseFirestore.instance;
 
-  /// Enquiries are written only by the trusted function, which validates the
-  /// payload and de-duplicates on `idempotencyKey`.
+  /// Writes the enquiry straight to Firestore, where the security rules
+  /// validate every field. The document id is the idempotency key, so a
+  /// retried submit collides with the first write instead of duplicating it.
   @override
   Future<EnquiryResult> create(EnquiryRequest request) async {
-    final callable = _fn.httpsCallable(
-      'createEnquiry',
-      options: HttpsCallableOptions(timeout: AppLimits.requestTimeout),
-    );
-    final res = await callable.call<Object?>(request.toPayload());
-    final data = res.data;
-    if (data is! Map) throw const DataParsingException(cause: 'createEnquiry returned no map');
-    return EnquiryResult.fromMap(data.map((k, v) => MapEntry(k.toString(), v)));
+    final uid = _signIn.currentUser?.uid;
+    if (uid == null) {
+      throw const AuthenticationException('Sign in to send an enquiry.');
+    }
+    final ref = _store.collection('enquiries').doc(request.idempotencyKey);
+
+    if ((await ref.get()).exists) {
+      return EnquiryResult(enquiryId: ref.id, duplicate: true);
+    }
+    try {
+      await ref.set({
+        ...request.toPayload(),
+        'customerId': uid,
+        'status': 'received',
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } on FirebaseException catch (e) {
+      // Rules allow create but not update, so a racing second submit lands
+      // here rather than overwriting the enquiry already on record.
+      if (e.code == 'permission-denied' && (await ref.get()).exists) {
+        return EnquiryResult(enquiryId: ref.id, duplicate: true);
+      }
+      rethrow;
+    }
+    return EnquiryResult(enquiryId: ref.id, duplicate: false);
   }
 
   @override

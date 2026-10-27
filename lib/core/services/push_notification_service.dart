@@ -47,7 +47,7 @@ class PushNotificationService extends GetxService {
     });
     unawaited(_messaging.getInitialMessage().then((m) {
       if (m != null) _openFrom(m);
-    }));
+    }),);
     final uid = session.uid;
     if (uid != null && prefs.pushEnabled) unawaited(register(uid));
   }
@@ -69,7 +69,7 @@ class PushNotificationService extends GetxService {
       _subs.add(_messaging.onTokenRefresh.listen((t) {
         final current = session.uid;
         if (current != null) unawaited(_saveToken(current, t));
-      }));
+      }),);
     } catch (e, st) {
       AppLogger.error('push registration failed', error: e, stackTrace: st);
     }

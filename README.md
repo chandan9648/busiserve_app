@@ -1,9 +1,9 @@
 # Busiserve — official mobile app
 
 Flutter + GetX app for **Busiserve Infotech Solution** (https://www.busiserve.in), with a Firebase backend
-(Auth, Firestore, Cloud Functions, FCM, Storage, App Check, Crashlytics).
+(Auth, Firestore, App Check, Crashlytics) on the free Spark plan — no Cloud Functions.
 
-Public visitors can browse services, case studies and contact details and send an enquiry without an
+Public visitors can browse services, case studies and contact details. Sending an enquiry needs an
 account. Signed-in customers can also track enquiries and quotations, follow project milestones, receive
 notifications, raise support requests and delete their account.
 
@@ -65,34 +65,59 @@ upload an APNs key in Firebase Console → Project settings → Cloud Messaging.
 ## 2. Firebase setup
 
 The production web flavor is configured to use the `busiserve-app` Firebase project.
-Run it with `flutter run -d chrome -t lib/main_prod.dart`. Dev and staging remain
+Run it with `flutter run -d chrome -t lib/main_prod.dart --dart-define-from-file=env/prod.json`. Dev and staging remain
 unconfigured. For Android and iOS production builds, run FlutterFire configuration with the
 matching native app IDs and add the platform-specific options before building. Until then,
 Firebase-dependent features are unavailable on those platforms; public screens remain browsable.
 
 In the Firebase Console, enable Email/Password sign-in, create Firestore (region `asia-south1`),
-enable Storage, register App Check (Play Integrity / App Attest), and upgrade to Blaze (required
-for Functions).
+and register App Check (reCAPTCHA v3 for web, Play Integrity / App Attest for native).
 
-Deploy rules, indexes and functions:
+### Spark plan: no Cloud Functions
+
+This project runs on the **free Spark plan**, so nothing in `firebase/functions/` is deployed.
+Everything those functions used to do now happens in the client with the Firestore security
+rules as the only enforcement point:
+
+| Was | Now |
+|---|---|
+| `createEnquiry` validated and wrote the enquiry | The signed-in customer writes `enquiries/{idempotencyKey}` directly; `firestore.rules` validates every field |
+| `deleteAccount` deleted the user and anonymised their records | The app clears the profile subcollections, deletes `users/{uid}`, then calls `User.delete()` |
+| `setUserRole` set a `role` custom claim | `users/{uid}.role` is a Firestore field; only an admin may write it |
+| `onQuotationCreated` / `onProjectUpdated` / `onTicketMessageCreated` sent notifications | Staff create `users/{uid}/notifications/{id}` by hand |
+
+What this costs you, stated plainly:
+
+- **Anonymous enquiries are gone.** Submitting now requires an account, because an
+  unauthenticated write path would be an open door for bots.
+- **No rate limiting.** The old 5-per-hour-per-email cap needed a server-side counter.
+  App Check and the sign-in requirement are the remaining defences.
+- **No push notifications at all.** Sending FCM needs a server key. The in-app
+  notification list still works, but someone has to write the entries.
+- **Deleted accounts leave records behind.** Enquiries, quotations, projects and tickets
+  keep pointing at a uid that no longer exists; anonymising them needs the Admin SDK.
+  Clear them from the console when you delete an account.
+- **Firestore Storage is not set up.** The app does not use it, and new projects need
+  Blaze for a default bucket anyway.
+
+Deploy rules and indexes:
 
 ```bash
 cd firebase
 cp .firebaserc.example .firebaserc          # edit project ids
-cd functions && npm install && npm run build && npm test && cd ..
-firebase use dev
-firebase deploy --only firestore:rules,firestore:indexes,storage,functions
+firebase use prod
+firebase deploy --only firestore:rules,firestore:indexes
 ```
 
-Grant the first admin from a trusted machine (never from the app):
+Grant the first admin from the Firebase Console — there is no script, because
+`scripts/grant-admin.ts` needs the Admin SDK:
 
-```bash
-cd firebase/functions
-export GOOGLE_APPLICATION_CREDENTIALS=/secure/path/service-account.json
-npx ts-node scripts/grant-admin.ts owner@example.com
-```
+1. Sign up in the app with the owner's email so `users/{uid}` exists.
+2. Firestore → `users` → that document → add field `role` (string) = `admin`.
 
-Admins can then promote staff with the `setUserRole` callable.
+That admin can then set `role` on other users, which the rules allow and nothing else does.
+If you later enable Blaze, deploy `firebase/functions/` and move `role` back to custom
+claims — the functions are left in the repository unchanged for exactly that.
 
 ---
 
@@ -109,6 +134,14 @@ public client configuration values and are still included in the built app; keep
 account keys and other privileged credentials out of the app and use CI secrets/server-side
 storage for those.
 
+`FIREBASE_APPCHECK_RECAPTCHA_SITE_KEY` comes from Firebase Console → App Check → Apps →
+your web app → reCAPTCHA v3. With no Cloud Functions in front of the data, App Check on
+Firestore is what stops a scripted client from hammering the enquiry collection, so enable
+enforcement on Firestore and fill this key in. Leave it blank only while enforcement is off.
+
+All three env files carry the same key set. A prod build with a blank `FIREBASE_*` value
+now fails at startup naming the missing entry instead of degrading to public-only mode.
+
 For dev on web, put the same `FIREBASE_*` keys in `env/dev.local.json` (git-ignored) and pass it
 as a second file:
 
@@ -119,8 +152,7 @@ flutter run -d chrome -t lib/main_dev.dart --dart-define-from-file=env/dev.json 
 ### Local emulators
 
 ```bash
-cd firebase && echo "ENFORCE_APP_CHECK=false" > functions/.env.local
-firebase emulators:start
+cd firebase && firebase emulators:start   # auth + firestore only; no functions on Spark
 # another terminal
 flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=env/dev.json \
   --dart-define=USE_FIREBASE_EMULATOR=true
@@ -134,7 +166,7 @@ flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=env/dev.js
 dart format .
 flutter analyze
 flutter test
-cd firebase/functions && npm run build && npm test
+# firebase/functions/ is not deployed on Spark; build it only if you enable Blaze.
 # with emulators running:
 flutter test integration_test --flavor dev \
   --dart-define-from-file=env/dev.json --dart-define=USE_FIREBASE_EMULATOR=true
@@ -154,10 +186,10 @@ What the tests cover:
 | Enquiry form validation, double-submit prevention, safe retry with same key | `test/widgets/enquiry_form_test.dart` |
 | Auth middleware and that every customer-data route is protected | `test/routes/auth_middleware_test.dart` |
 | Guest enquiry and register/sign-out/sign-in against emulators | `integration_test/app_flow_test.dart` |
-| Server-side enquiry validation | `firebase/functions/src/test/validation.test.ts` |
+| Enquiry validation (reference only; not deployed on Spark) | `firebase/functions/src/test/validation.test.ts` |
 
 Not yet covered: Firestore security-rules unit tests (`@firebase/rules-unit-testing`). Add these
-before production; the rules are the real security boundary.
+before production. With no Cloud Functions, the rules are the *only* security boundary.
 
 ---
 
@@ -199,8 +231,8 @@ Conventions:
 - **DI.** App-wide services in `InitialBinding`; feature dependencies in feature bindings with
   `lazyPut`. Nothing is `Get.put` from a `build` method. Controllers dispose text controllers, focus
   nodes, workers and stream subscriptions in `onClose`.
-- **Auth boundary.** `AuthMiddleware` hides screens; Firestore/Storage rules and Cloud Functions
-  enforce access. Staff/admin come from Auth custom claims only.
+- **Auth boundary.** `AuthMiddleware` hides screens; the Firestore and Storage rules enforce
+  access. Staff/admin come from `users/{uid}.role`, writable by an admin only.
 
 ---
 
@@ -211,8 +243,8 @@ Conventions:
 | `services/{slug}`, `caseStudies/{slug}` (`published`, `order`, …) | staff | everyone (published only) |
 | `users/{uid}` (`name`, `email`, `phone`, `company`) | owner (limited fields) | owner, staff |
 | `users/{uid}/devices/{fcmToken}` | owner | owner |
-| `users/{uid}/notifications/{id}` | functions | owner (may only set `read`) |
-| `enquiries/{idempotencyKey}` | `createEnquiry` function | owner, staff |
+| `users/{uid}/notifications/{id}` | staff | owner (may only set `read`) |
+| `enquiries/{idempotencyKey}` | owner (validated by rules), staff | owner, staff |
 | `quotations/{id}` (`customerId`, `items[]`, `total`, `status`, `validUntil`) | staff | owner, staff |
 | `projects/{id}` + `milestones/{id}` | staff | owner, staff |
 | `tickets/{id}` + `messages/{id}` | owner (validated), staff | owner, staff |
@@ -224,14 +256,15 @@ Conventions:
 `challenge`, `solution`, `results`, `technologies` are optional and render when present.
 
 **Duplicate protection.** The enquiry form generates one UUID per form session and keeps it across
-failed attempts; `createEnquiry` uses it as the document id inside a transaction, so a retried request
-returns the original enquiry. Support tickets use the same pattern with a pre-generated document id.
+failed attempts and uses it as the document id. The rules allow create but not update, so a retried
+submit collides with the first write and the app reports the original enquiry. Support tickets use the same pattern with a pre-generated document id.
 
 ---
 
 ## 7. Release
 
-1. Replace placeholder Firebase options for `prod`; deploy rules, indexes and functions to prod.
+1. Fill `env/prod.json` (including the App Check site key); deploy rules and indexes to prod;
+   grant the first admin by setting `users/{uid}.role` in the console.
 2. Android: create an upload keystore, `key.properties` (git-ignored), signing config; add the release
    SHA-256 to Firebase and Play Integrity.
    `flutter build appbundle --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json --obfuscate --split-debug-info=build/symbols`

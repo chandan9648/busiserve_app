@@ -8,7 +8,6 @@ import 'package:busiserve_app/core/errors/firebase_error_mapper.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -70,7 +69,7 @@ void main() {
     final req = RequestOptions(path: '/x');
     test('timeouts and connection errors', () {
       expect(DioErrorMapper.map(DioException.connectionTimeout(timeout: Duration.zero, requestOptions: req)),
-          isA<RequestTimeoutException>());
+          isA<RequestTimeoutException>(),);
       expect(DioErrorMapper.map(DioException.connectionError(requestOptions: req, reason: 'x')), isA<NetworkException>());
     });
     test('status codes', () {

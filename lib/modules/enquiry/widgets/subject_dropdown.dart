@@ -11,7 +11,7 @@ class SubjectDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<EnquirySubject>(
-      value: value,
+      initialValue: value,
       isExpanded: true,
       decoration: const InputDecoration(
         labelText: 'Subject',

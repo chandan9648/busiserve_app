@@ -8,6 +8,7 @@ analyzer:
     - lib/core/config/firebase/firebase_options_*.dart
     - build/**
     - web/**
+    - android/**
 
 linter:
   rules:

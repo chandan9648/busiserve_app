@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -44,7 +43,7 @@ Future<void> _initFirebase(FlavorConfig config) async {
   } catch (e) {
     // Native platforms still need their platform-specific FlutterFire options.
     FirebaseStatus.isReady = false;
-    AppLogger.warning('Firebase not initialised for ${config.flavor.name}: public mode only.');
+    AppLogger.warning('Firebase not initialised for ${config.flavor.name}: public mode only. $e');
     return;
   }
 
@@ -55,13 +54,21 @@ Future<void> _initFirebase(FlavorConfig config) async {
     FirebaseFunctions.instanceFor(region: AppEnv.functionsRegion).useFunctionsEmulator(host, 5001);
   }
 
-  try {
-    await FirebaseAppCheck.instance.activate(
-      androidProvider: kReleaseMode ? AndroidProvider.playIntegrity : AndroidProvider.debug,
-      appleProvider: kReleaseMode ? AppleProvider.appAttestWithDeviceCheckFallback : AppleProvider.debug,
-    );
-  } catch (e, st) {
-    AppLogger.error('App Check activation failed', error: e, stackTrace: st);
+  const siteKey = AppEnv.appCheckRecaptchaSiteKey;
+  if (kIsWeb && siteKey.isEmpty) {
+    // The callables deploy with enforceAppCheck, so say so rather than
+    // activating a web App Check that can never mint a token.
+    AppLogger.warning('App Check off on web: FIREBASE_APPCHECK_RECAPTCHA_SITE_KEY is not set.');
+  } else {
+    try {
+      await FirebaseAppCheck.instance.activate(
+        webProvider: siteKey.isEmpty ? null : ReCaptchaV3Provider(siteKey),
+        androidProvider: kReleaseMode ? AndroidProvider.playIntegrity : AndroidProvider.debug,
+        appleProvider: kReleaseMode ? AppleProvider.appAttestWithDeviceCheckFallback : AppleProvider.debug,
+      );
+    } catch (e, st) {
+      AppLogger.error('App Check activation failed', error: e, stackTrace: st);
+    }
   }
 
   if (!kIsWeb) {

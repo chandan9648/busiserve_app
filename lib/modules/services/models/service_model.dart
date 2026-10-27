@@ -13,7 +13,7 @@ enum ServiceCategory {
       ServiceCategory.values.firstWhere((c) => c.name == key, orElse: () => ServiceCategory.webAndApps);
 }
 
-/// A Busiserve service. `id` equals the slug used on busiserve.in/services/<id>.
+/// A Busiserve service. `id` equals the slug used on `busiserve.in/services/<id>`.
 class ServiceModel {
   const ServiceModel({
     required this.id,

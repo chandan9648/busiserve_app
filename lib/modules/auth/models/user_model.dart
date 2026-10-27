@@ -1,7 +1,8 @@
 import '../../../core/utils/parsing.dart';
 
-/// Customer profile stored at `users/{uid}`. Roles are NOT stored here; they
-/// live in Firebase Auth custom claims set by a trusted function.
+/// Customer profile stored at `users/{uid}`. The document also carries a
+/// `role` field that the security rules read, but only an admin may write it,
+/// so this model deliberately neither parses nor sends it.
 class UserModel {
   const UserModel({
     required this.uid,

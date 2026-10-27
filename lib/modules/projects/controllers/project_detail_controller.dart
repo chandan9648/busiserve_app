@@ -39,11 +39,11 @@ class ProjectDetailController extends GetxController {
         ..add(_repository.watch(projectId).listen(
               (p) => project.value = SuccessState(p),
               onError: (Object e) => project.value = ErrorState(_f(e)),
-            ))
+            ),)
         ..add(_repository.watchMilestones(projectId).listen(
               (m) => milestones.value = listState(m),
               onError: (Object e) => milestones.value = ErrorState(_f(e)),
-            ));
+            ),);
     } on AppException catch (e) {
       project.value = ErrorState(Failure.fromException(e));
     }

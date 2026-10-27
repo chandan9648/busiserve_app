@@ -129,9 +129,9 @@ class EnquiryFormView extends GetView<EnquiryController> {
                   spacing: AppSpacing.sm,
                   runSpacing: AppSpacing.sm,
                   children: [
-                    ActionChip(
-                      avatar: const Icon(Icons.call_outlined, size: 18),
-                      label: const Text(CompanyInfo.phoneDisplay),
+                    const ActionChip(
+                      avatar: Icon(Icons.call_outlined, size: 18),
+                      label: Text(CompanyInfo.phoneDisplay),
                       onPressed: Launcher.call,
                     ),
                     ActionChip(

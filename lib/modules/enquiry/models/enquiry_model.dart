@@ -20,8 +20,8 @@ enum EnquiryStatus {
       };
 }
 
-/// An enquiry as stored in `enquiries/{idempotencyKey}` by the createEnquiry
-/// Cloud Function.
+/// An enquiry as stored in `enquiries/{idempotencyKey}`, written by the
+/// signed-in customer and validated by the Firestore security rules.
 class EnquiryModel {
   const EnquiryModel({
     required this.id,
@@ -57,7 +57,7 @@ class EnquiryModel {
   String get reference => 'BS-${id.substring(0, id.length < 8 ? id.length : 8).toUpperCase()}';
 }
 
-/// What the app sends to `createEnquiry`.
+/// What the app writes to `enquiries/{idempotencyKey}`.
 class EnquiryRequest {
   const EnquiryRequest({
     required this.idempotencyKey,
@@ -77,8 +77,8 @@ class EnquiryRequest {
   final String? phone;
   final String? company;
 
+  /// The idempotency key is the document id, so it is not a field here.
   Map<String, dynamic> toPayload() => {
-        'idempotencyKey': idempotencyKey,
         'name': name.trim(),
         'email': email.trim().toLowerCase(),
         'subject': subjectId,

@@ -63,11 +63,10 @@ class ServerException extends AppException {
 }
 
 class DataParsingException extends AppException {
-  const DataParsingException({Object? cause})
+  const DataParsingException({super.cause})
       : super(
           'We received data we could not read. Update the app or try again later.',
           code: 'parse',
-          cause: cause,
         );
 }
 
@@ -79,6 +78,6 @@ class ConfigurationException extends AppException {
 }
 
 class UnknownException extends AppException {
-  const UnknownException({Object? cause})
-      : super('Something went wrong. Try again.', code: 'unknown', cause: cause);
+  const UnknownException({super.cause})
+      : super('Something went wrong. Try again.', code: 'unknown');
 }

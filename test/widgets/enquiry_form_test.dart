@@ -23,7 +23,7 @@ void main() {
     final session = FakeAuthSession();
     Get.put<AuthSession>(session);
     Get.put(EnquiryController(EnquiryRepository(remote: remote, session: session), session,
-        arguments: const {'subjectId': 'app-development'}));
+        arguments: const {'subjectId': 'app-development'},),);
 
     await tester.pumpWidget(
       GetMaterialApp(

@@ -54,14 +54,14 @@ class TicketDetailController extends GetxController {
         ..add(_repository.watch(ticketId).listen(
               (t) => ticket.value = SuccessState(t),
               onError: (Object e) => ticket.value = ErrorState(_f(e)),
-            ))
+            ),)
         ..add(_repository.watchMessages(ticketId).listen(
               (m) {
                 messages.value = listState(m);
                 _scrollToEnd();
               },
               onError: (Object e) => messages.value = ErrorState(_f(e)),
-            ));
+            ),);
     } on AppException catch (e) {
       ticket.value = ErrorState(Failure.fromException(e));
     }

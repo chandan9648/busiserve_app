@@ -33,7 +33,7 @@ class CreateTicketView extends GetView<CreateTicketController> {
               ),
               Obx(
                 () => DropdownButtonFormField<TicketCategory>(
-                  value: controller.category.value,
+                  initialValue: controller.category.value,
                   isExpanded: true,
                   decoration: const InputDecoration(labelText: 'Topic', prefixIcon: Icon(Icons.label_outline, size: 20)),
                   items: [
