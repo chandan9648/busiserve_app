@@ -13,8 +13,9 @@ class FlavorConfig {
   final AppFlavor flavor;
   final String appTitle;
 
-  /// Returns the generated options for this flavor. Throws [UnsupportedError]
-  /// until `flutterfire configure` has been run (see README).
+  /// Returns the Firebase options for this flavor and current platform.
+  /// Production web options are configured; dev, staging, and native options
+  /// still require FlutterFire setup.
   final FirebaseOptions Function() firebaseOptions;
 
 }

@@ -62,24 +62,17 @@ upload an APNs key in Firebase Console → Project settings → Cloud Messaging.
 
 ---
 
-## 2. Firebase setup (once per environment)
+## 2. Firebase setup
 
-Create three projects, for example `busiserve-dev`, `busiserve-staging`, `busiserve-prod`. In each:
-enable Email/Password sign-in, create Firestore (region `asia-south1`), enable Storage, register
-App Check (Play Integrity / App Attest), and upgrade to Blaze (required for Functions).
+The production web flavor is configured to use the `busiserve-app` Firebase project.
+Run it with `flutter run -d chrome -t lib/main_prod.dart`. Dev and staging remain
+unconfigured. For Android and iOS production builds, run FlutterFire configuration with the
+matching native app IDs and add the platform-specific options before building. Until then,
+Firebase-dependent features are unavailable on those platforms; public screens remain browsable.
 
-Generate the options file for each flavor. These replace the placeholders in
-`lib/core/config/firebase/`:
-
-```bash
-flutterfire configure --project=busiserve-dev \
-  --out=lib/core/config/firebase/firebase_options_dev.dart \
-  --ios-bundle-id=in.busiserve.app.dev --android-package-name=in.busiserve.app.dev
-# repeat for staging (".staging") and prod (no suffix)
-```
-
-Until this is done the app still starts: public screens work and account features show
-"not available yet". That is intentional, not a bug.
+In the Firebase Console, enable Email/Password sign-in, create Firestore (region `asia-south1`),
+enable Storage, register App Check (Play Integrity / App Attest), and upgrade to Blaze (required
+for Functions).
 
 Deploy rules, indexes and functions:
 
@@ -110,7 +103,18 @@ flutter run --flavor dev     -t lib/main_dev.dart     --dart-define-from-file=en
 flutter run --flavor staging -t lib/main_staging.dart --dart-define-from-file=env/staging.json
 ```
 
-For production, copy `env/prod.example.json` to `env/prod.json` (git-ignored).
+For production, copy `env/prod.example.json` to `env/prod.json` (git-ignored) and fill
+the `FIREBASE_*` values from Firebase Console → Project settings → Your apps. These are
+public client configuration values and are still included in the built app; keep service
+account keys and other privileged credentials out of the app and use CI secrets/server-side
+storage for those.
+
+For dev on web, put the same `FIREBASE_*` keys in `env/dev.local.json` (git-ignored) and pass it
+as a second file:
+
+```bash
+flutter run -d chrome -t lib/main_dev.dart --dart-define-from-file=env/dev.json --dart-define-from-file=env/dev.local.json
+```
 
 ### Local emulators
 

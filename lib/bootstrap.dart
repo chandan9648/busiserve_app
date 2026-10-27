@@ -42,7 +42,7 @@ Future<void> _initFirebase(FlavorConfig config) async {
     await Firebase.initializeApp(options: config.firebaseOptions());
     FirebaseStatus.isReady = true;
   } catch (e) {
-    // Expected until `flutterfire configure` has been run for this flavor.
+    // Native platforms still need their platform-specific FlutterFire options.
     FirebaseStatus.isReady = false;
     AppLogger.warning('Firebase not initialised for ${config.flavor.name}: public mode only.');
     return;

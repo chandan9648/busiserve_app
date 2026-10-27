@@ -13,6 +13,7 @@ coverage/
 
 # Environment & secrets
 env/prod.json
+env/*.local.json
 *.keystore
 *.jks
 key.properties
@@ -25,3 +26,5 @@ firebase/functions/node_modules/
 firebase/functions/lib/
 firebase/.firebase/
 firebase/*-debug.log
+
+
