@@ -1,0 +1,6 @@
+{
+  "APP_FLAVOR": "dev",
+  "API_BASE_URL": "",
+  "USE_FIREBASE_EMULATOR": "false",
+  "FUNCTIONS_REGION": "asia-south1"
+}

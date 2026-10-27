@@ -1,0 +1,138 @@
+rules_version = '2';
+
+// Customers read only their own records. Staff access comes from Auth custom
+// claims (role: 'staff' | 'admin') set by the setUserRole function, never from
+// a document field the client can write.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+    function role() { return signedIn() ? request.auth.token.get('role', '') : ''; }
+    function isStaff() { return role() in ['staff', 'admin']; }
+    function isAdmin() { return role() == 'admin'; }
+    function owns(data) { return signedIn() && data.customerId == uid(); }
+    function onlyChanges(keys) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
+    }
+    function str(v, min, max) { return v is string && v.size() >= min && v.size() <= max; }
+    function optStr(data, key, max) { return !(key in data) || data[key] == null || str(data[key], 0, max); }
+
+    // ---------- Public catalogue ----------
+    match /services/{id} {
+      allow read: if resource.data.published == true || isStaff();
+      allow write: if isStaff();
+    }
+    match /caseStudies/{id} {
+      allow read: if resource.data.published == true || isStaff();
+      allow write: if isStaff();
+    }
+
+    // ---------- Customer profile ----------
+    match /users/{userId} {
+      allow read: if signedIn() && (uid() == userId || isStaff());
+      allow create: if signedIn() && uid() == userId
+        && request.resource.data.keys().hasOnly(['name', 'email', 'phone', 'createdAt'])
+        && str(request.resource.data.name, 2, 80)
+        && request.resource.data.email == request.auth.token.email
+        && optStr(request.resource.data, 'phone', 20)
+        && request.resource.data.createdAt == request.time;
+      allow update: if signedIn() && uid() == userId
+        && onlyChanges(['name', 'phone', 'company', 'updatedAt'])
+        && str(request.resource.data.name, 2, 80)
+        && optStr(request.resource.data, 'phone', 20)
+        && optStr(request.resource.data, 'company', 120);
+      allow delete: if false; // via deleteAccount function only
+
+      match /devices/{token} {
+        allow read, delete: if signedIn() && uid() == userId;
+        allow create, update: if signedIn() && uid() == userId
+          && request.resource.data.keys().hasOnly(['platform', 'updatedAt'])
+          && str(request.resource.data.platform, 1, 20);
+      }
+
+      match /notifications/{id} {
+        allow read: if signedIn() && uid() == userId;
+        // Customers may only mark as read. Functions (Admin SDK) create them.
+        allow update: if signedIn() && uid() == userId
+          && onlyChanges(['read']) && request.resource.data.read == true;
+        allow create, delete: if false;
+      }
+    }
+
+    // ---------- Enquiries (created only by createEnquiry) ----------
+    match /enquiries/{id} {
+      allow read: if owns(resource.data) || isStaff();
+      allow create, delete: if false;
+      allow update: if isStaff() && onlyChanges(['status', 'assignedTo', 'internalNotes', 'updatedAt']);
+    }
+
+    // ---------- Quotations and projects (staff-managed) ----------
+    match /quotations/{id} {
+      allow read: if owns(resource.data) || isStaff();
+      allow write: if isStaff();
+    }
+
+    match /projects/{projectId} {
+      allow read: if owns(resource.data) || isStaff();
+      allow write: if isStaff();
+
+      match /milestones/{milestoneId} {
+        allow read: if isStaff()
+          || (signedIn() && get(/databases/$(database)/documents/projects/$(projectId)).data.customerId == uid());
+        allow write: if isStaff();
+      }
+    }
+
+    // ---------- Support tickets ----------
+    match /tickets/{ticketId} {
+      // `resource == null` lets the app check whether its own pre-generated
+      // id was already written (safe retry); it reveals nothing.
+      allow get: if signedIn() && (resource == null || owns(resource.data) || isStaff());
+      allow list: if owns(resource.data) || isStaff();
+      allow create: if signedIn()
+        && request.resource.data.customerId == uid()
+        && request.resource.data.keys().hasOnly(
+             ['customerId', 'subject', 'category', 'status', 'relatedId', 'lastMessage', 'createdAt', 'updatedAt'])
+        && request.resource.data.status == 'open'
+        && request.resource.data.category in ['general', 'project', 'quotation', 'billing', 'technical']
+        && str(request.resource.data.subject, 4, 120)
+        && str(request.resource.data.lastMessage, 1, 2000)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+      allow update: if isStaff()
+        || (owns(resource.data)
+            && resource.data.status != 'closed'
+            && onlyChanges(['lastMessage', 'status', 'updatedAt'])
+            && request.resource.data.status == 'open'
+            && str(request.resource.data.lastMessage, 1, 2000)
+            && request.resource.data.updatedAt == request.time);
+      allow delete: if isAdmin();
+
+      match /messages/{messageId} {
+        function ticket() { return get(/databases/$(database)/documents/tickets/$(ticketId)).data; }
+        // getAfter: the first message is written in the same batch as the ticket.
+        function ticketAfter() { return getAfter(/databases/$(database)/documents/tickets/$(ticketId)).data; }
+        allow read: if isStaff() || (signedIn() && ticket().customerId == uid());
+        allow create: if signedIn()
+          && (
+            (ticketAfter().customerId == uid()
+              && request.resource.data.authorRole == 'customer'
+              && ticketAfter().status != 'closed')
+            || (isStaff() && request.resource.data.authorRole == 'staff')
+          )
+          && request.resource.data.authorId == uid()
+          && request.resource.data.keys().hasOnly(['authorId', 'authorRole', 'authorName', 'text', 'createdAt'])
+          && str(request.resource.data.text, 1, 2000)
+          && str(request.resource.data.authorName, 1, 80)
+          && request.resource.data.createdAt == request.time;
+        allow update, delete: if false;
+      }
+    }
+
+    // Internal collections (rate limits, audit) are server-only.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

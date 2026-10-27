@@ -1,0 +1,68 @@
+name: busiserve_app
+description: Official mobile app of Busiserve Infotech Solution.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.6.0 <4.0.0'
+  flutter: '>=3.27.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management, DI, routing
+  get: ^4.7.2
+
+  # Networking (used only when a REST backend such as the Busiserve CRM is configured)
+  dio: ^5.8.0
+
+  # Firebase (keep these on the same release train; upgrade them together)
+  firebase_core: ^3.13.0
+  firebase_auth: ^5.5.3
+  cloud_firestore: ^5.6.7
+  cloud_functions: ^5.5.0
+  firebase_messaging: ^15.2.5
+  firebase_storage: ^12.4.5
+  firebase_crashlytics: ^4.3.5
+  firebase_app_check: ^0.3.2+5
+
+  # Storage
+  get_storage: ^2.1.1
+  flutter_secure_storage: ^9.2.4
+
+  # Utilities
+  logger: ^2.5.0
+  uuid: ^4.5.1
+  url_launcher: ^6.3.1
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  mocktail: ^1.0.4
+  flutter_launcher_icons: ^0.14.3
+  flutter_native_splash: ^2.4.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/icons/app_icon.png
+  remove_alpha_ios: true
+  adaptive_icon_background: '#FFFFFF'
+  adaptive_icon_foreground: assets/icons/app_icon.png
+
+flutter_native_splash:
+  color: '#FFFFFF'
+  image: assets/images/logo_mark.png
+  android_12:
+    color: '#FFFFFF'
+    image: assets/images/logo_mark.png

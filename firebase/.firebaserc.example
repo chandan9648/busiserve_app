@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "dev": "busiserve-dev",
+    "staging": "busiserve-staging",
+    "prod": "busiserve-prod"
+  }
+}
