@@ -9,8 +9,27 @@ notifications, raise support requests and delete their account.
 
 > **Where things stand.** The app runs on **web** (Chrome) and **Android** against the
 > `busiserve-app` Firebase project. Android has no build flavors yet, so every Android build uses
-> package `in.busiserve_app`. The iOS folder has not been generated yet. Before you start changing
-> code, run the checks in [Verify](#4-verify).
+> package `in.busiserve_app`. The `ios/` folder exists (bundle ID `in.busiserveApp`), but iOS is not
+> connected to Firebase yet, so it starts in public-only mode. Before you start changing code, run
+> the checks in [Verify](#4-verify).
+
+## Quick start (Android phone)
+
+For a machine that already has Flutter and Android Studio installed. Every step is explained in
+detail further down.
+
+```bash
+git clone <repository-url> busiserve_app
+cd busiserve_app
+flutter pub get
+# put the Firebase Android config in place (ask the project owner, or see 3.3):
+#   android/app/google-services.json
+flutter devices                    # phone connected with USB debugging on
+flutter run -d <device-id>
+```
+
+The phone needs a working internet connection. Without one, the app shows a "No internet" screen
+and comes back by itself when the connection returns (see [3.6](#36-offline-screen)).
 
 ---
 
@@ -24,7 +43,7 @@ Git Bash), macOS and Linux unless a step says otherwise.
 | Tool | Version | Needed for | Check with |
 |---|---|---|---|
 | [Git](https://git-scm.com/downloads) | any recent | cloning the repo | `git --version` |
-| [Flutter SDK](https://docs.flutter.dev/get-started/install) | 3.27 or newer (includes Dart 3.6+) | everything | `flutter --version` |
+| [Flutter SDK](https://docs.flutter.dev/get-started/install) | 3.27 or newer (includes Dart 3.6+); last tested on 3.47.8 stable | everything | `flutter --version` |
 | [Google Chrome](https://www.google.com/chrome/) | any recent | running the web build | — |
 | [Android Studio](https://developer.android.com/studio) | latest, with Android SDK, command-line tools and an emulator | Android builds | `flutter doctor` |
 | JDK 17 | bundled with Android Studio | Android builds | `java -version` |
@@ -60,7 +79,10 @@ cd busiserve_app
 flutter pub get
 ```
 
-Optional, only after changing the icon or splash images in `assets/`:
+The generated app icons and splash screens for Android, iOS and web are already committed. Run
+these only after replacing `assets/icons/app_icon.png` (app icon) or `assets/images/logo_mark.png`
+(splash). Their settings are in `pubspec.yaml` under `flutter_launcher_icons` and
+`flutter_native_splash`.
 
 ```bash
 dart run flutter_launcher_icons
@@ -281,9 +303,11 @@ productFlavors {
 Register `in.busiserve_app.dev` and `in.busiserve_app.staging` in Firebase too. Then download
 `google-services.json` again so that it covers all three package names.
 
-**4. Update `AndroidManifest.xml`.** In `android/app/src/main/AndroidManifest.xml`, add these to
-the existing `<queries>` block so phone, email and web links open on Android 11+. After step 3,
-also set `android:label="@string/app_name"`.
+**4. Update `AndroidManifest.xml`.** `android/app/src/main/AndroidManifest.xml` already has the
+`INTERNET` permission, which release builds need for Firebase and the offline check. Add these to
+the existing `<queries>` block so phone, email and web links open on Android 11+. The launcher
+label is still `busiserve_app`: change it to `android:label="Busiserve"` now, or to
+`android:label="@string/app_name"` after step 3.
 
 ```xml
 <intent><action android:name="android.intent.action.DIAL" /><data android:scheme="tel" /></intent>
@@ -300,18 +324,25 @@ cd android && ./gradlew signingReport      # Windows: .\gradlew signingReport
 
 ### 3.4 iOS setup (one-time, macOS only)
 
+The `ios/` folder is already in the repo (bundle ID `in.busiserveApp`, iOS 15.0 minimum, icons
+and launch screen generated). Don't run `flutter create` for iOS again. iOS bundle IDs can't
+contain underscores, so iOS uses `in.busiserveApp` while Android uses `in.busiserve_app`.
+
 ```bash
-flutter create . --org in.busiserve --project-name busiserve_app --platforms ios
-cd ios && pod install && cd ..
-flutterfire configure --project=busiserve-app --platforms=ios --ios-bundle-id=in.busiserve.app
-# iOS bundle IDs can't contain underscores, so iOS uses in.busiserve.app (Android uses in.busiserve_app)
+flutter pub get
+flutter build ios --no-codesign      # first run creates ios/Podfile and runs pod install
+flutterfire configure --project=busiserve-app --platforms=ios --ios-bundle-id=in.busiserveApp
 ```
 
-Then, in Xcode:
+`flutterfire configure` registers the iOS app in Firebase and writes
+`ios/Runner/GoogleService-Info.plist` (git-ignored, so every developer downloads or generates it).
 
-- Create schemes `dev`, `staging` and `prod` with matching build configurations (`Debug-dev`,
-  `Release-dev`, ...) and bundle IDs `in.busiserve.app.dev`, `in.busiserve.app.staging` and
-  `in.busiserve.app`.
+Then, in Xcode (`open ios/Runner.xcworkspace`):
+
+- Set your signing team under **Runner → Signing & Capabilities**.
+- Only if you want flavors: create schemes `dev`, `staging` and `prod` with matching build
+  configurations (`Debug-dev`, `Release-dev`, ...) and bundle IDs `in.busiserveApp.dev`,
+  `in.busiserveApp.staging` and `in.busiserveApp`.
 - Enable **Push Notifications** and **Background Modes → Remote notifications**.
 - Upload an APNs key in **Firebase Console → Project settings → Cloud Messaging**.
 
@@ -333,7 +364,32 @@ flutter build apk --release -t lib/main_prod.dart --dart-define-from-file=env/pr
 
 After you've added flavors (Android step 3), add `--flavor dev|staging|prod` to these commands.
 
-### 3.6 Troubleshooting
+### 3.6 Offline screen
+
+On Android and iOS, `OfflineGate` (`lib/core/widgets/offline_gate.dart`, wired in `app.dart`) covers
+the current screen with a "No internet" animation (`assets/animations/network_error.json`) when the
+device has no working internet. It does not trust Wi-Fi/mobile status alone. It checks that a real
+host is reachable, re-checks every 5 seconds and whenever connectivity changes, and returns the user
+to the same screen once the internet is back. The check is skipped on web.
+
+To test it, turn on airplane mode while the app is open, then turn it off again.
+
+### 3.7 Small screens and large fonts
+
+The layouts are built to work on small phones (down to about 320 dp wide) and with large system
+font sizes:
+
+- Text scaling follows the phone's font setting, but `app.dart` caps it at **1.3x** so cards and
+  grids keep their shape. Raise `maxScaleFactor` there only if you also check every screen.
+- The home "What we build" grid shows 2 columns below 360 dp width, 3 on phones and 4 on tablets.
+  Tile height is calculated from the font size, not a fixed aspect ratio.
+- Long titles end in "..." instead of overflowing.
+
+Before releasing UI changes, check on a small emulator (for example a 4" / 320 dp device) with
+**Settings → Display → Font size** at the largest setting. A red-and-yellow "BOTTOM OVERFLOWED BY
+… PIXELS" stripe in a debug build means a widget has a fixed height that's too small for its text.
+
+### 3.8 Troubleshooting
 
 | Symptom | Fix |
 |---|---|
@@ -346,6 +402,9 @@ After you've added flavors (Android step 3), add `--flavor dev|staging|prod` to 
 | Warnings about `java.lang.System::load` or `cloud_functions` / Kotlin Gradle Plugin | Harmless warnings. They don't cause the build to fail. |
 | `flutter.sdk not set in local.properties` | Run `flutter pub get` once from the project root; it writes `android/local.properties`. |
 | Stale build errors after switching branches | `flutter clean`, then `flutter pub get`. |
+| "No internet" screen stays although the phone is online | The reachability check is failing (captive Wi-Fi login, firewall, VPN). Open a website in the phone browser first. A release build also needs `INTERNET` in `AndroidManifest.xml`. |
+| "BOTTOM OVERFLOWED BY … PIXELS" stripe | A widget has a fixed height that's too small for its text at the current font size. See [3.7](#37-small-screens-and-large-fonts). |
+| `pod install` / `Podfile` not found (iOS) | Run `flutter build ios --no-codesign` once; it generates `ios/Podfile`. |
 
 ---
 
@@ -387,7 +446,7 @@ before production. With no Cloud Functions, the rules are the *only* security bo
 ```
 lib/
   main_dev|staging|prod.dart  flavor entry points -> bootstrap.dart
-  app.dart                    GetMaterialApp, themes
+  app.dart                    GetMaterialApp, themes, text-scale cap, OfflineGate
   bindings/initial_binding.dart  app-lifetime services (GetxService)
   routes/                     Routes, AppPages (GetPage table), AuthMiddleware
   core/
@@ -399,7 +458,7 @@ lib/
     state/       sealed ViewState<T>: Initial, Loading, Success, Empty, Error
     theme/       colours sampled from the logo, spacing, BrandTokens, ThemeData (light + dark)
     utils/       validators, parsing, formatters, logger (redacting), launcher, idempotency
-    widgets/     AppButton, AppTextField, StateView, hexagon motif, cards, notices
+    widgets/     AppButton, AppTextField, StateView, OfflineGate, hexagon motif, cards, notices
   modules/<feature>/
     bindings/ controllers/ models/ datasources/ repositories/ views/ widgets/
 ```
