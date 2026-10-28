@@ -1,9 +1,15 @@
+import java.util.Properties
 
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
     // Flutter Gradle Plugin must be applied after Android and Kotlin plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+val keystoreProperties = Properties().apply {
+    val file = rootProject.file("key.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
 }
 
 android {
@@ -24,10 +30,28 @@ android {
         versionName = flutter.versionName
     }
 
+    // Release signing comes from android/key.properties (git-ignored). Without it,
+    // release builds fall back to the debug key: fine on your own phone, never
+    // for anything you distribute.
+    signingConfigs {
+        if (keystoreProperties.isNotEmpty()) {
+            create("release") {
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Configure your production signing key before publishing.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (keystoreProperties.isNotEmpty()) {
+                signingConfigs.getByName("release")
+            } else {
+                logger.warn("android/key.properties not found: release build is signed with the DEBUG key.")
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }

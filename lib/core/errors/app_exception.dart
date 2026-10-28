@@ -49,6 +49,13 @@ class NotFoundException extends AppException {
       : super(code: 'not-found');
 }
 
+/// The account's email is not verified yet; enquiries and support need it.
+class EmailNotVerifiedException extends AppException {
+  const EmailNotVerifiedException([
+    super.message = 'Verify your email first. Open the link we sent you, then tap "I\'ve verified".',
+  ]) : super(code: 'email-not-verified');
+}
+
 class RateLimitException extends AppException {
   const RateLimitException([
     super.message = 'Too many attempts. Wait a few minutes and try again.',

@@ -20,7 +20,13 @@ class EnquiryRepository {
         'Online enquiries are not available yet. Email or call us instead.',
       );
     }
-    return guard(() => _remote.create(request), context: 'createEnquiry');
+    return guard(
+      () async {
+        if (!await _session.refreshEmailVerified()) throw const EmailNotVerifiedException();
+        return _remote.create(request);
+      },
+      context: 'createEnquiry',
+    );
   }
 
   Stream<List<EnquiryModel>> watchMine() {

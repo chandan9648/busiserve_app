@@ -28,6 +28,21 @@ service cloud.firestore {
     }
     function str(v, min, max) { return v is string && v.size() >= min && v.size() <= max; }
     function optStr(data, key, max) { return !(key in data) || data[key] == null || str(data[key], 0, max); }
+    // Customer writes that reach staff need a verified inbox, so a spammer
+    // cannot dodge the per-account limits below with throwaway sign-ups.
+    function verified() { return signedIn() && request.auth.token.email_verified == true; }
+
+    // ---------- Per-user write limits ----------
+    // Spark has no server to count requests, so every limited create must be
+    // batched with an update to users/{uid}/limits/{kind}. The limit doc
+    // records the id it was spent on, so one update pays for exactly one write.
+    // Keep these numbers in sync with RateLimit in lib/core/services/rate_limits.dart.
+    function limitCooldown(kind) { return kind == 'message' ? duration.value(3, 's') : duration.value(2, 'm'); }
+    function limitPerDay(kind) { return kind == 'message' ? 200 : 5; }
+    function spentOn(kind, docId) {
+      return getAfter(/databases/$(database)/documents/users/$(uid())/limits/$(kind)).data.lastId == docId
+        && getAfter(/databases/$(database)/documents/users/$(uid())/limits/$(kind)).data.last == request.time;
+    }
 
     // ---------- Public catalogue ----------
     match /services/{id} {
@@ -69,6 +84,29 @@ service cloud.firestore {
           && str(request.resource.data.platform, 1, 20);
       }
 
+      match /limits/{kind} {
+        allow read: if signedIn() && uid() == userId;
+        // Never deletable: deleting would reset the counter.
+        allow create, update: if signedIn() && uid() == userId
+          && kind in ['enquiry', 'ticket', 'message']
+          && request.resource.data.keys().hasOnly(['last', 'windowStart', 'count', 'lastId'])
+          && str(request.resource.data.lastId, 1, 128)
+          && request.resource.data.last == request.time
+          && (
+            // Same 24-hour window: respect the cooldown and the daily cap.
+            (resource != null
+              && request.time < resource.data.windowStart + duration.value(24, 'h')
+              && request.time > resource.data.last + limitCooldown(kind)
+              && request.resource.data.windowStart == resource.data.windowStart
+              && request.resource.data.count == resource.data.count + 1
+              && request.resource.data.count <= limitPerDay(kind))
+            // First write, or the previous window has expired: start a new one.
+            || ((resource == null || request.time >= resource.data.windowStart + duration.value(24, 'h'))
+              && request.resource.data.windowStart == request.time
+              && request.resource.data.count == 1)
+          );
+      }
+
       match /notifications/{id} {
         allow read, delete: if signedIn() && uid() == userId;
         // Customers may only mark as read. Staff raise notifications by hand,
@@ -94,7 +132,8 @@ service cloud.firestore {
       // was already written (safe retry); it reveals nothing.
       allow get: if signedIn() && (resource == null || owns(resource.data) || isStaff());
       allow list: if owns(resource.data) || isStaff();
-      allow create: if signedIn()
+      allow create: if verified()
+        && spentOn('enquiry', id)
         && id.matches('^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')
         && request.resource.data.customerId == uid()
         && request.resource.data.keys().hasAll(
@@ -144,7 +183,8 @@ service cloud.firestore {
       // id was already written (safe retry); it reveals nothing.
       allow get: if signedIn() && (resource == null || owns(resource.data) || isStaff());
       allow list: if owns(resource.data) || isStaff();
-      allow create: if signedIn()
+      allow create: if verified()
+        && spentOn('ticket', ticketId)
         && request.resource.data.customerId == uid()
         && request.resource.data.keys().hasOnly(
              ['customerId', 'subject', 'category', 'status', 'relatedId', 'lastMessage', 'createdAt', 'updatedAt'])
@@ -152,6 +192,8 @@ service cloud.firestore {
         && request.resource.data.category in ['general', 'project', 'quotation', 'billing', 'technical']
         && str(request.resource.data.subject, 4, 120)
         && str(request.resource.data.lastMessage, 1, 2000)
+        // A short document id; anything else would let a client park arbitrary data here.
+        && optStr(request.resource.data, 'relatedId', 128)
         && request.resource.data.createdAt == request.time
         && request.resource.data.updatedAt == request.time;
       allow update: if isStaff()
@@ -170,7 +212,9 @@ service cloud.firestore {
         allow read: if isStaff() || (signedIn() && ticket().customerId == uid());
         allow create: if signedIn()
           && (
-            (ticketAfter().customerId == uid()
+            (verified()
+              && spentOn('message', messageId)
+              && ticketAfter().customerId == uid()
               && request.resource.data.authorRole == 'customer'
               && ticketAfter().status != 'closed')
             || (isStaff() && request.resource.data.authorRole == 'staff')

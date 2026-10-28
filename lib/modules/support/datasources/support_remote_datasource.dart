@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../core/services/rate_limits.dart';
 import '../models/ticket_model.dart';
 
 abstract class SupportRemoteDataSource {
@@ -59,7 +60,11 @@ class FirestoreSupportDataSource implements SupportRemoteDataSource {
     final ref = _store.doc('tickets/${t.id}');
     final existing = await ref.get();
     if (existing.exists) return;
-    final batch = _store.batch()
+    final message = ref.collection('messages').doc();
+    final batch = _store.batch();
+    await RateLimits.spend(_store, batch, uid: uid, limit: RateLimit.ticket, docId: ref.id);
+    await RateLimits.spend(_store, batch, uid: uid, limit: RateLimit.message, docId: message.id);
+    batch
       ..set(ref, {
         'customerId': uid,
         'subject': t.subject.trim(),
@@ -70,7 +75,7 @@ class FirestoreSupportDataSource implements SupportRemoteDataSource {
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       })
-      ..set(ref.collection('messages').doc(), {
+      ..set(message, {
         'authorId': uid,
         'authorRole': 'customer',
         'authorName': authorName,
@@ -89,8 +94,13 @@ class FirestoreSupportDataSource implements SupportRemoteDataSource {
     required String text,
   }) async {
     final ticket = _store.doc('tickets/$ticketId');
-    final batch = _store.batch()
-      ..set(ticket.collection('messages').doc(messageId), {
+    final message = ticket.collection('messages').doc(messageId);
+    // A retry after a lost response: the message is already there.
+    if ((await message.get()).exists) return;
+    final batch = _store.batch();
+    await RateLimits.spend(_store, batch, uid: uid, limit: RateLimit.message, docId: messageId);
+    batch
+      ..set(message, {
         'authorId': uid,
         'authorRole': 'customer',
         'authorName': authorName,

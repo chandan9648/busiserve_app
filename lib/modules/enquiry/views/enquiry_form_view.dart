@@ -10,6 +10,7 @@ import '../../../core/utils/validators.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/common.dart';
+import '../../../core/widgets/email_verification_notice.dart';
 import '../controllers/enquiry_controller.dart';
 import '../widgets/subject_dropdown.dart';
 
@@ -36,6 +37,7 @@ class EnquiryFormView extends GetView<EnquiryController> {
                   style: context.text.bodyMedium?.copyWith(color: context.brand.muted),
                 ),
                 const SizedBox(height: AppSpacing.xl),
+                const EmailVerificationNotice(padding: EdgeInsets.only(bottom: AppSpacing.lg)),
                 Obx(
                   () => controller.errorMessage.value == null
                       ? const SizedBox.shrink()

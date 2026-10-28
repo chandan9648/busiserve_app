@@ -17,6 +17,12 @@ abstract class AuthSession {
   String? get displayName;
   bool get isEmailVerified;
 
+  /// Reloads the user and, once verified, refreshes the ID token so the
+  /// security rules see `email_verified`. Returns whether it is verified.
+  Future<bool> refreshEmailVerified();
+
+  Future<void> sendEmailVerification();
+
   /// False when Firebase is not configured for this build.
   bool get isAvailable;
 
@@ -68,6 +74,28 @@ class AuthService extends GetxService implements AuthSession {
   String? get displayName => user?.displayName;
   @override
   bool get isEmailVerified => user?.emailVerified ?? false;
+
+  @override
+  Future<bool> refreshEmailVerified() async {
+    var u = user;
+    if (u == null) return false;
+    if (!u.emailVerified) {
+      await u.reload();
+      u = auth.currentUser;
+      if (u == null || !u.emailVerified) return false;
+    }
+    // The cached token may predate verification; rules read the token.
+    final claims = (await u.getIdTokenResult()).claims;
+    if (claims?['email_verified'] != true) await u.getIdToken(true);
+    return true;
+  }
+
+  @override
+  Future<void> sendEmailVerification() async {
+    final u = user;
+    if (u == null) throw const AuthenticationException('Sign in to continue.', code: 'unauthenticated');
+    await u.sendEmailVerification();
+  }
 
   @override
   String requireUid() {

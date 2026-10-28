@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../core/errors/app_exception.dart';
+import '../../../core/services/rate_limits.dart';
 import '../models/enquiry_model.dart';
 
 abstract class EnquiryRemoteDataSource {
@@ -34,14 +35,17 @@ class FirebaseEnquiryDataSource implements EnquiryRemoteDataSource {
     if ((await ref.get()).exists) {
       return EnquiryResult(enquiryId: ref.id, duplicate: true);
     }
+    final batch = _store.batch();
+    await RateLimits.spend(_store, batch, uid: uid, limit: RateLimit.enquiry, docId: ref.id);
+    batch.set(ref, {
+      ...request.toPayload(),
+      'customerId': uid,
+      'status': 'received',
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
     try {
-      await ref.set({
-        ...request.toPayload(),
-        'customerId': uid,
-        'status': 'received',
-        'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
+      await batch.commit();
     } on FirebaseException catch (e) {
       // Rules allow create but not update, so a racing second submit lands
       // here rather than overwriting the enquiry already on record.

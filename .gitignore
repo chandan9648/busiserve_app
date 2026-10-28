@@ -28,3 +28,5 @@ firebase/.firebase/
 firebase/*-debug.log
 
 
+firebase/test/node_modules/
+firebase/test/*-debug.log

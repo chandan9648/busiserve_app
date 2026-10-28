@@ -8,6 +8,7 @@ import '../../../core/theme/brand_tokens.dart';
 import '../../../core/utils/launcher.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/common.dart';
+import '../../../core/widgets/email_verification_notice.dart';
 import '../../../core/widgets/hex_shape.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../../routes/app_routes.dart';
@@ -219,13 +220,8 @@ class _SignedInHeader extends GetView<ProfileController> {
                 ],
               ),
             ),
-            if (!controller.session.isEmailVerified) ...[
-              const SizedBox(height: AppSpacing.md),
-              const InlineNotice(
-                icon: Icons.mark_email_unread_outlined,
-                message: 'Verify your email using the link we sent, then reopen the app.',
-              ),
-            ],
+            if (!controller.session.isEmailVerified)
+              const EmailVerificationNotice(padding: EdgeInsets.only(top: AppSpacing.md)),
           ],
         ),
       ),

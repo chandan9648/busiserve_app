@@ -35,20 +35,34 @@ class SupportRepository {
 
   Future<void> create(NewTicket ticket) async {
     final uid = _session.requireUid();
-    return guard(() => _remote.createTicket(uid, _authorName, ticket), context: 'create ticket');
+    return guard(
+      () async {
+        await _requireVerified();
+        return _remote.createTicket(uid, _authorName, ticket);
+      },
+      context: 'create ticket',
+    );
   }
 
   Future<void> send({required String ticketId, required String messageId, required String text}) async {
     final uid = _session.requireUid();
     return guard(
-      () => _remote.sendMessage(
-        uid: uid,
-        authorName: _authorName,
-        ticketId: ticketId,
-        messageId: messageId,
-        text: text,
-      ),
+      () async {
+        await _requireVerified();
+        return _remote.sendMessage(
+          uid: uid,
+          authorName: _authorName,
+          ticketId: ticketId,
+          messageId: messageId,
+          text: text,
+        );
+      },
       context: 'send message',
     );
+  }
+
+  Future<void> _requireVerified() async {
+    // Cheap after the first success: no reload once the token says verified.
+    if (!await _session.refreshEmailVerified()) throw const EmailNotVerifiedException();
   }
 }

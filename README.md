@@ -195,8 +195,8 @@ Trade-offs of running without Cloud Functions:
 
 - **Anonymous enquiries are gone.** Submitting now requires an account, because an
   unauthenticated write path would be an open door for bots.
-- **No rate limiting.** The old 5-per-hour-per-email cap needed a server-side counter.
-  App Check and the sign-in requirement are the remaining defences.
+- **Rate limiting lives in the rules, per account only.** See [2.5](#25-abuse-protection).
+  There is no per-IP limit, which would need a server.
 - **No push notifications at all.** Sending FCM needs a server key. The in-app
   notification list still works, but someone has to write the entries.
 - **Deleted accounts leave records behind.** Enquiries, quotations, projects and tickets
@@ -207,6 +207,35 @@ Trade-offs of running without Cloud Functions:
 
 If you later move to the Blaze plan, deploy `firebase/functions/` and move `role` back to custom
 claims. The functions are kept in the repository for that purpose.
+
+### 2.5 Abuse protection
+
+Three layers stop bots and spam from flooding staff with enquiries and tickets:
+
+1. **Verified email.** The rules accept enquiries, new tickets and customer messages only when
+   the ID token has `email_verified == true`. The app shows a notice with **Resend link** and
+   **I've verified** buttons on the enquiry form, the new-ticket form and the Account tab.
+2. **Per-account rate limits**, enforced by `firestore.rules`:
+
+   | Write | Cooldown | Max per 24 hours |
+   |---|---|---|
+   | Enquiry | 2 minutes | 5 |
+   | Support ticket | 2 minutes | 5 |
+   | Ticket message | 3 seconds | 200 |
+
+   Each limited create must be committed in the same batch as an update to
+   `users/{uid}/limits/{enquiry|ticket|message}` (`last`, `windowStart`, `count`, `lastId`). The
+   rules check the cooldown and the count, require `lastId` to equal the new document's id (so one
+   update can't pay for several writes), and never allow the limit document to be deleted. The
+   app does this in `lib/core/services/rate_limits.dart` and shows a friendly message before the
+   write when a limit is reached. **If you change a number, change it in both `firestore.rules`
+   (`limitCooldown` / `limitPerDay`) and `RateLimit` in `rate_limits.dart`.**
+3. **App Check.** Turn on enforcement for Cloud Firestore in **Firebase Console → App Check →
+   APIs**, so only the genuine app can write at all. Check the App Check metrics page first: once
+   enforcement is on, unverified requests (old app versions, debug builds without a registered
+   debug token) are rejected.
+
+Firebase Auth also limits how fast new accounts can be created from one IP address.
 
 ---
 
@@ -405,6 +434,10 @@ Before releasing UI changes, check on a small emulator (for example a 4" / 320 d
 | "No internet" screen stays although the phone is online | The reachability check is failing (captive Wi-Fi login, firewall, VPN). Open a website in the phone browser first. A release build also needs `INTERNET` in `AndroidManifest.xml`. |
 | "BOTTOM OVERFLOWED BY … PIXELS" stripe | A widget has a fixed height that's too small for its text at the current font size. See [3.7](#37-small-screens-and-large-fonts). |
 | `pod install` / `Podfile` not found (iOS) | Run `flutter build ios --no-codesign` once; it generates `ios/Podfile`. |
+| "Verify your email first" although the link was clicked | Tap **I've verified**; it reloads the account and refreshes the sign-in token, which the rules read. |
+| "You've reached today's limit…" / "Please wait a moment…" | A rate limit from [2.5](#25-abuse-protection). In testing, delete `users/{uid}/limits/*` from the console or emulator UI. |
+| `npm test` in `firebase/test`: "Could not start Firestore Emulator, port taken" | An emulator is already on port 8080, often one left over from an earlier run on Windows. Either run `npm run test:running` to test against it, or stop it: `netstat -ano \| findstr :8080`, then `taskkill /PID <pid> /F`. |
+| `permission-denied` on enquiry/ticket after editing the rules | The batch must also update `users/{uid}/limits/{kind}`; run the rules tests (section 4). |
 
 ---
 
@@ -418,6 +451,9 @@ flutter test
 # with emulators running:
 flutter test integration_test --flavor dev \
   --dart-define-from-file=env/dev.json --dart-define=USE_FIREBASE_EMULATOR=true
+
+# Firestore security rules (needs Node 20+ and Java 11+; starts its own emulator)
+cd firebase/test && npm install && npm test
 ```
 
 What the tests cover:
@@ -435,9 +471,11 @@ What the tests cover:
 | Auth middleware and that every customer-data route is protected | `test/routes/auth_middleware_test.dart` |
 | Guest enquiry and register/sign-out/sign-in against emulators | `integration_test/app_flow_test.dart` |
 | Enquiry validation (reference only; not deployed on Spark) | `firebase/functions/src/test/validation.test.ts` |
+| Security rules: email verification, rate limits (cooldown, daily cap, new window, one write per limit update), limit docs can't be deleted or lowered, ticket `relatedId` size | `firebase/test/firestore.rules.test.js` |
 
-Not yet covered: Firestore security-rules unit tests (`@firebase/rules-unit-testing`). Add these
-before production. With no Cloud Functions, the rules are the *only* security boundary.
+The rules tests cover the abuse-protection rules only. Field validation and owner/staff access
+are not tested yet. Extend `firestore.rules.test.js` whenever you change the rules: with no Cloud
+Functions, they are the *only* security boundary.
 
 ---
 
@@ -513,8 +551,17 @@ submit collides with the first write and the app reports the original enquiry. S
 
 1. Fill `env/prod.json` (including the App Check site key); deploy rules and indexes to prod;
    grant the first admin by setting `users/{uid}.role` in the console.
-2. Android: create an upload keystore, `key.properties` (git-ignored), signing config; add the release
+2. Android: create an upload keystore and `android/key.properties` (both git-ignored). The signing
+   config in `android/app/build.gradle.kts` already reads it; without it, release builds fall back
+   to the debug key and Gradle prints a warning. Never distribute a debug-signed APK. Add the release
    SHA-256 to Firebase and Play Integrity.
+
+   ```properties
+   storePassword=...
+   keyPassword=...
+   keyAlias=upload
+   storeFile=C:/path/to/upload-keystore.jks
+   ```
    `flutter build appbundle --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json --obfuscate --split-debug-info=build/symbols`
 3. iOS: set signing team, push capability, App Attest.
    `flutter build ipa --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json --obfuscate --split-debug-info=build/symbols`

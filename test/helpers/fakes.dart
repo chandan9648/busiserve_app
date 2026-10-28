@@ -29,6 +29,10 @@ class FakeAuthSession implements AuthSession {
   @override
   bool get isEmailVerified => true;
   @override
+  Future<bool> refreshEmailVerified() async => true;
+  @override
+  Future<void> sendEmailVerification() async {}
+  @override
   String requireUid() {
     final id = uid;
     if (id == null) throw const AuthenticationException('Sign in to continue.', code: 'unauthenticated');

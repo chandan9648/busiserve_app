@@ -7,6 +7,7 @@ import '../../../core/utils/validators.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/common.dart';
+import '../../../core/widgets/email_verification_notice.dart';
 import '../controllers/create_ticket_controller.dart';
 import '../models/ticket_model.dart';
 
@@ -23,6 +24,7 @@ class CreateTicketView extends GetView<CreateTicketController> {
           child: ListView(
             padding: const EdgeInsets.all(AppSpacing.page),
             children: [
+              const EmailVerificationNotice(padding: EdgeInsets.only(bottom: AppSpacing.lg)),
               Obx(
                 () => controller.errorMessage.value == null
                     ? const SizedBox.shrink()

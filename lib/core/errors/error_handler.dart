@@ -43,7 +43,8 @@ class ErrorHandler {
         mapped is AuthenticationException ||
         mapped is NetworkException ||
         mapped is RequestTimeoutException ||
-        mapped is RateLimitException;
+        mapped is RateLimitException ||
+        mapped is EmailNotVerifiedException;
     if (isExpected) {
       AppLogger.info('${context ?? 'request'} failed: ${mapped.runtimeType}(${mapped.code})');
     } else {

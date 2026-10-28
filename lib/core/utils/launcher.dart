@@ -18,7 +18,17 @@ class Launcher {
         ),
       );
 
-  static Future<void> web(String url) => _open(Uri.parse(url));
+  /// Only https links leave the app, so a bad URL in content can never open an
+  /// `intent:`, `file:` or other app-specific scheme.
+  static Future<void> web(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null || uri.scheme != 'https' || uri.host.isEmpty) {
+      AppLogger.warning('blocked non-https link');
+      _fail();
+      return;
+    }
+    await _open(uri);
+  }
 
   static Future<void> _open(Uri uri) async {
     try {

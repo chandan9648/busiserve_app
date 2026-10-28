@@ -18,9 +18,11 @@ service firebase.storage {
 
     match /projects/{projectId}/files/{fileName} {
       allow read: if isStaff() || projectOwner(projectId);
-      allow write: if isStaff()
+      allow create, update: if isStaff()
         && request.resource.size < 25 * 1024 * 1024
         && request.resource.contentType.matches('application/pdf|image/.*|application/zip|text/plain');
+      // Split out because `request.resource` is null on delete.
+      allow delete: if isStaff();
     }
 
     match /{allPaths=**} {
