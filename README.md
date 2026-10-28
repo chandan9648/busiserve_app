@@ -7,77 +7,156 @@ Public visitors can browse services, case studies and contact details. Sending a
 account. Signed-in customers can also track enquiries and quotations, follow project milestones, receive
 notifications, raise support requests and delete their account.
 
-> **Build status — read this first.** This code was written without access to a Flutter SDK or the
-> network, so `dart format`, `flutter analyze`, `flutter test` and `npm run build` have **not** been run
-> yet. Run the commands in [Verify](#verify) before anything else and fix whatever they report. Package
-> versions are a mutually compatible set from 2025; `flutter pub outdated` will show newer ones.
+> **Where things stand.** The app currently runs on **web** (Chrome) against the `busiserve-app`
+> Firebase project. Android needs the one-time steps in [Android setup](#33-android-setup-one-time)
+> before it builds, and the iOS folder has not been generated yet. Before you start changing code,
+> run the checks in [Verify](#4-verify).
 
 ---
 
-## 1. First-time setup
+## 1. Set up your system
 
-Requirements: Flutter 3.27+ (Dart 3.6+), Xcode 15+, Android Studio, Node 20, Firebase CLI,
-FlutterFire CLI (`dart pub global activate flutterfire_cli`).
+Follow these steps in order on a new machine. Commands are the same on Windows (PowerShell or
+Git Bash), macOS and Linux unless a step says otherwise.
 
-The repository contains `lib/`, `test/`, `assets/` and `firebase/`, but not the generated platform
-folders. Create them once (this does not touch `lib/`):
+### 1.1 Install the tools
+
+| Tool | Version | Needed for | Check with |
+|---|---|---|---|
+| [Git](https://git-scm.com/downloads) | any recent | cloning the repo | `git --version` |
+| [Flutter SDK](https://docs.flutter.dev/get-started/install) | 3.27 or newer (includes Dart 3.6+) | everything | `flutter --version` |
+| [Google Chrome](https://www.google.com/chrome/) | any recent | running the web build | — |
+| [Android Studio](https://developer.android.com/studio) | latest, with Android SDK, command-line tools and an emulator | Android builds | `flutter doctor` |
+| JDK 17 | bundled with Android Studio | Android builds | `java -version` |
+| [Node.js](https://nodejs.org/) | 20 LTS | Firebase CLI | `node -v` |
+| [Firebase CLI](https://firebase.google.com/docs/cli) | latest | deploying rules, emulators | `firebase --version` |
+| FlutterFire CLI | latest | generating native Firebase config | `flutterfire --version` |
+| Xcode 15+ and CocoaPods | macOS only | iOS builds | `xcodebuild -version` |
+
+Install the two CLIs after Node and Flutter are in place:
 
 ```bash
-flutter create . --org in.busiserve --project-name busiserve_app --platforms android,ios
+npm install -g firebase-tools
+dart pub global activate flutterfire_cli
+```
+
+On Windows, add `%LOCALAPPDATA%\Pub\Cache\bin` to your `PATH` so the `flutterfire` command is
+found. On macOS/Linux, add `$HOME/.pub-cache/bin`. Then accept the Android licences and check the
+toolchain:
+
+```bash
+flutter doctor --android-licenses
+flutter doctor
+```
+
+`flutter doctor` should show green ticks for Flutter and Chrome, plus the Android toolchain if you
+build for Android. Fix anything it reports before going further.
+
+### 1.2 Get the code and dependencies
+
+```bash
+git clone <repository-url> busiserve_app
+cd busiserve_app
 flutter pub get
+```
+
+Optional, only after changing the icon or splash images in `assets/`:
+
+```bash
 dart run flutter_launcher_icons
 dart run flutter_native_splash:create
 ```
 
-### Android flavors
+### 1.3 Create your local environment files
 
-In `android/app/build.gradle(.kts)` set `applicationId "in.busiserve.app"`, `minSdk 23`, and add:
+Build settings come from JSON files in `env/`, passed with `--dart-define-from-file`. Two of them
+are git-ignored, so every developer creates them locally:
 
-```groovy
-flavorDimensions "env"
-productFlavors {
-    dev     { dimension "env"; applicationIdSuffix ".dev";     resValue "string", "app_name", "Busiserve Dev" }
-    staging { dimension "env"; applicationIdSuffix ".staging"; resValue "string", "app_name", "Busiserve Staging" }
-    prod    { dimension "env";                                  resValue "string", "app_name", "Busiserve" }
+| File | Committed? | Purpose |
+|---|---|---|
+| `env/dev.json` | yes | dev flavor settings, Firebase values left blank |
+| `env/staging.json` | yes | staging flavor settings, Firebase values left blank |
+| `env/prod.example.json` | yes | template for `env/prod.json` |
+| `env/prod.json` | **no** | production Firebase web config |
+| `env/dev.local.json` | **no** | Firebase web config for running dev on web |
+
+Create `env/prod.json` from the template:
+
+```bash
+# macOS / Linux / Git Bash
+cp env/prod.example.json env/prod.json
+# Windows PowerShell
+Copy-Item env/prod.example.json env/prod.json
+```
+
+Fill in every `FIREBASE_*` value from **Firebase Console → Project settings → General → Your apps →
+Web app → SDK setup and configuration**. These are public client identifiers, not secrets. Keep
+service-account keys and other privileged credentials out of these files and out of the repo.
+
+`env/dev.local.json` holds only the Firebase keys:
+
+```json
+{
+  "FIREBASE_API_KEY": "AIza...",
+  "FIREBASE_AUTH_DOMAIN": "busiserve-app.firebaseapp.com",
+  "FIREBASE_PROJECT_ID": "busiserve-app",
+  "FIREBASE_STORAGE_BUCKET": "busiserve-app.firebasestorage.app",
+  "FIREBASE_MESSAGING_SENDER_ID": "...",
+  "FIREBASE_APP_ID": "1:...:web:..."
 }
 ```
 
-Use `@string/app_name` as the label in `AndroidManifest.xml`, and add inside `<manifest>` so phone,
-email and web links open on Android 11+:
+`FIREBASE_APPCHECK_RECAPTCHA_SITE_KEY` comes from **Firebase Console → App Check → Apps → your web
+app → reCAPTCHA v3**. You can leave it blank while App Check enforcement is off. Once enforcement
+is on, it's required. With no Cloud Functions in front of the data, App Check on Firestore is what
+stops scripted clients from flooding the enquiry collection.
 
-```xml
-<queries>
-  <intent><action android:name="android.intent.action.DIAL" /><data android:scheme="tel" /></intent>
-  <intent><action android:name="android.intent.action.SENDTO" /><data android:scheme="mailto" /></intent>
-  <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="https" /></intent>
-</queries>
-```
-
-### iOS flavors
-
-In Xcode create schemes `dev`, `staging`, `prod` with matching build configurations
-(`Debug-dev`, `Release-dev`, ...). Set bundle ids `in.busiserve.app.dev`, `in.busiserve.app.staging`,
-`in.busiserve.app`. Enable **Push Notifications** and **Background Modes → Remote notifications**, and
-upload an APNs key in Firebase Console → Project settings → Cloud Messaging.
+A prod build with a blank `FIREBASE_*` value fails at startup and names the missing entry. Dev and
+staging builds without Firebase values still start, but in public-only mode: you can browse
+services and case studies, but you can't sign in or send enquiries.
 
 ---
 
 ## 2. Firebase setup
 
-The production web flavor is configured to use the `busiserve-app` Firebase project.
-Run it with `flutter run -d chrome -t lib/main_prod.dart --dart-define-from-file=env/prod.json`. Dev and staging remain
-unconfigured. For Android and iOS production builds, run FlutterFire configuration with the
-matching native app IDs and add the platform-specific options before building. Until then,
-Firebase-dependent features are unavailable on those platforms; public screens remain browsable.
+You only need this section if you're setting up a new Firebase project or deploying rules. If
+you're joining an existing project, ask the owner for the web config values in step 1.3 and go
+to [Run the app](#3-run-the-app).
 
-In the Firebase Console, enable Email/Password sign-in, create Firestore (region `asia-south1`),
-and register App Check (reCAPTCHA v3 for web, Play Integrity / App Attest for native).
+### 2.1 Console setup (once per project)
 
-### Spark plan: no Cloud Functions
+1. Create the project (production uses `busiserve-app`) on the free **Spark** plan.
+2. **Authentication → Sign-in method:** enable Email/Password.
+3. **Firestore Database:** create it in region `asia-south1`.
+4. **Project settings → Your apps:** add a Web app, plus Android/iOS apps when you build for them.
+5. **App Check:** register reCAPTCHA v3 for web, and Play Integrity / App Attest for native.
+
+### 2.2 Deploy Firestore rules and indexes
+
+```bash
+firebase login
+cd firebase
+cp .firebaserc.example .firebaserc          # edit the project ids if yours differ
+firebase use prod
+firebase deploy --only firestore:rules,firestore:indexes
+cd ..
+```
+
+### 2.3 Make yourself an admin
+
+There's no script for this, because `scripts/grant-admin.ts` needs the Admin SDK, which Spark
+doesn't allow.
+
+1. Run the app and sign up with the owner's email so that `users/{uid}` exists.
+2. In **Firestore**, open `users` → that document, then add the field `role` (string) = `admin`.
+
+That admin can then set `role` on other users. The rules allow this for admins and no one else.
+
+### 2.4 Spark plan: no Cloud Functions
 
 This project runs on the **free Spark plan**, so nothing in `firebase/functions/` is deployed.
-Everything those functions used to do now happens in the client with the Firestore security
-rules as the only enforcement point:
+Everything those functions used to do now happens in the client, and the Firestore security
+rules are the only enforcement point:
 
 | Was | Now |
 |---|---|
@@ -86,7 +165,7 @@ rules as the only enforcement point:
 | `setUserRole` set a `role` custom claim | `users/{uid}.role` is a Firestore field; only an admin may write it |
 | `onQuotationCreated` / `onProjectUpdated` / `onTicketMessageCreated` sent notifications | Staff create `users/{uid}/notifications/{id}` by hand |
 
-What this costs you, stated plainly:
+Trade-offs of running without Cloud Functions:
 
 - **Anonymous enquiries are gone.** Submitting now requires an account, because an
   unauthenticated write path would be an open door for bots.
@@ -97,66 +176,154 @@ What this costs you, stated plainly:
 - **Deleted accounts leave records behind.** Enquiries, quotations, projects and tickets
   keep pointing at a uid that no longer exists; anonymising them needs the Admin SDK.
   Clear them from the console when you delete an account.
-- **Firestore Storage is not set up.** The app does not use it, and new projects need
+- **Firebase Storage is not set up.** The app does not use it, and new projects need
   Blaze for a default bucket anyway.
 
-Deploy rules and indexes:
-
-```bash
-cd firebase
-cp .firebaserc.example .firebaserc          # edit project ids
-firebase use prod
-firebase deploy --only firestore:rules,firestore:indexes
-```
-
-Grant the first admin from the Firebase Console — there is no script, because
-`scripts/grant-admin.ts` needs the Admin SDK:
-
-1. Sign up in the app with the owner's email so `users/{uid}` exists.
-2. Firestore → `users` → that document → add field `role` (string) = `admin`.
-
-That admin can then set `role` on other users, which the rules allow and nothing else does.
-If you later enable Blaze, deploy `firebase/functions/` and move `role` back to custom
-claims — the functions are left in the repository unchanged for exactly that.
+If you later move to the Blaze plan, deploy `firebase/functions/` and move `role` back to custom
+claims. The functions are kept in the repository for that purpose.
 
 ---
 
-## 3. Run
+## 3. Run the app
+
+### 3.1 Web (works today)
 
 ```bash
-flutter run --flavor dev     -t lib/main_dev.dart     --dart-define-from-file=env/dev.json
-flutter run --flavor staging -t lib/main_staging.dart --dart-define-from-file=env/staging.json
+# Production Firebase project
+flutter run -d chrome -t lib/main_prod.dart --dart-define-from-file=env/prod.json
+
+# Dev flavor against the same Firebase project
+flutter run -d chrome -t lib/main_dev.dart \
+  --dart-define-from-file=env/dev.json --dart-define-from-file=env/dev.local.json
 ```
 
-For production, copy `env/prod.example.json` to `env/prod.json` (git-ignored) and fill
-the `FIREBASE_*` values from Firebase Console → Project settings → Your apps. These are
-public client configuration values and are still included in the built app; keep service
-account keys and other privileged credentials out of the app and use CI secrets/server-side
-storage for those.
+In PowerShell, put each command on one line or replace the trailing `\` with a backtick.
 
-`FIREBASE_APPCHECK_RECAPTCHA_SITE_KEY` comes from Firebase Console → App Check → Apps →
-your web app → reCAPTCHA v3. With no Cloud Functions in front of the data, App Check on
-Firestore is what stops a scripted client from hammering the enquiry collection, so enable
-enforcement on Firestore and fill this key in. Leave it blank only while enforcement is off.
+Plain `flutter run -d chrome` runs `lib/main.dart`, which is the dev flavor without Firebase
+config, so the app starts in public-only mode.
 
-All three env files carry the same key set. A prod build with a blank `FIREBASE_*` value
-now fails at startup naming the missing entry instead of degrading to public-only mode.
+### 3.2 Local Firebase emulators
 
-For dev on web, put the same `FIREBASE_*` keys in `env/dev.local.json` (git-ignored) and pass it
-as a second file:
+Use these to test sign-in and Firestore without touching real data:
 
 ```bash
-flutter run -d chrome -t lib/main_dev.dart --dart-define-from-file=env/dev.json --dart-define-from-file=env/dev.local.json
-```
-
-### Local emulators
-
-```bash
-cd firebase && firebase emulators:start   # auth + firestore only; no functions on Spark
-# another terminal
-flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=env/dev.json \
+cd firebase && firebase emulators:start   # auth + firestore; Emulator UI at http://localhost:4000
+# in a second terminal, from the project root:
+flutter run -d chrome -t lib/main_dev.dart \
+  --dart-define-from-file=env/dev.json --dart-define-from-file=env/dev.local.json \
   --dart-define=USE_FIREBASE_EMULATOR=true
 ```
+
+### 3.3 Android setup (one-time)
+
+The `android/` folder is the default `flutter create` output and isn't ready to build yet. Do
+these steps once, in this order.
+
+**1. Declare the Google Services Gradle plugin.** `android/app/build.gradle.kts` applies
+`com.google.gms.google-services`, but `android/settings.gradle.kts` never declares it. Add it to
+the `plugins { }` block in `android/settings.gradle.kts`:
+
+```kotlin
+id("com.google.gms.google-services") version "4.4.2" apply false
+```
+
+**2. Set the package name and flavors.** In `android/app/build.gradle.kts`, change `namespace`
+and `applicationId` from `com.example.busiserve_app` to `in.busiserve.app`, set `minSdk = 23`,
+and add inside `android { }`:
+
+```kotlin
+flavorDimensions += "env"
+productFlavors {
+    create("dev") {
+        dimension = "env"
+        applicationIdSuffix = ".dev"
+        resValue("string", "app_name", "Busiserve Dev")
+    }
+    create("staging") {
+        dimension = "env"
+        applicationIdSuffix = ".staging"
+        resValue("string", "app_name", "Busiserve Staging")
+    }
+    create("prod") {
+        dimension = "env"
+        resValue("string", "app_name", "Busiserve")
+    }
+}
+```
+
+Move `MainActivity.kt` to the matching package folder (`kotlin/in/busiserve/app/`) and update its
+`package` line.
+
+**3. Update `AndroidManifest.xml`.** In `android/app/src/main/AndroidManifest.xml`, set
+`android:label="@string/app_name"`, and add these to the existing `<queries>` block so phone,
+email and web links open on Android 11+:
+
+```xml
+<intent><action android:name="android.intent.action.DIAL" /><data android:scheme="tel" /></intent>
+<intent><action android:name="android.intent.action.SENDTO" /><data android:scheme="mailto" /></intent>
+<intent><action android:name="android.intent.action.VIEW" /><data android:scheme="https" /></intent>
+```
+
+**4. Connect Firebase.** Register the Android app and download `google-services.json`. The file is
+git-ignored, so every developer runs this:
+
+```bash
+flutterfire configure --project=busiserve-app --platforms=android --android-package-name=in.busiserve.app
+```
+
+The command also writes `lib/firebase_options.dart`. The app doesn't read that file. Instead,
+copy its `android` `FirebaseOptions` into `lib/core/config/firebase/firebase_options_prod.dart`
+(which currently throws on every non-web platform) and return it when
+`defaultTargetPlatform == TargetPlatform.android`. Then delete `lib/firebase_options.dart`. Repeat
+with the `.dev` / `.staging` package names when those Firebase projects exist.
+
+**5. Add the debug SHA-256** to the Android app in Firebase Console so that App Check and Auth
+work on debug builds:
+
+```bash
+cd android && ./gradlew signingReport      # Windows: .\gradlew signingReport
+```
+
+### 3.4 iOS setup (one-time, macOS only)
+
+```bash
+flutter create . --org in.busiserve --project-name busiserve_app --platforms ios
+cd ios && pod install && cd ..
+flutterfire configure --project=busiserve-app --platforms=ios --ios-bundle-id=in.busiserve.app
+```
+
+Then, in Xcode:
+
+- Create schemes `dev`, `staging` and `prod` with matching build configurations (`Debug-dev`,
+  `Release-dev`, ...) and bundle IDs `in.busiserve.app.dev`, `in.busiserve.app.staging` and
+  `in.busiserve.app`.
+- Enable **Push Notifications** and **Background Modes → Remote notifications**.
+- Upload an APNs key in **Firebase Console → Project settings → Cloud Messaging**.
+
+As with Android, copy the `ios` options into the flavor's `firebase_options_*.dart` file.
+
+### 3.5 Run on a phone or emulator
+
+After 3.3 or 3.4:
+
+```bash
+flutter devices                                   # list emulators and connected phones
+flutter run --flavor dev  -t lib/main_dev.dart  --dart-define-from-file=env/dev.json
+flutter run --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json
+```
+
+### 3.6 Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| `env/prod.json is incomplete: FIREBASE_...` | Fill the named key in `env/prod.json` (step 1.3). |
+| App runs but sign-in and enquiries are disabled | Firebase didn't initialise. Either you ran dev/staging without `env/dev.local.json`, or you ran on Android/iOS before the native setup. |
+| `flutterfire: command not found` | Add the pub-cache `bin` folder to `PATH` (step 1.1). |
+| `Plugin [id: 'com.google.gms.google-services'] was not found` | Android step 1. |
+| `File google-services.json is missing` | Android step 4. |
+| Gradle can't find the `dev` / `prod` flavor | Android step 2. |
+| `flutter.sdk not set in local.properties` | Run `flutter pub get` once from the project root; it writes `android/local.properties`. |
+| Stale build errors after switching branches | `flutter clean`, then `flutter pub get`. |
 
 ---
 
