@@ -16,6 +16,8 @@ dependencies:
 
   # Networking (used only when a REST backend such as the Busiserve CRM is configured)
   dio: ^5.8.0
+  connectivity_plus: ^6.1.5
+  lottie: ^3.3.1
 
   # Firebase (keep these on the same release train; upgrade them together)
   firebase_core: ^3.13.0
@@ -51,6 +53,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/animations/
 
 flutter_launcher_icons:
   android: true

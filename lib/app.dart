@@ -5,6 +5,7 @@ import 'bindings/initial_binding.dart';
 import 'core/config/flavor_config.dart';
 import 'core/services/prefs_service.dart';
 import 'core/theme/app_theme.dart';
+import 'core/widgets/offline_gate.dart';
 import 'routes/app_pages.dart';
 import 'routes/app_routes.dart';
 
@@ -28,8 +29,10 @@ class BusiserveApp extends StatelessWidget {
       builder: (context, child) {
         final media = MediaQuery.of(context);
         return MediaQuery(
-          data: media.copyWith(textScaler: media.textScaler.clamp(maxScaleFactor: 1.6)),
-          child: child ?? const SizedBox.shrink(),
+          data: media.copyWith(
+            textScaler: media.textScaler.clamp(maxScaleFactor: 1.6),
+          ),
+          child: OfflineGate(child: child ?? const SizedBox.shrink()),
         );
       },
     );
