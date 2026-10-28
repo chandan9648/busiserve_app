@@ -62,11 +62,14 @@ class ServiceTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           HexBadge(icon: serviceIcon(service.iconKey), size: 38, gradient: AppColors.circuit),
-          Text(
-            service.title,
-            style: context.text.titleSmall,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+          const SizedBox(height: AppSpacing.sm),
+          Flexible(
+            child: Text(
+              service.title,
+              style: context.text.titleSmall,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),

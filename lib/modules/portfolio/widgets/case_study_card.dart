@@ -50,17 +50,26 @@ class CaseStudyCard extends StatelessWidget {
                       children: [
                         HexBadge(icon: industryIcon(study.industry), size: 36, gradient: AppColors.arrow),
                         const SizedBox(width: AppSpacing.md),
-                        Text(
-                          study.industry,
-                          style: context.text.bodySmall?.copyWith(
-                            color: AppColors.amber,
-                            fontWeight: FontWeight.w700,
+                        Flexible(
+                          child: Text(
+                            study.industry,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.text.bodySmall?.copyWith(
+                              color: AppColors.amber,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: AppSpacing.lg),
-                    Text(study.title, style: context.text.titleLarge?.copyWith(color: Colors.white)),
+                    SizedBox(height: compact ? AppSpacing.md : AppSpacing.lg),
+                    Text(
+                      study.title,
+                      maxLines: compact ? 2 : null,
+                      overflow: compact ? TextOverflow.ellipsis : null,
+                      style: context.text.titleLarge?.copyWith(color: Colors.white),
+                    ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
                       study.summary,

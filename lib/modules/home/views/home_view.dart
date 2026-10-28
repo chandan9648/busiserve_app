@@ -73,8 +73,10 @@ class HomeView extends GetView<HomeController> {
               SliverToBoxAdapter(
                 child: Obx(() {
                   final state = controller.caseStudies.value;
+                  final scale = MediaQuery.textScalerOf(context).scale(1);
+                  final cardWidth = (MediaQuery.sizeOf(context).width * 0.82).clamp(240.0, 320.0);
                   return SizedBox(
-                    height: 280,
+                    height: 250 + 210 * (scale - 1).clamp(0.0, 1.0),
                     child: StateView<List<CaseStudyModel>>(
                       state: state,
                       onRetry: controller.loadCaseStudies,
@@ -84,7 +86,7 @@ class HomeView extends GetView<HomeController> {
                         itemCount: items.length,
                         separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.md),
                         itemBuilder: (_, i) => SizedBox(
-                          width: 300,
+                          width: cardWidth,
                           child: CaseStudyCard(
                             study: items[i],
                             compact: true,
@@ -135,7 +137,13 @@ class _ServiceGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, c) {
-        final columns = c.maxWidth > 700 ? 4 : 3;
+        final columns = c.maxWidth > 700 ? 4 : (c.maxWidth < 360 ? 2 : 3);
+        // Size tiles from the actual text scale instead of a fixed aspect ratio,
+        // so large system fonts and narrow screens never overflow.
+        final style = context.text.titleSmall;
+        final fontSize = style?.fontSize ?? 14;
+        final lineHeight = MediaQuery.textScalerOf(context).scale(fontSize) * (style?.height ?? 1.3);
+        final tileHeight = AppSpacing.md * 2 + 38 + AppSpacing.sm + lineHeight * 2 + 4;
         return GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -145,7 +153,7 @@ class _ServiceGrid extends StatelessWidget {
             crossAxisCount: columns,
             mainAxisSpacing: AppSpacing.md,
             crossAxisSpacing: AppSpacing.md,
-            childAspectRatio: 0.92,
+            mainAxisExtent: tileHeight,
           ),
           itemBuilder: (_, i) => ServiceTile(service: items[i], onTap: () => onTap(items[i])),
         );

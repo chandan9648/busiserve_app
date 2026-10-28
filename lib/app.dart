@@ -30,7 +30,7 @@ class BusiserveApp extends StatelessWidget {
         final media = MediaQuery.of(context);
         return MediaQuery(
           data: media.copyWith(
-            textScaler: media.textScaler.clamp(maxScaleFactor: 1.6),
+            textScaler: media.textScaler.clamp(maxScaleFactor: 1.3),
           ),
           child: OfflineGate(child: child ?? const SizedBox.shrink()),
         );
