@@ -197,8 +197,10 @@ Trade-offs of running without Cloud Functions:
   unauthenticated write path would be an open door for bots.
 - **Rate limiting lives in the rules, per account only.** See [2.5](#25-abuse-protection).
   There is no per-IP limit, which would need a server.
-- **No push notifications at all.** Sending FCM needs a server key. The in-app
-  notification list still works, but someone has to write the entries.
+- **Push notifications are sent by hand from the Firebase console** (see
+  [2.6](#26-push-notifications)). Nothing is pushed automatically when a quotation or ticket
+  changes, because that needs a server. The in-app notification list still works, but someone
+  has to write the entries.
 - **Deleted accounts leave records behind.** Enquiries, quotations, projects and tickets
   keep pointing at a uid that no longer exists; anonymising them needs the Admin SDK.
   Clear them from the console when you delete an account.
@@ -236,6 +238,54 @@ Three layers stop bots and spam from flooding staff with enquiries and tickets:
    debug token) are rejected.
 
 Firebase Auth also limits how fast new accounts can be created from one IP address.
+
+### 2.6 Push notifications
+
+Notifications arrive in the phone's notification tray even when the app is closed, like any
+other app's. FCM is free on Spark; no server or key is needed to send from the console.
+
+**How the app is wired:**
+
+- On start, every device with notifications on (Account → Privacy and data) asks for permission
+  and subscribes to the FCM topic **`all`**. Guests are included.
+- After sign-in the device token is also saved to `users/{uid}/devices/{token}`, for messages to
+  one person.
+- Android shows background notifications on the high-importance channel `busiserve_updates`
+  (created in `MainActivity.kt`) with the hexagon icon `ic_stat_notification`, so they pop up on
+  screen.
+- Turning notifications off deletes the token, which also drops the `all` subscription.
+
+**Send to all users:**
+
+1. Open **Firebase Console → Engage → Messaging → Create your first campaign** (or **New
+   campaign**) → **Firebase Notification messages**.
+2. Enter the title and text. An image URL is optional.
+3. **Target:** choose **Topic** and enter `all`. (Choosing **User segment → App** also works but
+   only reaches one app per platform; the topic reaches Android and iOS together.)
+4. **Scheduling:** Now, or pick a time.
+5. Optional, under **Additional options → Custom data**: key `route`, value one of
+   `/notifications`, `/projects`, `/my-enquiries`. Tapping the notification then opens that
+   screen. Other values are ignored for safety (`PushNotificationService.allowedRoutePrefixes`).
+6. **Review → Publish.**
+
+To test on one phone first, use **Send test message** in step 2 with the device token. In a
+debug build, print it with `FirebaseMessaging.instance.getToken()`, or copy the document ID from
+`users/{uid}/devices` in Firestore.
+
+**If a notification doesn't arrive:**
+
+- Open the app once after installing. The topic subscription happens on app start.
+- Android 13+: the permission must be allowed. Check Settings → Apps → busiserve_app →
+  Notifications.
+- A force-stopped app (Settings → Force stop) gets nothing until it's opened again. Some phones
+  (Xiaomi, Oppo, Vivo, Realme, OnePlus) treat swiping the app away as force stop; turn on
+  **Autostart** and set battery to **No restrictions** for the app.
+- Topic messages can take a few minutes to reach a freshly subscribed device.
+- iOS needs the APNs key and the Push Notifications capability from [3.4](#34-ios-setup-one-time-macos-only).
+  It doesn't work on the iOS simulator before Xcode 14 or without an Apple developer account.
+
+While the app is open, a notification shows as a banner at the top of the screen instead of in
+the tray.
 
 ---
 

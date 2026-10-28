@@ -45,11 +45,12 @@ class PrivacyController extends GetxController {
     pushEnabled.value = value;
     await _prefs.setPushEnabled(value);
     final uid = session.uid;
-    if (value && uid != null) {
-      await _push?.register(uid);
-    } else if (!value) {
+    if (!value) {
       await _push?.unregister();
+      return;
     }
+    await _push?.subscribeToBroadcasts();
+    if (uid != null) await _push?.register(uid);
   }
 
   void openPrivacyPolicy() => Launcher.web(CompanyInfo.privacyUrl);

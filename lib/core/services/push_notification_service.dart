@@ -10,13 +10,18 @@ import '../utils/app_logger.dart';
 import 'auth_session.dart';
 import 'prefs_service.dart';
 
-/// Registers this device for push notifications after sign-in and opens the
-/// relevant screen when a notification is tapped.
+/// Subscribes every device to [broadcastTopic], registers it for personal
+/// notifications after sign-in, and opens the relevant screen when a
+/// notification is tapped.
 class PushNotificationService extends GetxService {
   PushNotificationService({required this.session, required this.prefs});
 
   final AuthSession session;
   final PrefsService prefs;
+
+  /// Every device with notifications on is subscribed to this topic, so the
+  /// Firebase console can reach all users (Messaging → target Topic `all`).
+  static const String broadcastTopic = 'all';
 
   /// Only these in-app destinations may be opened from a notification payload.
   static const List<String> allowedRoutePrefixes = [
@@ -31,6 +36,7 @@ class PushNotificationService extends GetxService {
   final List<StreamSubscription<dynamic>> _subs = [];
   Worker? _authWorker;
   String? _registeredToken;
+  Future<bool>? _permissionRequest;
 
   bool get _supported => FirebaseStatus.isReady && !kIsWeb;
   FirebaseMessaging get _messaging => FirebaseMessaging.instance;
@@ -48,15 +54,32 @@ class PushNotificationService extends GetxService {
     unawaited(_messaging.getInitialMessage().then((m) {
       if (m != null) _openFrom(m);
     }),);
+    if (prefs.pushEnabled) unawaited(subscribeToBroadcasts());
     final uid = session.uid;
     if (uid != null && prefs.pushEnabled) unawaited(register(uid));
   }
 
-  Future<bool> requestPermission() async {
-    if (!_supported) return false;
+  /// Concurrent callers share one system prompt.
+  Future<bool> requestPermission() {
+    if (!_supported) return Future.value(false);
+    return _permissionRequest ??= _askPermission().whenComplete(() => _permissionRequest = null);
+  }
+
+  Future<bool> _askPermission() async {
     final settings = await _messaging.requestPermission();
     return settings.authorizationStatus == AuthorizationStatus.authorized ||
         settings.authorizationStatus == AuthorizationStatus.provisional;
+  }
+
+  /// Works for guests too; no Firestore write is involved.
+  Future<void> subscribeToBroadcasts() async {
+    if (!_supported) return;
+    try {
+      if (!await requestPermission()) return;
+      await _messaging.subscribeToTopic(broadcastTopic);
+    } catch (e, st) {
+      AppLogger.error('broadcast subscribe failed', error: e, stackTrace: st);
+    }
   }
 
   Future<void> register(String uid) async {
@@ -76,6 +99,8 @@ class PushNotificationService extends GetxService {
   }
 
   /// Call before signing out, while the user can still write their own docs.
+  /// Deleting the token also drops topic subscriptions, so the new token is
+  /// re-subscribed unless notifications were switched off.
   Future<void> unregister() async {
     if (!_supported) return;
     final uid = session.uid;
@@ -90,6 +115,7 @@ class PushNotificationService extends GetxService {
     } finally {
       _registeredToken = null;
     }
+    if (prefs.pushEnabled) unawaited(subscribeToBroadcasts());
   }
 
   Future<void> _saveToken(String uid, String token) async {
