@@ -7,10 +7,10 @@ Public visitors can browse services, case studies and contact details. Sending a
 account. Signed-in customers can also track enquiries and quotations, follow project milestones, receive
 notifications, raise support requests and delete their account.
 
-> **Where things stand.** The app currently runs on **web** (Chrome) against the `busiserve-app`
-> Firebase project. Android needs `google-services.json` (see [Android setup](#33-android-setup-one-time))
-> before it builds, and the iOS folder has not been generated yet. Before you start changing code,
-> run the checks in [Verify](#4-verify).
+> **Where things stand.** The app runs on **web** (Chrome) and **Android** against the
+> `busiserve-app` Firebase project. Android has no build flavors yet, so every Android build uses
+> package `in.busiserve_app`. The iOS folder has not been generated yet. Before you start changing
+> code, run the checks in [Verify](#4-verify).
 
 ---
 
@@ -79,6 +79,7 @@ are git-ignored, so every developer creates them locally:
 | `env/prod.example.json` | yes | template for `env/prod.json` |
 | `env/prod.json` | **no** | production Firebase web config |
 | `env/dev.local.json` | **no** | Firebase web config for running dev on web |
+| `android/app/google-services.json` | **no** | Firebase config for Android (see [Android setup](#33-android-setup-one-time)) |
 
 Create `env/prod.json` from the template:
 
@@ -111,9 +112,12 @@ app → reCAPTCHA v3**. You can leave it blank while App Check enforcement is of
 is on, it's required. With no Cloud Functions in front of the data, App Check on Firestore is what
 stops scripted clients from flooding the enquiry collection.
 
-A prod build with a blank `FIREBASE_*` value fails at startup and names the missing entry. Dev and
-staging builds without Firebase values still start, but in public-only mode: you can browse
-services and case studies, but you can't sign in or send enquiries.
+The `FIREBASE_*` values are used only on **web**. On Android, Firebase reads
+`google-services.json` instead.
+
+A prod web build with a blank `FIREBASE_*` value fails at startup and names the missing entry. Dev
+and staging web builds without Firebase values still start, but in public-only mode: you can
+browse services and case studies, but you can't sign in or send enquiries.
 
 ---
 
@@ -216,21 +220,42 @@ flutter run -d chrome -t lib/main_dev.dart \
 
 ### 3.3 Android setup (one-time)
 
-The app builds and runs on Android without flavors. You only need `google-services.json` for that.
+**1. Get `google-services.json`.** The Android app is already registered in the `busiserve-app`
+Firebase project with package name **`in.busiserve_app`**, which matches `applicationId` in
+`android/app/build.gradle.kts`. Download its config from **Firebase Console → Project settings →
+General → Your apps → Android app (`in.busiserve_app`) → google-services.json** and save it as:
 
-**1. Download `google-services.json`.** In **Firebase Console → Project settings → General → Your
-apps → Add app → Android**, register the package name `in.busiserve.app` (it must match
-`applicationId` in `android/app/build.gradle.kts`). Download the file and save it as
-`android/app/google-services.json`. The file is git-ignored, so every developer downloads it.
-
-You don't need any Dart changes. On Android, `firebase_options_dev.dart` and
-`firebase_options_prod.dart` return `null`, so Firebase reads its settings from this file.
-
-```bash
-flutter run -d <device-id>        # device id from `flutter devices`
+```
+android/app/google-services.json
 ```
 
-**2. Optional: add flavors.** These are needed only for `--flavor dev|staging|prod` builds. In
+The file is git-ignored, so every developer downloads it once. Without it, the build stops with
+`File google-services.json is missing`. Check that it's in place:
+
+```bash
+ls android/app        # should list build.gradle.kts, google-services.json, src
+```
+
+You don't need any Dart changes. On Android, `firebase_options_dev.dart` and
+`firebase_options_prod.dart` return `null`, so Firebase reads its settings from this file. The
+`env/*.json` Firebase keys aren't used on Android.
+
+If you ever change `applicationId`, register the new package name in Firebase and download
+`google-services.json` again. Otherwise the build fails with `No matching client found for
+package name`.
+
+**2. Run on a phone.** Turn on **Developer options → USB debugging** on the phone, connect it by
+USB and accept the prompt on the phone. Then:
+
+```bash
+flutter devices                    # copy the phone's id, e.g. 10BF9L1J6Y003J4
+flutter run -d <device-id>
+```
+
+The first build takes several minutes, because Gradle downloads the Android SDK platforms and the
+NDK. Later builds are much faster. See [3.5](#35-run-on-a-phone-or-emulator) for picking a flavor.
+
+**3. Optional: add flavors.** These are needed only for `--flavor dev|staging|prod` builds. In
 `android/app/build.gradle.kts`, set `minSdk = 23` and add inside `android { }`:
 
 ```kotlin
@@ -253,12 +278,12 @@ productFlavors {
 }
 ```
 
-Each suffixed package name (`in.busiserve.app.dev`, ...) must also be registered in Firebase.
-Download `google-services.json` again afterwards so that it covers all of them.
+Register `in.busiserve_app.dev` and `in.busiserve_app.staging` in Firebase too. Then download
+`google-services.json` again so that it covers all three package names.
 
-**3. Update `AndroidManifest.xml`.** In `android/app/src/main/AndroidManifest.xml`, set
-`android:label="@string/app_name"` (after step 2), and add these to the existing `<queries>`
-block so phone, email and web links open on Android 11+:
+**4. Update `AndroidManifest.xml`.** In `android/app/src/main/AndroidManifest.xml`, add these to
+the existing `<queries>` block so phone, email and web links open on Android 11+. After step 3,
+also set `android:label="@string/app_name"`.
 
 ```xml
 <intent><action android:name="android.intent.action.DIAL" /><data android:scheme="tel" /></intent>
@@ -266,8 +291,8 @@ block so phone, email and web links open on Android 11+:
 <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="https" /></intent>
 ```
 
-**4. Add the debug SHA-256** to the Android app in Firebase Console so that App Check and Auth
-work on debug builds:
+**5. Add the debug SHA-256** to the Android app in Firebase Console. Email/password sign-in works
+without it, but App Check and Google sign-in need it:
 
 ```bash
 cd android && ./gradlew signingReport      # Windows: .\gradlew signingReport
@@ -279,6 +304,7 @@ cd android && ./gradlew signingReport      # Windows: .\gradlew signingReport
 flutter create . --org in.busiserve --project-name busiserve_app --platforms ios
 cd ios && pod install && cd ..
 flutterfire configure --project=busiserve-app --platforms=ios --ios-bundle-id=in.busiserve.app
+# iOS bundle IDs can't contain underscores, so iOS uses in.busiserve.app (Android uses in.busiserve_app)
 ```
 
 Then, in Xcode:
@@ -289,27 +315,35 @@ Then, in Xcode:
 - Enable **Push Notifications** and **Background Modes → Remote notifications**.
 - Upload an APNs key in **Firebase Console → Project settings → Cloud Messaging**.
 
-As with Android, copy the `ios` options into the flavor's `firebase_options_*.dart` file.
+Then copy the `ios` options from the generated `lib/firebase_options.dart` into the flavor's
+`firebase_options_*.dart` file and return them when `defaultTargetPlatform == TargetPlatform.iOS`.
+Delete `lib/firebase_options.dart` afterwards. The flavor files currently throw on iOS, so until
+then the app starts in public-only mode.
 
 ### 3.5 Run on a phone or emulator
 
-After 3.3 or 3.4:
+Without flavors (the current setup), `-t` picks the entry point. Both entry points connect to
+`busiserve-app` through `google-services.json`:
 
 ```bash
-flutter devices                                   # list emulators and connected phones
-flutter run --flavor dev  -t lib/main_dev.dart  --dart-define-from-file=env/dev.json
-flutter run --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json
+flutter run -d <device-id>                                   # lib/main.dart = dev, "Busiserve Dev"
+flutter run -d <device-id> -t lib/main_prod.dart --dart-define-from-file=env/prod.json
+flutter build apk --release -t lib/main_prod.dart --dart-define-from-file=env/prod.json
 ```
+
+After you've added flavors (Android step 3), add `--flavor dev|staging|prod` to these commands.
 
 ### 3.6 Troubleshooting
 
 | Symptom | Fix |
 |---|---|
 | `env/prod.json is incomplete: FIREBASE_...` | Fill the named key in `env/prod.json` (step 1.3). |
-| App runs but sign-in and enquiries are disabled | Firebase didn't initialise. Either you ran dev/staging without `env/dev.local.json`, or you ran on Android/iOS before the native setup. |
+| "Accounts are not available yet" on sign-up | Firebase didn't initialise. On web, you ran without `env/dev.local.json` / `env/prod.json`. Restart the app with the full command from 3.1; hot reload isn't enough. Look for `Firebase not initialised` in the terminal for the exact cause. |
 | `flutterfire: command not found` | Add the pub-cache `bin` folder to `PATH` (step 1.1). |
-| `File google-services.json is missing` | Android step 1. |
-| Gradle can't find the `dev` / `prod` flavor | Android step 2, or run without `--flavor`. |
+| `File google-services.json is missing` | Android step 1. The file must be at `android/app/google-services.json`, not inside `src/`, and not named `google-services (1).json`. |
+| `No matching client found for package name` | `applicationId` doesn't match a package in `google-services.json`. Re-download it after registering the package. |
+| Gradle can't find the `dev` / `prod` flavor | Flavors aren't set up yet. Run without `--flavor`, or do Android step 3. |
+| Warnings about `java.lang.System::load` or `cloud_functions` / Kotlin Gradle Plugin | Harmless warnings. They don't cause the build to fail. |
 | `flutter.sdk not set in local.properties` | Run `flutter pub get` once from the project root; it writes `android/local.properties`. |
 | Stale build errors after switching branches | `flutter clean`, then `flutter pub get`. |
 
