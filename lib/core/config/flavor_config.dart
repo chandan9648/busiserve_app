@@ -14,9 +14,9 @@ class FlavorConfig {
   final String appTitle;
 
   /// Returns the Firebase options for this flavor and current platform.
-  /// Production web options are configured; dev, staging, and native options
-  /// still require FlutterFire setup.
-  final FirebaseOptions Function() firebaseOptions;
+  /// `null` means the native SDK reads them itself (Android:
+  /// `android/app/google-services.json`). Staging is not configured yet.
+  final FirebaseOptions? Function() firebaseOptions;
 
 }
 

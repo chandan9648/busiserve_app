@@ -8,7 +8,7 @@ account. Signed-in customers can also track enquiries and quotations, follow pro
 notifications, raise support requests and delete their account.
 
 > **Where things stand.** The app currently runs on **web** (Chrome) against the `busiserve-app`
-> Firebase project. Android needs the one-time steps in [Android setup](#33-android-setup-one-time)
+> Firebase project. Android needs `google-services.json` (see [Android setup](#33-android-setup-one-time))
 > before it builds, and the iOS folder has not been generated yet. Before you start changing code,
 > run the checks in [Verify](#4-verify).
 
@@ -216,20 +216,22 @@ flutter run -d chrome -t lib/main_dev.dart \
 
 ### 3.3 Android setup (one-time)
 
-The `android/` folder is the default `flutter create` output and isn't ready to build yet. Do
-these steps once, in this order.
+The app builds and runs on Android without flavors. You only need `google-services.json` for that.
 
-**1. Declare the Google Services Gradle plugin.** `android/app/build.gradle.kts` applies
-`com.google.gms.google-services`, but `android/settings.gradle.kts` never declares it. Add it to
-the `plugins { }` block in `android/settings.gradle.kts`:
+**1. Download `google-services.json`.** In **Firebase Console → Project settings → General → Your
+apps → Add app → Android**, register the package name `in.busiserve.app` (it must match
+`applicationId` in `android/app/build.gradle.kts`). Download the file and save it as
+`android/app/google-services.json`. The file is git-ignored, so every developer downloads it.
 
-```kotlin
-id("com.google.gms.google-services") version "4.4.2" apply false
+You don't need any Dart changes. On Android, `firebase_options_dev.dart` and
+`firebase_options_prod.dart` return `null`, so Firebase reads its settings from this file.
+
+```bash
+flutter run -d <device-id>        # device id from `flutter devices`
 ```
 
-**2. Set the package name and flavors.** In `android/app/build.gradle.kts`, change `namespace`
-and `applicationId` from `com.example.busiserve_app` to `in.busiserve.app`, set `minSdk = 23`,
-and add inside `android { }`:
+**2. Optional: add flavors.** These are needed only for `--flavor dev|staging|prod` builds. In
+`android/app/build.gradle.kts`, set `minSdk = 23` and add inside `android { }`:
 
 ```kotlin
 flavorDimensions += "env"
@@ -251,12 +253,12 @@ productFlavors {
 }
 ```
 
-Move `MainActivity.kt` to the matching package folder (`kotlin/in/busiserve/app/`) and update its
-`package` line.
+Each suffixed package name (`in.busiserve.app.dev`, ...) must also be registered in Firebase.
+Download `google-services.json` again afterwards so that it covers all of them.
 
 **3. Update `AndroidManifest.xml`.** In `android/app/src/main/AndroidManifest.xml`, set
-`android:label="@string/app_name"`, and add these to the existing `<queries>` block so phone,
-email and web links open on Android 11+:
+`android:label="@string/app_name"` (after step 2), and add these to the existing `<queries>`
+block so phone, email and web links open on Android 11+:
 
 ```xml
 <intent><action android:name="android.intent.action.DIAL" /><data android:scheme="tel" /></intent>
@@ -264,20 +266,7 @@ email and web links open on Android 11+:
 <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="https" /></intent>
 ```
 
-**4. Connect Firebase.** Register the Android app and download `google-services.json`. The file is
-git-ignored, so every developer runs this:
-
-```bash
-flutterfire configure --project=busiserve-app --platforms=android --android-package-name=in.busiserve.app
-```
-
-The command also writes `lib/firebase_options.dart`. The app doesn't read that file. Instead,
-copy its `android` `FirebaseOptions` into `lib/core/config/firebase/firebase_options_prod.dart`
-(which currently throws on every non-web platform) and return it when
-`defaultTargetPlatform == TargetPlatform.android`. Then delete `lib/firebase_options.dart`. Repeat
-with the `.dev` / `.staging` package names when those Firebase projects exist.
-
-**5. Add the debug SHA-256** to the Android app in Firebase Console so that App Check and Auth
+**4. Add the debug SHA-256** to the Android app in Firebase Console so that App Check and Auth
 work on debug builds:
 
 ```bash
@@ -319,9 +308,8 @@ flutter run --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod
 | `env/prod.json is incomplete: FIREBASE_...` | Fill the named key in `env/prod.json` (step 1.3). |
 | App runs but sign-in and enquiries are disabled | Firebase didn't initialise. Either you ran dev/staging without `env/dev.local.json`, or you ran on Android/iOS before the native setup. |
 | `flutterfire: command not found` | Add the pub-cache `bin` folder to `PATH` (step 1.1). |
-| `Plugin [id: 'com.google.gms.google-services'] was not found` | Android step 1. |
-| `File google-services.json is missing` | Android step 4. |
-| Gradle can't find the `dev` / `prod` flavor | Android step 2. |
+| `File google-services.json is missing` | Android step 1. |
+| Gradle can't find the `dev` / `prod` flavor | Android step 2, or run without `--flavor`. |
 | `flutter.sdk not set in local.properties` | Run `flutter pub get` once from the project root; it writes `android/local.properties`. |
 | Stale build errors after switching branches | `flutter clean`, then `flutter pub get`. |
 
