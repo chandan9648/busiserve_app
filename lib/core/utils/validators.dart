@@ -10,7 +10,7 @@ class Validators {
   static final RegExp _email = RegExp(
     r"^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$",
   );
-  static final RegExp _name = RegExp(r"^[\p{L}][\p{L} .'\-]*$", unicode: true);
+  static final RegExp _name = RegExp(r"^[\p{L}][\p{L}\p{M} .'\-]*$", unicode: true);
   static final RegExp _phoneAllowed = RegExp(r'^\+?[0-9 \-()]+$');
   static final RegExp _letter = RegExp(r'[A-Za-z]');
   static final RegExp _digit = RegExp(r'\d');

@@ -51,9 +51,9 @@ class Parse {
 
   static DateTime? date(Map<String, dynamic> map, String key) {
     final v = map[key];
-    if (v is Timestamp) return v.toDate();
+    if (v is Timestamp) return v.toDate().toUtc();
     if (v is DateTime) return v;
-    if (v is int) return DateTime.fromMillisecondsSinceEpoch(v);
+    if (v is num) return DateTime.fromMillisecondsSinceEpoch(v.toInt());
     if (v is String) return DateTime.tryParse(v);
     return null;
   }
