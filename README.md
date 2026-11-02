@@ -506,6 +506,51 @@ flutter test integration_test --flavor dev \
 cd firebase/test && npm install && npm test
 ```
 
+## 5. CI/CD
+
+GitHub Actions is configured in [.github/workflows/flutter-ci.yml](.github/workflows/flutter-ci.yml)
+and [.github/workflows/release.yml](.github/workflows/release.yml).
+
+### CI
+
+Pushes to `main` or `develop`, pull requests targeting either branch, and manual runs execute:
+
+- Java 17 and the tested Flutter stable version (3.47.8)
+- Dependency installation and lockfile consistency validation
+- Dart formatting, `flutter analyze` and `flutter test`
+- Firestore security rules tests in `firebase/test`
+- Firebase Functions lint, build and test checks
+- Signed Android APK/AAB builds when Android release secrets are configured
+
+Fork pull requests without repository secrets still run all checks; the Android artifact job
+explicitly reports that signing-dependent builds were skipped.
+
+### Android releases
+
+Pushing a tag such as `v1.0.0` starts the release workflow. It verifies that the tag matches the
+`version:` value in `pubspec.yaml`, builds a signed APK and AAB, and attaches versioned files to a
+GitHub Release with generated notes. Configure these protected `production` environment secrets:
+
+| Secret | Purpose |
+|---|---|
+| `ANDROID_KEYSTORE_BASE64` | Base64-encoded upload/release keystore |
+| `ANDROID_KEYSTORE_PASSWORD` | Keystore password |
+| `ANDROID_KEY_ALIAS` | Signing key alias |
+| `ANDROID_KEY_PASSWORD` | Signing key password |
+| `ANDROID_GOOGLE_SERVICES_JSON` | Firebase Android configuration |
+
+The keystore and Firebase configuration are written only to the runner and are never committed.
+Protect the `production` environment with required reviewers. The current Android project has no
+product flavors; the workflows preserve that configuration and build `lib/main_prod.dart`.
+
+### Firebase deployment scope
+
+Firebase Functions source exists, but this project intentionally runs on the Spark plan and
+`firebase/firebase.json` does not configure a Functions deployment target. CI validates the
+Functions source without deploying it. Firestore rules, indexes, Storage rules and Hosting are
+not deployed automatically; production deployment should be enabled only after the Firebase
+plan and an explicitly reviewed deployment workflow are configured.
+
 What the tests cover:
 
 | Area | File |
@@ -529,7 +574,7 @@ Functions, they are the *only* security boundary.
 
 ---
 
-## 5. Architecture
+## 6. Architecture
 
 ```
 lib/
@@ -572,7 +617,7 @@ Conventions:
 
 ---
 
-## 6. Data model (Firestore)
+## 7. Data model (Firestore)
 
 | Path | Written by | Read by |
 |---|---|---|
@@ -597,14 +642,15 @@ submit collides with the first write and the app reports the original enquiry. S
 
 ---
 
-## 7. Release
+## 8. Release
 
 1. Fill `env/prod.json` (including the App Check site key); deploy rules and indexes to prod;
    grant the first admin by setting `users/{uid}.role` in the console.
 2. Android: create an upload keystore and `android/key.properties` (both git-ignored). The signing
-   config in `android/app/build.gradle.kts` already reads it; without it, release builds fall back
-   to the debug key and Gradle prints a warning. Never distribute a debug-signed APK. Add the release
-   SHA-256 to Firebase and Play Integrity.
+   config in `android/app/build.gradle.kts` already reads it; without it, local release builds fall
+   back to the debug key and Gradle prints a warning. Never distribute a debug-signed APK. The
+   GitHub release workflow requires signing secrets before it builds. Add the release SHA-256 to
+   Firebase and Play Integrity.
 
    ```properties
    storePassword=...
@@ -612,9 +658,9 @@ submit collides with the first write and the app reports the original enquiry. S
    keyAlias=upload
    storeFile=C:/path/to/upload-keystore.jks
    ```
-   `flutter build appbundle --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json --obfuscate --split-debug-info=build/symbols`
+   `flutter build appbundle -t lib/main_prod.dart --dart-define-from-file=env/prod.json --obfuscate --split-debug-info=build/symbols`
 3. iOS: set signing team, push capability, App Attest.
-   `flutter build ipa --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json --obfuscate --split-debug-info=build/symbols`
+   `flutter build ipa -t lib/main_prod.dart --dart-define-from-file=env/prod.json --obfuscate --split-debug-info=build/symbols`
 4. Upload Crashlytics symbols (`firebase crashlytics:symbols:upload`).
 5. Store listings: Play Data Safety and App Store privacy labels (name, email, phone, messages;
    crash data only with consent). Account deletion is available in-app (Account → Privacy and data);
@@ -622,7 +668,7 @@ submit collides with the first write and the app reports the original enquiry. S
 
 ---
 
-## 8. Open items before production
+## 9. Open items before production
 
 - **Content approval.** Confirm the three case studies and their figures may appear in the app.
 - **Backend of record.** busiserve.in links to a company CRM. If enquiries, quotations and projects

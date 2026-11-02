@@ -1,0 +1,116 @@
+name: Android Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: '3.47.8'
+  JAVA_VERSION: '17'
+
+jobs:
+  release:
+    name: Build and publish Android release
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Require release credentials
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          GOOGLE_SERVICES: ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON }}
+        run: |
+          missing=()
+          [[ -z "$KEYSTORE" ]] && missing+=("ANDROID_KEYSTORE_BASE64")
+          [[ -z "$STORE_PASSWORD" ]] && missing+=("ANDROID_KEYSTORE_PASSWORD")
+          [[ -z "$KEY_ALIAS" ]] && missing+=("ANDROID_KEY_ALIAS")
+          [[ -z "$KEY_PASSWORD" ]] && missing+=("ANDROID_KEY_PASSWORD")
+          [[ -z "$GOOGLE_SERVICES" ]] && missing+=("ANDROID_GOOGLE_SERVICES_JSON")
+          if (( ${#missing[@]} > 0 )); then
+            printf 'Missing required production secrets: %s\n' "${missing[*]}"
+            exit 1
+          fi
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Configure Android signing and Firebase
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          GOOGLE_SERVICES: ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON }}
+        run: |
+          printf '%s' "$KEYSTORE" | base64 --decode > android/upload-keystore.jks
+          printf '%s' "$GOOGLE_SERVICES" > android/app/google-services.json
+          cat > android/key.properties <<EOF
+          storePassword=$STORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=../upload-keystore.jks
+          EOF
+
+      - name: Verify tag matches pubspec version
+        id: version
+        run: |
+          VERSION_LINE="$(grep '^version:' pubspec.yaml)"
+          VERSION="${VERSION_LINE#version: }"
+          VERSION_NAME="${VERSION%+*}"
+          BUILD_NUMBER="${VERSION#*+}"
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          if [[ "$VERSION_NAME" != "$TAG_VERSION" ]]; then
+            echo "Tag $TAG_VERSION does not match pubspec version $VERSION_NAME."
+            exit 1
+          fi
+          echo "version=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "build=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+
+      - name: Build signed APK and AAB
+        run: |
+          flutter pub get --enforce-lockfile
+          flutter build apk --release -t lib/main_prod.dart --dart-define-from-file=env/prod.json
+          flutter build appbundle --release -t lib/main_prod.dart --dart-define-from-file=env/prod.json
+
+      - name: Verify release outputs
+        run: |
+          test -s build/app/outputs/flutter-apk/app-release.apk
+          test -s build/app/outputs/bundle/release/app-release.aab
+
+      - name: Name release artifacts
+        run: |
+          mkdir -p release
+          cp build/app/outputs/flutter-apk/app-release.apk \
+            "release/busiserve-${{ steps.version.outputs.version }}+${{ steps.version.outputs.build }}-release.apk"
+          cp build/app/outputs/bundle/release/app-release.aab \
+            "release/busiserve-${{ steps.version.outputs.version }}+${{ steps.version.outputs.build }}-release.aab"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: release/*

@@ -1,0 +1,210 @@
+name: Flutter CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flutter-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: '3.47.8'
+  JAVA_VERSION: '17'
+
+jobs:
+  flutter:
+    name: Flutter checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Verify dependency lockfile
+        run: flutter pub get --enforce-lockfile
+
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze Dart code
+        run: flutter analyze
+
+      - name: Run Flutter tests
+        run: flutter test
+
+  firebase:
+    name: Firebase checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java for Firebase Emulator
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: firebase/test/package-lock.json
+
+      - name: Install rules test dependencies
+        working-directory: firebase/test
+        run: npm ci
+
+      - name: Run Firestore rules tests
+        working-directory: firebase/test
+        run: npm test
+
+  functions:
+    name: Firebase Functions checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Functions dependencies
+        working-directory: firebase/functions
+        run: npm install
+
+      - name: Lint Functions
+        working-directory: firebase/functions
+        run: npm run lint
+
+      - name: Build Functions
+        working-directory: firebase/functions
+        run: npm run build
+
+      - name: Test Functions
+        working-directory: firebase/functions
+        run: npm test
+
+  android:
+    name: Android release artifacts
+    runs-on: ubuntu-latest
+    needs:
+      - flutter
+      - firebase
+      - functions
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check Android signing configuration
+        id: signing
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          GOOGLE_SERVICES: ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON }}
+        run: |
+          if [[ -z "$KEYSTORE" || -z "$STORE_PASSWORD" || -z "$KEY_ALIAS" || -z "$KEY_PASSWORD" || -z "$GOOGLE_SERVICES" ]]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "Android release artifacts skipped: required signing/Firebase secrets are not configured."
+            exit 0
+          fi
+          echo "configured=true" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Java
+        if: steps.signing.outputs.configured == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Set up Flutter
+        if: steps.signing.outputs.configured == 'true'
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Configure Android signing and Firebase
+        if: steps.signing.outputs.configured == 'true'
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          GOOGLE_SERVICES: ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON }}
+        run: |
+          printf '%s' "$KEYSTORE" | base64 --decode > android/upload-keystore.jks
+          printf '%s' "$GOOGLE_SERVICES" > android/app/google-services.json
+          cat > android/key.properties <<EOF
+          storePassword=$STORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=../upload-keystore.jks
+          EOF
+
+      - name: Build signed APK and AAB
+        if: steps.signing.outputs.configured == 'true'
+        run: |
+          flutter pub get
+          flutter build apk --release -t lib/main_prod.dart --dart-define-from-file=env/prod.json
+          flutter build appbundle --release -t lib/main_prod.dart --dart-define-from-file=env/prod.json
+
+      - name: Read application version
+        if: steps.signing.outputs.configured == 'true'
+        id: version
+        run: |
+          VERSION_LINE="$(grep '^version:' pubspec.yaml)"
+          VERSION="${VERSION_LINE#version: }"
+          VERSION_NAME="${VERSION%+*}"
+          BUILD_NUMBER="${VERSION#*+}"
+          echo "version=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "build=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+
+      - name: Verify Android outputs
+        if: steps.signing.outputs.configured == 'true'
+        run: |
+          test -s build/app/outputs/flutter-apk/app-release.apk
+          test -s build/app/outputs/bundle/release/app-release.aab
+
+      - name: Upload signed Android artifacts
+        if: steps.signing.outputs.configured == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-${{ steps.version.outputs.version }}+${{ steps.version.outputs.build }}
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 14
