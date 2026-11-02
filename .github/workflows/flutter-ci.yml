@@ -29,6 +29,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -50,7 +52,29 @@ jobs:
         run: flutter pub get --enforce-lockfile
 
       - name: Check formatting
-        run: dart format --output=none --set-exit-if-changed .
+        run: |
+          set -euo pipefail
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE_SHA="${{ github.event.before }}"
+            HEAD_SHA="${{ github.sha }}"
+          fi
+
+          if [[ -z "$BASE_SHA" || "$BASE_SHA" == "0000000000000000000000000000000000000000" ]]; then
+            mapfile -t changed_dart_files < <(git ls-files '*.dart')
+          else
+            mapfile -t changed_dart_files < <(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- '*.dart')
+          fi
+
+          if [[ "${#changed_dart_files[@]}" -eq 0 ]]; then
+            echo "No changed Dart files to format check."
+            exit 0
+          fi
+
+          dart format --output=none --set-exit-if-changed "${changed_dart_files[@]}"
 
       - name: Analyze Dart code
         run: flutter analyze
