@@ -28,7 +28,8 @@ class ProfileView extends GetView<ProfileController> {
         child: Obx(() {
           final signedIn = controller.session.currentUid.value != null;
           return ListView(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.page, 0, AppSpacing.page, AppSpacing.xxxl),
+            padding: const EdgeInsets.fromLTRB(
+                AppSpacing.page, 0, AppSpacing.page, AppSpacing.xxxl,),
             children: [
               if (signedIn) const _SignedInHeader() else const _SignedOutCard(),
               if (signedIn)
@@ -72,12 +73,17 @@ class ProfileView extends GetView<ProfileController> {
                           child: SegmentedButton<ThemeMode>(
                             showSelectedIcon: false,
                             segments: const [
-                              ButtonSegment(value: ThemeMode.system, label: Text('System')),
-                              ButtonSegment(value: ThemeMode.light, label: Text('Light')),
-                              ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
+                              ButtonSegment(
+                                  value: ThemeMode.system,
+                                  label: Text('System'),),
+                              ButtonSegment(
+                                  value: ThemeMode.light, label: Text('Light'),),
+                              ButtonSegment(
+                                  value: ThemeMode.dark, label: Text('Dark'),),
                             ],
                             selected: {controller.themeMode.value},
-                            onSelectionChanged: (s) => controller.setThemeMode(s.first),
+                            onSelectionChanged: (s) =>
+                                controller.setThemeMode(s.first),
                           ),
                         ),
                       ],
@@ -147,13 +153,18 @@ class _SignedOutCard extends GetView<ProfileController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const HexBadge(icon: Icons.person_outline_rounded, size: 52, gradient: AppColors.arrow),
+          const HexBadge(
+              icon: Icons.person_outline_rounded,
+              size: 52,
+              gradient: AppColors.arrow,),
           const SizedBox(height: AppSpacing.lg),
-          Text('Your Busiserve account', style: context.text.titleLarge?.copyWith(color: Colors.white)),
+          Text('Your Busiserve account',
+              style: context.text.titleLarge?.copyWith(color: Colors.white),),
           const SizedBox(height: AppSpacing.sm),
           Text(
             'Sign in to track enquiries, quotations, project milestones and support requests.',
-            style: context.text.bodyMedium?.copyWith(color: Colors.white.withValues(alpha: 0.8)),
+            style: context.text.bodyMedium
+                ?.copyWith(color: Colors.white.withValues(alpha: 0.8)),
           ),
           const SizedBox(height: AppSpacing.xl),
           AppButton(label: 'Sign in', onPressed: controller.goToLogin),
@@ -193,11 +204,13 @@ class _SignedInHeader extends GetView<ProfileController> {
                     child: Container(
                       width: 60,
                       height: 64,
-                      decoration: const BoxDecoration(gradient: AppColors.circuit),
+                      decoration:
+                          const BoxDecoration(gradient: AppColors.circuit),
                       alignment: Alignment.center,
                       child: Text(
                         u.initials,
-                        style: context.text.titleLarge?.copyWith(color: Colors.white),
+                        style: context.text.titleLarge
+                            ?.copyWith(color: Colors.white),
                       ),
                     ),
                   ),
@@ -206,9 +219,12 @@ class _SignedInHeader extends GetView<ProfileController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(u.name.isEmpty ? 'Your profile' : u.name, style: context.text.titleMedium),
+                        Text(u.name.isEmpty ? 'Your profile' : u.name,
+                            style: context.text.titleMedium,),
                         const SizedBox(height: 2),
-                        Text(u.email, style: context.text.bodySmall, overflow: TextOverflow.ellipsis),
+                        Text(u.email,
+                            style: context.text.bodySmall,
+                            overflow: TextOverflow.ellipsis,),
                       ],
                     ),
                   ),
@@ -221,7 +237,8 @@ class _SignedInHeader extends GetView<ProfileController> {
               ),
             ),
             if (!controller.session.isEmailVerified)
-              const EmailVerificationNotice(padding: EdgeInsets.only(top: AppSpacing.md)),
+              const EmailVerificationNotice(
+                  padding: EdgeInsets.only(top: AppSpacing.md),),
           ],
         ),
       ),

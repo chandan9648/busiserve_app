@@ -19,6 +19,8 @@ class FirestoreServiceDataSource implements ServiceRemoteDataSource {
         .where('published', isEqualTo: true)
         .orderBy('order')
         .get();
-    return snap.docs.map((d) => ServiceModel.fromMap(d.data(), id: d.id)).toList();
+    return snap.docs
+        .map((d) => ServiceModel.fromMap(d.data(), id: d.id))
+        .toList();
   }
 }

@@ -10,7 +10,8 @@ import '../models/quotation_model.dart';
 import '../repositories/quotation_repository.dart';
 
 class QuotationDetailController extends GetxController {
-  QuotationDetailController(this._repository, {String? id}) : _id = id ?? Get.parameters['id'] ?? '';
+  QuotationDetailController(this._repository, {String? id})
+      : _id = id ?? Get.parameters['id'] ?? '';
   final QuotationRepository _repository;
   final String _id;
 
@@ -30,7 +31,9 @@ class QuotationDetailController extends GetxController {
       _sub = _repository.watch(_id).listen(
             (q) => state.value = SuccessState(q),
             onError: (Object e) => state.value = ErrorState(
-              e is AppException ? Failure.fromException(e) : const Failure('Something went wrong.', retryable: true),
+              e is AppException
+                  ? Failure.fromException(e)
+                  : const Failure('Something went wrong.', retryable: true),
             ),
           );
     } on AppException catch (e) {
@@ -45,7 +48,11 @@ class QuotationDetailController extends GetxController {
     if (q == null) return;
     Get.toNamed<void>(
       Routes.createTicket,
-      arguments: {'subject': 'About quotation: ${q.title}', 'category': 'quotation', 'relatedId': q.id},
+      arguments: {
+        'subject': 'About quotation: ${q.title}',
+        'category': 'quotation',
+        'relatedId': q.id,
+      },
     );
   }
 

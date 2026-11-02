@@ -21,12 +21,14 @@ class PrefsService extends GetxService {
         'dark' => ThemeMode.dark,
         _ => ThemeMode.system,
       };
-  Future<void> setThemeMode(ThemeMode mode) => _box.write(_themeMode, mode.name);
+  Future<void> setThemeMode(ThemeMode mode) =>
+      _box.write(_themeMode, mode.name);
 
   /// Null means the user has not been asked yet. Crash reporting stays off
   /// until this is explicitly true.
   bool? get crashReportingConsent => _box.read<bool>(_crashConsent);
-  Future<void> setCrashReportingConsent(bool value) => _box.write(_crashConsent, value);
+  Future<void> setCrashReportingConsent(bool value) =>
+      _box.write(_crashConsent, value);
 
   bool get pushEnabled => _box.read<bool>(_pushEnabled) ?? true;
   Future<void> setPushEnabled(bool value) => _box.write(_pushEnabled, value);

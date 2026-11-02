@@ -16,7 +16,8 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
   Widget build(BuildContext context) {
     return AuthScaffold(
       title: 'Reset your password',
-      subtitle: 'Enter the email you signed up with and we will send you a reset link.',
+      subtitle:
+          'Enter the email you signed up with and we will send you a reset link.',
       children: [
         Obx(() {
           if (controller.sent.value) {
@@ -29,7 +30,9 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                       'Check your inbox and spam folder.',
                 ),
                 const SizedBox(height: AppSpacing.xl),
-                AppButton.secondary(label: 'Back to sign in', onPressed: () => Get.back<void>()),
+                AppButton.secondary(
+                    label: 'Back to sign in',
+                    onPressed: () => Get.back<void>(),),
               ],
             );
           }
@@ -50,7 +53,10 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
-              AppButton(label: 'Send reset link', isLoading: controller.isLoading.value, onPressed: controller.send),
+              AppButton(
+                  label: 'Send reset link',
+                  isLoading: controller.isLoading.value,
+                  onPressed: controller.send,),
             ],
           );
         }),

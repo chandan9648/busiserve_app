@@ -13,7 +13,8 @@ sealed class AppException implements Exception {
 
 class NetworkException extends AppException {
   const NetworkException([
-    super.message = 'No internet connection. Check your connection and try again.',
+    super.message =
+        'No internet connection. Check your connection and try again.',
   ]) : super(code: 'network');
 }
 
@@ -52,7 +53,8 @@ class NotFoundException extends AppException {
 /// The account's email is not verified yet; enquiries and support need it.
 class EmailNotVerifiedException extends AppException {
   const EmailNotVerifiedException([
-    super.message = 'Verify your email first. Open the link we sent you, then tap "I\'ve verified".',
+    super.message =
+        'Verify your email first. Open the link we sent you, then tap "I\'ve verified".',
   ]) : super(code: 'email-not-verified');
 }
 

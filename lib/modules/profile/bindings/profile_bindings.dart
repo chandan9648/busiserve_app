@@ -8,7 +8,8 @@ import '../repositories/profile_repository.dart';
 void registerProfileRepository() {
   if (Get.isRegistered<ProfileRepository>()) return;
   Get.lazyPut(
-    () => ProfileRepository(remote: FirestoreProfileDataSource(), session: Get.find<AuthSession>()),
+    () => ProfileRepository(
+        remote: FirestoreProfileDataSource(), session: Get.find<AuthSession>(),),
     fenix: true,
   );
 }

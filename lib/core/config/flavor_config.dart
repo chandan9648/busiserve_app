@@ -17,7 +17,6 @@ class FlavorConfig {
   /// `null` means the native SDK reads them itself (Android:
   /// `android/app/google-services.json`). Staging is not configured yet.
   final FirebaseOptions? Function() firebaseOptions;
-
 }
 
 /// Whether Firebase initialised successfully at startup.

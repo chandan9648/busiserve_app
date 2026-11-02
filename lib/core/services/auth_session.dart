@@ -93,7 +93,10 @@ class AuthService extends GetxService implements AuthSession {
   @override
   Future<void> sendEmailVerification() async {
     final u = user;
-    if (u == null) throw const AuthenticationException('Sign in to continue.', code: 'unauthenticated');
+    if (u == null) {
+      throw const AuthenticationException('Sign in to continue.',
+          code: 'unauthenticated',);
+    }
     await u.sendEmailVerification();
   }
 
@@ -101,7 +104,8 @@ class AuthService extends GetxService implements AuthSession {
   String requireUid() {
     final id = uid;
     if (id == null) {
-      throw const AuthenticationException('Sign in to continue.', code: 'unauthenticated');
+      throw const AuthenticationException('Sign in to continue.',
+          code: 'unauthenticated',);
     }
     return id;
   }

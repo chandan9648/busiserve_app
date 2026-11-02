@@ -37,10 +37,14 @@ class DioClient {
     Map<String, dynamic>? query,
     CancelToken? cancelToken,
   }) =>
-      guard(() async {
-        final res = await _dio.get<Object?>(path, queryParameters: query, cancelToken: cancelToken);
-        return parse(_asMap(res.data));
-      }, context: 'GET $path',);
+      guard(
+        () async {
+          final res = await _dio.get<Object?>(path,
+              queryParameters: query, cancelToken: cancelToken,);
+          return parse(_asMap(res.data));
+        },
+        context: 'GET $path',
+      );
 
   /// [idempotencyKey] is sent as `Idempotency-Key` so the server can reject
   /// duplicates. Never retry a POST automatically.
@@ -51,22 +55,28 @@ class DioClient {
     String? idempotencyKey,
     CancelToken? cancelToken,
   }) =>
-      guard(() async {
-        final res = await _dio.post<Object?>(
-          path,
-          data: body,
-          cancelToken: cancelToken,
-          options: Options(
-            headers: {if (idempotencyKey != null) 'Idempotency-Key': idempotencyKey},
-          ),
-        );
-        return parse(_asMap(res.data));
-      }, context: 'POST $path',);
+      guard(
+        () async {
+          final res = await _dio.post<Object?>(
+            path,
+            data: body,
+            cancelToken: cancelToken,
+            options: Options(
+              headers: {
+                if (idempotencyKey != null) 'Idempotency-Key': idempotencyKey,
+              },
+            ),
+          );
+          return parse(_asMap(res.data));
+        },
+        context: 'POST $path',
+      );
 
   static Map<String, dynamic> _asMap(Object? data) {
     if (data is Map<String, dynamic>) return data;
     if (data is Map) return data.map((k, v) => MapEntry(k.toString(), v));
-    throw const DataParsingException(cause: 'Response body is not a JSON object');
+    throw const DataParsingException(
+        cause: 'Response body is not a JSON object',);
   }
 }
 
@@ -75,7 +85,8 @@ class _AuthInterceptor extends Interceptor {
   final SecureStorageService _storage;
 
   @override
-  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  Future<void> onRequest(
+      RequestOptions options, RequestInterceptorHandler handler,) async {
     final token = await _storage.readApiToken();
     if (token != null) options.headers['Authorization'] = 'Bearer $token';
     handler.next(options);
@@ -85,14 +96,17 @@ class _AuthInterceptor extends Interceptor {
 /// Logs method, path and status only. Never headers or bodies.
 class _SafeLogInterceptor extends Interceptor {
   @override
-  void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
-    AppLogger.debug('${response.requestOptions.method} ${response.requestOptions.path} -> ${response.statusCode}');
+  void onResponse(
+      Response<dynamic> response, ResponseInterceptorHandler handler,) {
+    AppLogger.debug(
+        '${response.requestOptions.method} ${response.requestOptions.path} -> ${response.statusCode}',);
     handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    AppLogger.debug('${err.requestOptions.method} ${err.requestOptions.path} -> ${err.response?.statusCode ?? err.type.name}');
+    AppLogger.debug(
+        '${err.requestOptions.method} ${err.requestOptions.path} -> ${err.response?.statusCode ?? err.type.name}',);
     handler.next(err);
   }
 }

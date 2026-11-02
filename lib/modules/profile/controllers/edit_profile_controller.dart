@@ -27,7 +27,10 @@ class EditProfileController extends GetxController {
 
   Future<void> _prefill() async {
     try {
-      final p = await _repository.watchMine().first.timeout(const Duration(seconds: 15));
+      final p = await _repository
+          .watchMine()
+          .first
+          .timeout(const Duration(seconds: 15));
       nameCtrl.text = p.name;
       phoneCtrl.text = p.phone ?? '';
       companyCtrl.text = p.company ?? '';
@@ -35,7 +38,8 @@ class EditProfileController extends GetxController {
     } on AppException catch (e) {
       errorMessage.value = e.message;
     } on TimeoutException {
-      errorMessage.value = 'Could not load your details. You can still edit and save.';
+      errorMessage.value =
+          'Could not load your details. You can still edit and save.';
     } finally {
       isLoading.value = false;
     }
@@ -47,7 +51,10 @@ class EditProfileController extends GetxController {
     if (!(formKey.currentState?.validate() ?? false)) return;
     isSaving.value = true;
     try {
-      await _repository.update(name: nameCtrl.text, phone: phoneCtrl.text, company: companyCtrl.text);
+      await _repository.update(
+          name: nameCtrl.text,
+          phone: phoneCtrl.text,
+          company: companyCtrl.text,);
       Get.back<void>();
       Get.snackbar('Profile updated', 'Your details have been saved.');
     } on AppException catch (e) {

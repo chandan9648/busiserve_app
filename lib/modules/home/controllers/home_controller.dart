@@ -29,7 +29,8 @@ class HomeController extends GetxController {
     refreshAll();
   }
 
-  Future<void> refreshAll() => Future.wait([loadServices(refresh: true), loadCaseStudies(refresh: true)]);
+  Future<void> refreshAll() => Future.wait(
+      [loadServices(refresh: true), loadCaseStudies(refresh: true)],);
 
   Future<void> loadServices({bool refresh = false}) async {
     if (services.value.isLoading) return;
@@ -45,18 +46,23 @@ class HomeController extends GetxController {
     if (caseStudies.value.isLoading) return;
     caseStudies.value = const LoadingState();
     try {
-      caseStudies.value = listState(await _portfolio.getCaseStudies(refresh: refresh));
+      caseStudies.value =
+          listState(await _portfolio.getCaseStudies(refresh: refresh));
     } on AppException catch (e) {
       caseStudies.value = ErrorState(Failure.fromException(e));
     }
   }
 
   void startProject() => Get.toNamed<void>(Routes.enquiry);
-  void openService(ServiceModel s) => Get.toNamed<void>(Routes.serviceDetailPath(s.id));
-  void openCaseStudy(CaseStudyModel c) => Get.toNamed<void>(Routes.caseStudyPath(c.id));
+  void openService(ServiceModel s) =>
+      Get.toNamed<void>(Routes.serviceDetailPath(s.id));
+  void openCaseStudy(CaseStudyModel c) =>
+      Get.toNamed<void>(Routes.caseStudyPath(c.id));
   void openNotifications() => Get.toNamed<void>(Routes.notifications);
-  void showAllServices() => Get.find<MainController>().changeTab(MainController.services);
-  void showAllWork() => Get.find<MainController>().changeTab(MainController.work);
+  void showAllServices() =>
+      Get.find<MainController>().changeTab(MainController.services);
+  void showAllWork() =>
+      Get.find<MainController>().changeTab(MainController.work);
 
   void callUs() => Launcher.call();
   void email() => Launcher.email(subject: 'Project enquiry');

@@ -17,6 +17,8 @@ class FirestorePortfolioDataSource implements PortfolioRemoteDataSource {
         .where('published', isEqualTo: true)
         .orderBy('order')
         .get();
-    return snap.docs.map((d) => CaseStudyModel.fromMap(d.data(), id: d.id)).toList();
+    return snap.docs
+        .map((d) => CaseStudyModel.fromMap(d.data(), id: d.id))
+        .toList();
   }
 }

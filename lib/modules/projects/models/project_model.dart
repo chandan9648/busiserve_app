@@ -36,7 +36,9 @@ class ProjectModel {
     this.updatedAt,
   });
 
-  factory ProjectModel.fromMap(Map<String, dynamic> map, {required String id}) => ProjectModel(
+  factory ProjectModel.fromMap(Map<String, dynamic> map,
+          {required String id,}) =>
+      ProjectModel(
         id: id,
         title: Parse.string(map, 'title', 'Project'),
         status: ProjectStatus.fromKey(Parse.optString(map, 'status')),
@@ -90,7 +92,9 @@ class MilestoneModel {
     this.completedAt,
   });
 
-  factory MilestoneModel.fromMap(Map<String, dynamic> map, {required String id}) => MilestoneModel(
+  factory MilestoneModel.fromMap(Map<String, dynamic> map,
+          {required String id,}) =>
+      MilestoneModel(
         id: id,
         title: Parse.string(map, 'title', 'Milestone'),
         status: MilestoneStatus.fromKey(Parse.optString(map, 'status')),

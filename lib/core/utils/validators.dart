@@ -20,27 +20,37 @@ class Validators {
   static final RegExp _digit = RegExp(r'\d');
 
   static String? required(String? value, {String field = 'This field'}) {
-    if (value == null || value.trim().isEmpty) return '$field is required.';
+    if (value == null || value.trim().isEmpty) {
+      return '$field is required.';
+    }
     return null;
   }
 
   static String? email(String? value) {
     final v = value?.trim() ?? '';
-    if (v.isEmpty) return 'Email is required.';
-    if (v.length > 254 || !_email.hasMatch(v))
+    if (v.isEmpty) {
+      return 'Email is required.';
+    }
+    if (v.length > 254 || !_email.hasMatch(v)) {
       return 'Enter a valid email address.';
+    }
     return null;
   }
 
   static String? name(String? value) {
     final v = value?.trim() ?? '';
-    if (v.isEmpty) return 'Name is required.';
-    if (v.length < AppLimits.nameMin) return 'Name is too short.';
+    if (v.isEmpty) {
+      return 'Name is required.';
+    }
+    if (v.length < AppLimits.nameMin) {
+      return 'Name is too short.';
+    }
     if (v.length > AppLimits.nameMax) {
       return 'Name must be ${AppLimits.nameMax} characters or fewer.';
     }
-    if (!_name.hasMatch(v))
+    if (!_name.hasMatch(v)) {
       return 'Use letters, spaces, dots, apostrophes or hyphens.';
+    }
     return null;
   }
 
@@ -48,13 +58,17 @@ class Validators {
   /// international numbers in E.164 range (8–15 digits).
   static String? phone(String? value, {bool isRequired = false}) {
     final v = value?.trim() ?? '';
-    if (v.isEmpty) return isRequired ? 'Phone number is required.' : null;
-    if (!_phoneAllowed.hasMatch(v))
+    if (v.isEmpty) {
+      return isRequired ? 'Phone number is required.' : null;
+    }
+    if (!_phoneAllowed.hasMatch(v)) {
       return 'Use digits only, with an optional +.';
+    }
     final digits = v.replaceAll(RegExp(r'\D'), '');
     if (v.startsWith('+')) {
-      if (digits.length < 8 || digits.length > 15)
+      if (digits.length < 8 || digits.length > 15) {
         return 'Enter a valid phone number.';
+      }
       if (digits.startsWith('91') &&
           !RegExp(r'^91[6-9]\d{9}$').hasMatch(digits)) {
         return 'Enter a valid Indian mobile number.';
@@ -68,16 +82,26 @@ class Validators {
     return null;
   }
 
-  static String? minLength(String? value, int min,
-      {String field = 'This field'}) {
+  static String? minLength(
+    String? value,
+    int min, {
+    String field = 'This field',
+  }) {
     final v = value?.trim() ?? '';
-    if (v.isEmpty) return '$field is required.';
-    if (v.length < min) return '$field must be at least $min characters.';
+    if (v.isEmpty) {
+      return '$field is required.';
+    }
+    if (v.length < min) {
+      return '$field must be at least $min characters.';
+    }
     return null;
   }
 
-  static String? maxLength(String? value, int max,
-      {String field = 'This field'}) {
+  static String? maxLength(
+    String? value,
+    int max, {
+    String field = 'This field',
+  }) {
     if ((value?.trim().length ?? 0) > max) {
       return '$field must be $max characters or fewer.';
     }
@@ -90,7 +114,9 @@ class Validators {
 
   static String? password(String? value) {
     final v = value ?? '';
-    if (v.isEmpty) return 'Password is required.';
+    if (v.isEmpty) {
+      return 'Password is required.';
+    }
     if (v.length < AppLimits.passwordMin) {
       return 'Use at least ${AppLimits.passwordMin} characters.';
     }
@@ -101,18 +127,25 @@ class Validators {
   }
 
   static String? confirmPassword(String? value, String original) {
-    if (value == null || value.isEmpty) return 'Confirm your password.';
-    if (value != original) return 'Passwords do not match.';
+    if (value == null || value.isEmpty) {
+      return 'Confirm your password.';
+    }
+    if (value != original) {
+      return 'Passwords do not match.';
+    }
     return null;
   }
 
   /// Runs validators in order and returns the first error.
   static FormFieldValidator<String> compose(
-      List<FormFieldValidator<String>> validators) {
+    List<FormFieldValidator<String>> validators,
+  ) {
     return (value) {
       for (final validator in validators) {
         final result = validator(value);
-        if (result != null) return result;
+        if (result != null) {
+          return result;
+        }
       }
       return null;
     };

@@ -21,7 +21,9 @@ class OnboardingController extends GetxController {
     if (isLast) {
       finish();
     } else {
-      pageController.nextPage(duration: const Duration(milliseconds: 320), curve: Curves.easeOutCubic);
+      pageController.nextPage(
+          duration: const Duration(milliseconds: 320),
+          curve: Curves.easeOutCubic,);
     }
   }
 

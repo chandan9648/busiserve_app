@@ -10,7 +10,8 @@ enum ServiceCategory {
   final String label;
 
   static ServiceCategory fromKey(String? key) =>
-      ServiceCategory.values.firstWhere((c) => c.name == key, orElse: () => ServiceCategory.webAndApps);
+      ServiceCategory.values.firstWhere((c) => c.name == key,
+          orElse: () => ServiceCategory.webAndApps,);
 }
 
 /// A Busiserve service. `id` equals the slug used on `busiserve.in/services/<id>`.
@@ -27,7 +28,8 @@ class ServiceModel {
     this.highlights = const [],
   });
 
-  factory ServiceModel.fromMap(Map<String, dynamic> map, {String? id}) => ServiceModel(
+  factory ServiceModel.fromMap(Map<String, dynamic> map, {String? id}) =>
+      ServiceModel(
         id: id ?? Parse.requireString(map, 'id'),
         title: Parse.requireString(map, 'title'),
         summary: Parse.string(map, 'summary'),

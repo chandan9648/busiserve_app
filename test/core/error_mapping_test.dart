@@ -13,19 +13,31 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('FirebaseErrorMapper.mapAuth', () {
     test('wrong credentials share one message (no account enumeration)', () {
-      for (final code in ['user-not-found', 'wrong-password', 'invalid-credential']) {
-        final e = FirebaseErrorMapper.mapAuth(FirebaseAuthException(code: code));
+      for (final code in [
+        'user-not-found',
+        'wrong-password',
+        'invalid-credential',
+      ]) {
+        final e =
+            FirebaseErrorMapper.mapAuth(FirebaseAuthException(code: code));
         expect(e, isA<AuthenticationException>());
         expect(e.message, 'Email or password is incorrect.');
       }
     });
     test('network and rate limit', () {
-      expect(FirebaseErrorMapper.mapAuth(FirebaseAuthException(code: 'network-request-failed')), isA<NetworkException>());
-      expect(FirebaseErrorMapper.mapAuth(FirebaseAuthException(code: 'too-many-requests')), isA<RateLimitException>());
+      expect(
+          FirebaseErrorMapper.mapAuth(
+              FirebaseAuthException(code: 'network-request-failed'),),
+          isA<NetworkException>(),);
+      expect(
+          FirebaseErrorMapper.mapAuth(
+              FirebaseAuthException(code: 'too-many-requests'),),
+          isA<RateLimitException>(),);
     });
     test('never leaks the raw server message', () {
       final e = FirebaseErrorMapper.mapAuth(
-        FirebaseAuthException(code: 'internal-error', message: 'stack trace at line 42'),
+        FirebaseAuthException(
+            code: 'internal-error', message: 'stack trace at line 42',),
       );
       expect(e.message.contains('stack'), isFalse);
     });
@@ -43,37 +55,48 @@ void main() {
         ),
       );
       expect(e, isA<ValidationException>());
-      expect((e as ValidationException).fieldErrors['email'], 'Enter a valid email address.');
+      expect((e as ValidationException).fieldErrors['email'],
+          'Enter a valid email address.',);
     });
     test('internal errors become generic server errors', () {
       final e = FirebaseErrorMapper.mapFunctions(
-        FirebaseFunctionsException(code: 'internal', message: 'TypeError: x is undefined'),
+        FirebaseFunctionsException(
+            code: 'internal', message: 'TypeError: x is undefined',),
       );
       expect(e, isA<ServerException>());
       expect(e.message.contains('TypeError'), isFalse);
     });
     test('resource-exhausted is rate limit', () {
       expect(
-        FirebaseErrorMapper.mapFunctions(FirebaseFunctionsException(code: 'resource-exhausted', message: '')),
+        FirebaseErrorMapper.mapFunctions(FirebaseFunctionsException(
+            code: 'resource-exhausted', message: '',),),
         isA<RateLimitException>(),
       );
     });
   });
 
   test('Firestore permission-denied', () {
-    final e = FirebaseErrorMapper.map(FirebaseException(plugin: 'cloud_firestore', code: 'permission-denied'));
+    final e = FirebaseErrorMapper.map(FirebaseException(
+        plugin: 'cloud_firestore', code: 'permission-denied',),);
     expect(e, isA<PermissionException>());
   });
 
   group('DioErrorMapper', () {
     final req = RequestOptions(path: '/x');
     test('timeouts and connection errors', () {
-      expect(DioErrorMapper.map(DioException.connectionTimeout(timeout: Duration.zero, requestOptions: req)),
-          isA<RequestTimeoutException>(),);
-      expect(DioErrorMapper.map(DioException.connectionError(requestOptions: req, reason: 'x')), isA<NetworkException>());
+      expect(
+        DioErrorMapper.map(DioException.connectionTimeout(
+            timeout: Duration.zero, requestOptions: req,),),
+        isA<RequestTimeoutException>(),
+      );
+      expect(
+          DioErrorMapper.map(
+              DioException.connectionError(requestOptions: req, reason: 'x'),),
+          isA<NetworkException>(),);
     });
     test('status codes', () {
-      expect(DioErrorMapper.fromStatusForTest(401), isA<AuthenticationException>());
+      expect(DioErrorMapper.fromStatusForTest(401),
+          isA<AuthenticationException>(),);
       expect(DioErrorMapper.fromStatusForTest(403), isA<PermissionException>());
       expect(DioErrorMapper.fromStatusForTest(404), isA<NotFoundException>());
       expect(DioErrorMapper.fromStatusForTest(429), isA<RateLimitException>());
@@ -94,8 +117,10 @@ void main() {
       expect(ErrorHandler.map(e), same(e));
     });
     test('parsing and timeout', () {
-      expect(ErrorHandler.map(const FormatException('bad')), isA<DataParsingException>());
-      expect(ErrorHandler.map(TimeoutException('t')), isA<RequestTimeoutException>());
+      expect(ErrorHandler.map(const FormatException('bad')),
+          isA<DataParsingException>(),);
+      expect(ErrorHandler.map(TimeoutException('t')),
+          isA<RequestTimeoutException>(),);
     });
     test('unknown objects become UnknownException', () {
       expect(ErrorHandler.map(Object()), isA<UnknownException>());
@@ -111,7 +136,9 @@ void main() {
   test('Failure.retryable only for transient errors', () {
     expect(Failure.fromException(const NetworkException()).retryable, isTrue);
     expect(Failure.fromException(const ServerException()).retryable, isTrue);
-    expect(Failure.fromException(const PermissionException()).retryable, isFalse);
-    expect(Failure.fromException(const ValidationException('x')).retryable, isFalse);
+    expect(
+        Failure.fromException(const PermissionException()).retryable, isFalse,);
+    expect(Failure.fromException(const ValidationException('x')).retryable,
+        isFalse,);
   });
 }

@@ -10,7 +10,8 @@ import '../repositories/support_repository.dart';
 void _registerSupportRepository() {
   if (Get.isRegistered<SupportRepository>()) return;
   Get.lazyPut(
-    () => SupportRepository(remote: FirestoreSupportDataSource(), session: Get.find<AuthSession>()),
+    () => SupportRepository(
+        remote: FirestoreSupportDataSource(), session: Get.find<AuthSession>(),),
     fenix: true,
   );
 }

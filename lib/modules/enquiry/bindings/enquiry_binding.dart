@@ -8,7 +8,8 @@ import '../repositories/enquiry_repository.dart';
 void registerEnquiryRepository() {
   if (Get.isRegistered<EnquiryRepository>()) return;
   Get.lazyPut(
-    () => EnquiryRepository(remote: FirebaseEnquiryDataSource(), session: Get.find<AuthSession>()),
+    () => EnquiryRepository(
+        remote: FirebaseEnquiryDataSource(), session: Get.find<AuthSession>(),),
     fenix: true,
   );
 }

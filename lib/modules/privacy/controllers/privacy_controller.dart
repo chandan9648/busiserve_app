@@ -12,7 +12,10 @@ import '../../../core/utils/launcher.dart';
 import '../../../routes/app_routes.dart';
 
 class PrivacyController extends GetxController {
-  PrivacyController({required PrefsService prefs, required this.session, PushNotificationService? push})
+  PrivacyController(
+      {required PrefsService prefs,
+      required this.session,
+      PushNotificationService? push,})
       : _prefs = prefs,
         _push = push;
 

@@ -33,7 +33,9 @@ class EnquiryModel {
     this.email,
   });
 
-  factory EnquiryModel.fromMap(Map<String, dynamic> map, {required String id}) => EnquiryModel(
+  factory EnquiryModel.fromMap(Map<String, dynamic> map,
+          {required String id,}) =>
+      EnquiryModel(
         id: id,
         subjectId: Parse.string(map, 'subject', 'general'),
         message: Parse.string(map, 'message'),
@@ -54,7 +56,8 @@ class EnquiryModel {
   String get subjectLabel => EnquirySubject.labelFor(subjectId);
 
   /// Short reference shown to customers.
-  String get reference => 'BS-${id.substring(0, id.length < 8 ? id.length : 8).toUpperCase()}';
+  String get reference =>
+      'BS-${id.substring(0, id.length < 8 ? id.length : 8).toUpperCase()}';
 }
 
 /// What the app writes to `enquiries/{idempotencyKey}`.
@@ -84,7 +87,8 @@ class EnquiryRequest {
         'subject': subjectId,
         'message': message.trim(),
         if (phone != null && phone!.trim().isNotEmpty) 'phone': phone!.trim(),
-        if (company != null && company!.trim().isNotEmpty) 'company': company!.trim(),
+        if (company != null && company!.trim().isNotEmpty)
+          'company': company!.trim(),
         'source': 'mobile_app',
       };
 }
@@ -100,5 +104,6 @@ class EnquiryResult {
   final String enquiryId;
   final bool duplicate;
 
-  String get reference => 'BS-${enquiryId.substring(0, enquiryId.length < 8 ? enquiryId.length : 8).toUpperCase()}';
+  String get reference =>
+      'BS-${enquiryId.substring(0, enquiryId.length < 8 ? enquiryId.length : 8).toUpperCase()}';
 }

@@ -54,11 +54,13 @@ class ProfileController extends GetxController {
     profile.value = const LoadingState();
     try {
       _sub = _profileRepository.watchMine().listen(
-            (u) => profile.value = SuccessState(u),
-            onError: (Object e) {
-              if (e is AppException) profile.value = ErrorState(Failure.fromException(e));
-            },
-          );
+        (u) => profile.value = SuccessState(u),
+        onError: (Object e) {
+          if (e is AppException) {
+            profile.value = ErrorState(Failure.fromException(e));
+          }
+        },
+      );
     } on AppException catch (e) {
       profile.value = ErrorState(Failure.fromException(e));
     }

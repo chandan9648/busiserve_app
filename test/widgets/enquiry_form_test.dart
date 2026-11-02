@@ -22,15 +22,22 @@ void main() {
     remote = fake ?? FakeEnquiryRemote();
     final session = FakeAuthSession();
     Get.put<AuthSession>(session);
-    Get.put(EnquiryController(EnquiryRepository(remote: remote, session: session), session,
-        arguments: const {'subjectId': 'app-development'},),);
+    Get.put(
+      EnquiryController(
+        EnquiryRepository(remote: remote, session: session),
+        session,
+        arguments: const {'subjectId': 'app-development'},
+      ),
+    );
 
     await tester.pumpWidget(
       GetMaterialApp(
         initialRoute: Routes.enquiry,
         getPages: [
           GetPage(name: Routes.enquiry, page: () => const EnquiryFormView()),
-          GetPage(name: Routes.enquirySuccess, page: () => const Scaffold(body: Text('SUCCESS'))),
+          GetPage(
+              name: Routes.enquirySuccess,
+              page: () => const Scaffold(body: Text('SUCCESS')),),
         ],
       ),
     );
@@ -38,14 +45,18 @@ void main() {
   }
 
   Future<void> fillValid(WidgetTester tester) async {
-    await tester.enterText(find.widgetWithText(TextFormField, 'Full name'), 'Asha Verma');
-    await tester.enterText(find.widgetWithText(TextFormField, 'Work email'), 'asha@example.com');
-    await tester.enterText(find.widgetWithText(TextFormField, 'Message'), 'We need a clinic booking app.');
+    await tester.enterText(
+        find.widgetWithText(TextFormField, 'Full name'), 'Asha Verma',);
+    await tester.enterText(
+        find.widgetWithText(TextFormField, 'Work email'), 'asha@example.com',);
+    await tester.enterText(find.widgetWithText(TextFormField, 'Message'),
+        'We need a clinic booking app.',);
   }
 
   tearDown(Get.reset);
 
-  testWidgets('shows inline errors and does not submit an invalid form', (tester) async {
+  testWidgets('shows inline errors and does not submit an invalid form',
+      (tester) async {
     await pumpForm(tester);
     await tester.tap(find.text('Send message'));
     await tester.pump();
@@ -60,8 +71,10 @@ void main() {
     expect(find.text('Mobile App Development'), findsWidgets);
   });
 
-  testWidgets('double tap submits once and navigates to success', (tester) async {
-    await pumpForm(tester, fake: FakeEnquiryRemote(delay: const Duration(milliseconds: 300)));
+  testWidgets('double tap submits once and navigates to success',
+      (tester) async {
+    await pumpForm(tester,
+        fake: FakeEnquiryRemote(delay: const Duration(milliseconds: 300)),);
     await fillValid(tester);
     await tester.tap(find.text('Send message'));
     await tester.pump(const Duration(milliseconds: 10));
@@ -72,8 +85,12 @@ void main() {
     expect(find.text('SUCCESS'), findsOneWidget);
   });
 
-  testWidgets('retry after a failure reuses the same idempotency key and keeps input', (tester) async {
-    await pumpForm(tester, fake: FakeEnquiryRemote(failuresBeforeSuccess: 1, failure: const NetworkException()));
+  testWidgets(
+      'retry after a failure reuses the same idempotency key and keeps input',
+      (tester) async {
+    await pumpForm(tester,
+        fake: FakeEnquiryRemote(
+            failuresBeforeSuccess: 1, failure: const NetworkException(),),);
     await fillValid(tester);
     await tester.tap(find.text('Send message'));
     await tester.pumpAndSettle();
@@ -83,7 +100,8 @@ void main() {
     await tester.tap(find.text('Send message'));
     await tester.pumpAndSettle();
     expect(remote.requests.length, 2);
-    expect(remote.requests[0].idempotencyKey, remote.requests[1].idempotencyKey);
+    expect(
+        remote.requests[0].idempotencyKey, remote.requests[1].idempotencyKey,);
     expect(find.text('SUCCESS'), findsOneWidget);
   });
 }

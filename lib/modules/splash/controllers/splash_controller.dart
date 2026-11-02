@@ -6,7 +6,8 @@ import '../../../core/services/prefs_service.dart';
 import '../../../routes/app_routes.dart';
 
 class SplashController extends GetxController {
-  SplashController(this._prefs, {this.delay = const Duration(milliseconds: 1400)});
+  SplashController(this._prefs,
+      {this.delay = const Duration(milliseconds: 1400),});
   final PrefsService _prefs;
   final Duration delay;
   Timer? _timer;
@@ -18,7 +19,8 @@ class SplashController extends GetxController {
   }
 
   void _next() {
-    Get.offAllNamed<void>(_prefs.onboardingDone ? Routes.main : Routes.onboarding);
+    Get.offAllNamed<void>(
+        _prefs.onboardingDone ? Routes.main : Routes.onboarding,);
   }
 
   @override

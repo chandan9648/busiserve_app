@@ -17,7 +17,8 @@ class EmailVerificationNotice extends StatefulWidget {
   final EdgeInsetsGeometry padding;
 
   @override
-  State<EmailVerificationNotice> createState() => _EmailVerificationNoticeState();
+  State<EmailVerificationNotice> createState() =>
+      _EmailVerificationNoticeState();
 }
 
 class _EmailVerificationNoticeState extends State<EmailVerificationNotice> {
@@ -43,9 +44,11 @@ class _EmailVerificationNoticeState extends State<EmailVerificationNotice> {
       if (!mounted) return;
       if (ok) {
         setState(() => _verified = true);
-        Get.snackbar('Email verified', 'Thanks! You can send enquiries and support requests now.');
+        Get.snackbar('Email verified',
+            'Thanks! You can send enquiries and support requests now.',);
       } else {
-        Get.snackbar('Not verified yet', 'Open the link in the email we sent, then try again.');
+        Get.snackbar('Not verified yet',
+            'Open the link in the email we sent, then try again.',);
       }
     } catch (e) {
       Get.snackbar('Could not check', ErrorHandler.map(e).message);
@@ -58,7 +61,8 @@ class _EmailVerificationNoticeState extends State<EmailVerificationNotice> {
     setState(() => _sending = true);
     try {
       await _session.sendEmailVerification();
-      Get.snackbar('Link sent', 'Check ${_session.email ?? 'your inbox'}, including the spam folder.');
+      Get.snackbar('Link sent',
+          'Check ${_session.email ?? 'your inbox'}, including the spam folder.',);
       _startCooldown();
     } catch (e) {
       Get.snackbar('Could not send', ErrorHandler.map(e).message);
@@ -98,7 +102,8 @@ class _EmailVerificationNoticeState extends State<EmailVerificationNotice> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.mark_email_unread_outlined, color: color, size: 20),
+                  Icon(Icons.mark_email_unread_outlined,
+                      color: color, size: 20,),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Text(
@@ -122,7 +127,9 @@ class _EmailVerificationNoticeState extends State<EmailVerificationNotice> {
                     onPressed: _check,
                   ),
                   AppButton.secondary(
-                    label: _resendIn > 0 ? 'Resend in ${_resendIn}s' : 'Resend link',
+                    label: _resendIn > 0
+                        ? 'Resend in ${_resendIn}s'
+                        : 'Resend link',
                     expand: false,
                     isLoading: _sending,
                     onPressed: _resendIn > 0 ? null : _resend,

@@ -28,7 +28,8 @@ class FirestoreSupportDataSource implements SupportRemoteDataSource {
   String newTicketId() => _store.collection('tickets').doc().id;
 
   @override
-  String newMessageId(String ticketId) => _store.collection('tickets/$ticketId/messages').doc().id;
+  String newMessageId(String ticketId) =>
+      _store.collection('tickets/$ticketId/messages').doc().id;
 
   @override
   Stream<List<TicketModel>> watchForCustomer(String uid) => _store
@@ -37,7 +38,8 @@ class FirestoreSupportDataSource implements SupportRemoteDataSource {
       .orderBy('updatedAt', descending: true)
       .limit(50)
       .snapshots()
-      .map((s) => s.docs.map((d) => TicketModel.fromMap(d.data(), id: d.id)).toList());
+      .map((s) =>
+          s.docs.map((d) => TicketModel.fromMap(d.data(), id: d.id)).toList(),);
 
   @override
   Stream<TicketModel?> watchById(String id) => _store
@@ -51,7 +53,9 @@ class FirestoreSupportDataSource implements SupportRemoteDataSource {
       .orderBy('createdAt')
       .limit(200)
       .snapshots()
-      .map((s) => s.docs.map((d) => TicketMessage.fromMap(d.data(), id: d.id)).toList());
+      .map((s) => s.docs
+          .map((d) => TicketMessage.fromMap(d.data(), id: d.id))
+          .toList(),);
 
   /// Writes the ticket and its first message atomically. If a previous
   /// attempt with the same id already succeeded, does nothing.
@@ -62,8 +66,10 @@ class FirestoreSupportDataSource implements SupportRemoteDataSource {
     if (existing.exists) return;
     final message = ref.collection('messages').doc();
     final batch = _store.batch();
-    await RateLimits.spend(_store, batch, uid: uid, limit: RateLimit.ticket, docId: ref.id);
-    await RateLimits.spend(_store, batch, uid: uid, limit: RateLimit.message, docId: message.id);
+    await RateLimits.spend(_store, batch,
+        uid: uid, limit: RateLimit.ticket, docId: ref.id,);
+    await RateLimits.spend(_store, batch,
+        uid: uid, limit: RateLimit.message, docId: message.id,);
     batch
       ..set(ref, {
         'customerId': uid,
@@ -98,7 +104,8 @@ class FirestoreSupportDataSource implements SupportRemoteDataSource {
     // A retry after a lost response: the message is already there.
     if ((await message.get()).exists) return;
     final batch = _store.batch();
-    await RateLimits.spend(_store, batch, uid: uid, limit: RateLimit.message, docId: messageId);
+    await RateLimits.spend(_store, batch,
+        uid: uid, limit: RateLimit.message, docId: messageId,);
     batch
       ..set(message, {
         'authorId': uid,

@@ -26,14 +26,17 @@ class PortfolioView extends GetView<PortfolioController> {
             builder: (items) => RefreshIndicator(
               onRefresh: () => controller.load(refresh: true),
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(AppSpacing.page, 0, AppSpacing.page, AppSpacing.xxl),
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.page, 0, AppSpacing.page, AppSpacing.xxl,),
                 children: [
-                  Text('Proven results. Measurable impact.', style: context.text.headlineSmall),
+                  Text('Proven results. Measurable impact.',
+                      style: context.text.headlineSmall,),
                   const SizedBox(height: AppSpacing.sm),
                   Text(
                     'How we have helped organisations overcome complex challenges, streamline '
                     'operations and grow.',
-                    style: context.text.bodyMedium?.copyWith(color: context.brand.muted),
+                    style: context.text.bodyMedium
+                        ?.copyWith(color: context.brand.muted),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   Wrap(

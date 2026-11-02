@@ -17,7 +17,8 @@ class NotificationsController extends GetxController {
   final isMarkingAll = false.obs;
   StreamSubscription<List<NotificationModel>>? _sub;
 
-  int get unreadCount => state.value.dataOrNull?.where((n) => !n.read).length ?? 0;
+  int get unreadCount =>
+      state.value.dataOrNull?.where((n) => !n.read).length ?? 0;
 
   @override
   void onInit() {
@@ -32,7 +33,9 @@ class NotificationsController extends GetxController {
       _sub = _repository.watchMine().listen(
             (list) => state.value = listState(list),
             onError: (Object e) => state.value = ErrorState(
-              e is AppException ? Failure.fromException(e) : const Failure('Something went wrong.', retryable: true),
+              e is AppException
+                  ? Failure.fromException(e)
+                  : const Failure('Something went wrong.', retryable: true),
             ),
           );
     } on AppException catch (e) {
@@ -56,7 +59,11 @@ class NotificationsController extends GetxController {
 
   Future<void> markAllRead() async {
     if (isMarkingAll.value) return;
-    final ids = state.value.dataOrNull?.where((n) => !n.read).map((n) => n.id).toList() ?? const [];
+    final ids = state.value.dataOrNull
+            ?.where((n) => !n.read)
+            .map((n) => n.id)
+            .toList() ??
+        const [];
     isMarkingAll.value = true;
     try {
       await _repository.markAllRead(ids);

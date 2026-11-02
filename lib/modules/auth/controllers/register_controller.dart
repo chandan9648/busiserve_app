@@ -8,7 +8,9 @@ import '../repositories/auth_repository.dart';
 class RegisterController extends GetxController {
   RegisterController(this._repository, {String? redirect})
       : redirect = redirect ??
-            (Get.arguments is Map ? (Get.arguments as Map)['redirect'] as String? : null);
+            (Get.arguments is Map
+                ? (Get.arguments as Map)['redirect'] as String?
+                : null);
 
   final AuthRepository _repository;
   final String? redirect;
@@ -30,7 +32,8 @@ class RegisterController extends GetxController {
     final valid = formKey.currentState?.validate() ?? false;
     if (!valid) return;
     if (!acceptedTerms.value) {
-      errorMessage.value = 'Accept the Terms of Service and Privacy Policy to continue.';
+      errorMessage.value =
+          'Accept the Terms of Service and Privacy Policy to continue.';
       return;
     }
     isLoading.value = true;
@@ -43,7 +46,8 @@ class RegisterController extends GetxController {
       );
       passwordCtrl.clear();
       confirmCtrl.clear();
-      Get.snackbar('Account created', 'We sent a verification link to ${emailCtrl.text.trim()}.');
+      Get.snackbar('Account created',
+          'We sent a verification link to ${emailCtrl.text.trim()}.',);
       final target = redirect;
       if (target != null && target != Routes.register) {
         await Get.offNamed<void>(target);
@@ -57,7 +61,8 @@ class RegisterController extends GetxController {
     }
   }
 
-  void goToLogin() => Get.offNamed<void>(Routes.login, arguments: {'redirect': redirect});
+  void goToLogin() =>
+      Get.offNamed<void>(Routes.login, arguments: {'redirect': redirect});
 
   @override
   void onClose() {

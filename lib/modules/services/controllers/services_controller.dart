@@ -18,7 +18,8 @@ class ServicesController extends GetxController {
   bool _loaded = false;
   Worker? _filterWorker;
 
-  bool get hasFilters => selectedCategory.value != null || query.value.isNotEmpty;
+  bool get hasFilters =>
+      selectedCategory.value != null || query.value.isNotEmpty;
 
   @override
   void onInit() {
@@ -50,8 +51,8 @@ class ServicesController extends GetxController {
     }
   }
 
-  void selectCategory(ServiceCategory? category) =>
-      selectedCategory.value = selectedCategory.value == category ? null : category;
+  void selectCategory(ServiceCategory? category) => selectedCategory.value =
+      selectedCategory.value == category ? null : category;
 
   void search(String value) => query.value = value.trim().toLowerCase();
 

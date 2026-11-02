@@ -26,7 +26,8 @@ class ProjectDetailView extends GetView<ProjectDetailController> {
           onRetry: controller.load,
           builder: (p) => ResponsiveBody(
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(AppSpacing.page, 0, AppSpacing.page, AppSpacing.xxl),
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.page, 0, AppSpacing.page, AppSpacing.xxl,),
               children: [
                 _Header(project: p),
                 const SizedBox(height: AppSpacing.xl),
@@ -34,10 +35,15 @@ class ProjectDetailView extends GetView<ProjectDetailController> {
                   spacing: AppSpacing.xl,
                   runSpacing: AppSpacing.md,
                   children: [
-                    _Fact(label: 'Started', value: Formatters.date(p.startDate)),
-                    _Fact(label: 'Target', value: Formatters.date(p.targetDate)),
-                    if (p.managerName != null) _Fact(label: 'Project lead', value: p.managerName!),
-                    _Fact(label: 'Last update', value: Formatters.relative(p.updatedAt)),
+                    _Fact(
+                        label: 'Started', value: Formatters.date(p.startDate),),
+                    _Fact(
+                        label: 'Target', value: Formatters.date(p.targetDate),),
+                    if (p.managerName != null)
+                      _Fact(label: 'Project lead', value: p.managerName!),
+                    _Fact(
+                        label: 'Last update',
+                        value: Formatters.relative(p.updatedAt),),
                   ],
                 ),
                 if (p.summary != null) ...[
@@ -80,27 +86,39 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(gradient: AppColors.hero, borderRadius: BorderRadius.circular(AppRadius.panel - 6)),
+      decoration: BoxDecoration(
+          gradient: AppColors.hero,
+          borderRadius: BorderRadius.circular(AppRadius.panel - 6),),
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
           Positioned.fill(
-            child: CustomPaint(painter: HexLatticePainter(color: Colors.white.withValues(alpha: 0.05))),
+            child: CustomPaint(
+                painter: HexLatticePainter(
+                    color: Colors.white.withValues(alpha: 0.05),),),
           ),
           Padding(
             padding: const EdgeInsets.all(AppSpacing.xl),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(project.status.label, style: context.text.bodyMedium?.copyWith(color: AppColors.amber, fontWeight: FontWeight.w700)),
+                Text(project.status.label,
+                    style: context.text.bodyMedium?.copyWith(
+                        color: AppColors.amber, fontWeight: FontWeight.w700,),),
                 const SizedBox(height: AppSpacing.sm),
-                Text(project.title, style: context.text.headlineSmall?.copyWith(color: Colors.white)),
+                Text(project.title,
+                    style: context.text.headlineSmall
+                        ?.copyWith(color: Colors.white),),
                 const SizedBox(height: AppSpacing.xl),
                 Row(
                   children: [
-                    Text('${project.progress}%', style: context.text.displaySmall?.copyWith(color: Colors.white)),
+                    Text('${project.progress}%',
+                        style: context.text.displaySmall
+                            ?.copyWith(color: Colors.white),),
                     const SizedBox(width: AppSpacing.md),
-                    Text('complete', style: context.text.bodyMedium?.copyWith(color: Colors.white70)),
+                    Text('complete',
+                        style: context.text.bodyMedium
+                            ?.copyWith(color: Colors.white70),),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.md),
@@ -124,7 +142,9 @@ class _Fact extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: context.text.bodySmall?.copyWith(color: context.brand.muted)),
+        Text(label,
+            style:
+                context.text.bodySmall?.copyWith(color: context.brand.muted),),
         const SizedBox(height: 2),
         Text(value, style: context.text.titleSmall),
       ],

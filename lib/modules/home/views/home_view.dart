@@ -28,7 +28,8 @@ class HomeView extends GetView<HomeController> {
             slivers: [
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(AppSpacing.page, AppSpacing.sm, AppSpacing.sm, AppSpacing.lg),
+                  padding: const EdgeInsets.fromLTRB(AppSpacing.page,
+                      AppSpacing.sm, AppSpacing.sm, AppSpacing.lg,),
                   child: Row(
                     children: [
                       const BrandLogo(height: 46),
@@ -43,7 +44,9 @@ class HomeView extends GetView<HomeController> {
                 ),
               ),
               SliverToBoxAdapter(
-                child: HeroPanel(onStart: controller.startProject, onExplore: controller.showAllServices),
+                child: HeroPanel(
+                    onStart: controller.startProject,
+                    onExplore: controller.showAllServices,),
               ),
               SliverToBoxAdapter(
                 child: SectionHeader(
@@ -58,7 +61,9 @@ class HomeView extends GetView<HomeController> {
                     state: controller.services.value,
                     onRetry: controller.loadServices,
                     loading: const SizedBox(height: 220, child: LoadingView()),
-                    builder: (items) => _ServiceGrid(items: items.take(6).toList(), onTap: controller.openService),
+                    builder: (items) => _ServiceGrid(
+                        items: items.take(6).toList(),
+                        onTap: controller.openService,),
                   ),
                 ),
               ),
@@ -74,7 +79,8 @@ class HomeView extends GetView<HomeController> {
                 child: Obx(() {
                   final state = controller.caseStudies.value;
                   final scale = MediaQuery.textScalerOf(context).scale(1);
-                  final cardWidth = (MediaQuery.sizeOf(context).width * 0.82).clamp(240.0, 320.0);
+                  final cardWidth = (MediaQuery.sizeOf(context).width * 0.82)
+                      .clamp(240.0, 320.0);
                   return SizedBox(
                     height: 250 + 210 * (scale - 1).clamp(0.0, 1.0),
                     child: StateView<List<CaseStudyModel>>(
@@ -84,7 +90,8 @@ class HomeView extends GetView<HomeController> {
                         scrollDirection: Axis.horizontal,
                         padding: AppSpacing.pagePadding,
                         itemCount: items.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.md),
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(width: AppSpacing.md),
                         itemBuilder: (_, i) => SizedBox(
                           width: cardWidth,
                           child: CaseStudyCard(
@@ -109,13 +116,17 @@ class HomeView extends GetView<HomeController> {
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(AppSpacing.page, AppSpacing.xxl, AppSpacing.page, AppSpacing.xxxl),
+                  padding: const EdgeInsets.fromLTRB(AppSpacing.page,
+                      AppSpacing.xxl, AppSpacing.page, AppSpacing.xxxl,),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(CompanyInfo.footerLine, style: context.text.bodySmall),
+                      Text(CompanyInfo.footerLine,
+                          style: context.text.bodySmall,),
                       const SizedBox(height: AppSpacing.xs),
-                      Text('© ${DateTime.now().year} Busiserve. All rights reserved.', style: context.text.bodySmall),
+                      Text(
+                          '© ${DateTime.now().year} Busiserve. All rights reserved.',
+                          style: context.text.bodySmall,),
                     ],
                   ),
                 ),
@@ -142,8 +153,10 @@ class _ServiceGrid extends StatelessWidget {
         // so large system fonts and narrow screens never overflow.
         final style = context.text.titleSmall;
         final fontSize = style?.fontSize ?? 14;
-        final lineHeight = MediaQuery.textScalerOf(context).scale(fontSize) * (style?.height ?? 1.3);
-        final tileHeight = AppSpacing.md * 2 + 38 + AppSpacing.sm + lineHeight * 2 + 4;
+        final lineHeight = MediaQuery.textScalerOf(context).scale(fontSize) *
+            (style?.height ?? 1.3);
+        final tileHeight =
+            AppSpacing.md * 2 + 38 + AppSpacing.sm + lineHeight * 2 + 4;
         return GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -155,7 +168,8 @@ class _ServiceGrid extends StatelessWidget {
             crossAxisSpacing: AppSpacing.md,
             mainAxisExtent: tileHeight,
           ),
-          itemBuilder: (_, i) => ServiceTile(service: items[i], onTap: () => onTap(items[i])),
+          itemBuilder: (_, i) =>
+              ServiceTile(service: items[i], onTap: () => onTap(items[i])),
         );
       },
     );
@@ -167,29 +181,46 @@ class _WhyBusiserve extends StatelessWidget {
   const _WhyBusiserve();
 
   static const _items = [
-    (Icons.business_center_outlined, 'Built around your business',
-        'Websites and tools shaped around the way you work and the customers you serve.'),
-    (Icons.touch_app_outlined, 'Easy to use',
-        'Clear layouts and thoughtful interactions that make everyday tasks simpler.'),
-    (Icons.cable_rounded, 'Connected systems',
-        'Bring your website, applications and business workflows together.'),
-    (Icons.trending_up_rounded, 'Room to grow',
-        'A considered technical foundation for your next stage of growth.'),
+    (
+      Icons.business_center_outlined,
+      'Built around your business',
+      'Websites and tools shaped around the way you work and the customers you serve.'
+    ),
+    (
+      Icons.touch_app_outlined,
+      'Easy to use',
+      'Clear layouts and thoughtful interactions that make everyday tasks simpler.'
+    ),
+    (
+      Icons.cable_rounded,
+      'Connected systems',
+      'Bring your website, applications and business workflows together.'
+    ),
+    (
+      Icons.trending_up_rounded,
+      'Room to grow',
+      'A considered technical foundation for your next stage of growth.'
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.page, AppSpacing.xxl, AppSpacing.page, 0),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.page, AppSpacing.xxl, AppSpacing.page, 0,),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Semantics(header: true, child: Text('Good technology. A clear purpose.', style: context.text.headlineSmall)),
+          Semantics(
+              header: true,
+              child: Text('Good technology. A clear purpose.',
+                  style: context.text.headlineSmall,),),
           const SizedBox(height: AppSpacing.sm),
           Text(
             'Your digital tools should make business easier. We bring design and development '
             'together with a focus on the people using them.',
-            style: context.text.bodyMedium?.copyWith(color: context.brand.muted),
+            style:
+                context.text.bodyMedium?.copyWith(color: context.brand.muted),
           ),
           const SizedBox(height: AppSpacing.lg),
           for (final (icon, title, body) in _items)
@@ -205,7 +236,8 @@ class _WhyBusiserve extends StatelessWidget {
                       color: context.colors.secondaryContainer,
                       borderRadius: BorderRadius.circular(AppRadius.chip),
                     ),
-                    child: Icon(icon, size: 20, color: context.colors.onSecondaryContainer),
+                    child: Icon(icon,
+                        size: 20, color: context.colors.onSecondaryContainer,),
                   ),
                   const SizedBox(width: AppSpacing.lg),
                   Expanded(
@@ -214,7 +246,9 @@ class _WhyBusiserve extends StatelessWidget {
                       children: [
                         Text(title, style: context.text.titleMedium),
                         const SizedBox(height: 2),
-                        Text(body, style: context.text.bodyMedium?.copyWith(color: context.brand.muted)),
+                        Text(body,
+                            style: context.text.bodyMedium
+                                ?.copyWith(color: context.brand.muted),),
                       ],
                     ),
                   ),

@@ -22,16 +22,23 @@ class TicketCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(child: Text(ticket.subject, style: context.text.titleMedium, maxLines: 2)),
+              Expanded(
+                  child: Text(ticket.subject,
+                      style: context.text.titleMedium, maxLines: 2,),),
               StatusChip(label: ticket.status.label, tone: ticket.status.tone),
             ],
           ),
           if (ticket.lastMessage != null) ...[
             const SizedBox(height: AppSpacing.sm),
-            Text(ticket.lastMessage!, maxLines: 2, overflow: TextOverflow.ellipsis, style: context.text.bodyMedium),
+            Text(ticket.lastMessage!,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: context.text.bodyMedium,),
           ],
           const SizedBox(height: AppSpacing.md),
-          Text('${ticket.category.label}, ${Formatters.relative(ticket.updatedAt)}', style: context.text.bodySmall),
+          Text(
+              '${ticket.category.label}, ${Formatters.relative(ticket.updatedAt)}',
+              style: context.text.bodySmall,),
         ],
       ),
     );
@@ -54,14 +61,17 @@ class MessageBubble extends StatelessWidget {
     return Align(
       alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.78),
+        constraints:
+            BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.78),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
           child: Column(
-            crossAxisAlignment: mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            crossAxisAlignment:
+                mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
                   color: mine ? AppColors.ink : context.colors.surface,
                   borderRadius: radius,
@@ -69,7 +79,8 @@ class MessageBubble extends StatelessWidget {
                 ),
                 child: SelectableText(
                   message.text,
-                  style: context.text.bodyMedium?.copyWith(color: mine ? Colors.white : null),
+                  style: context.text.bodyMedium
+                      ?.copyWith(color: mine ? Colors.white : null),
                 ),
               ),
               const SizedBox(height: 2),

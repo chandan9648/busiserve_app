@@ -9,7 +9,8 @@ enum RateLimit {
   ticket(cooldown: Duration(minutes: 2), perDay: 5, noun: 'support requests'),
   message(cooldown: Duration(seconds: 3), perDay: 200, noun: 'messages');
 
-  const RateLimit({required this.cooldown, required this.perDay, required this.noun});
+  const RateLimit(
+      {required this.cooldown, required this.perDay, required this.noun,});
   final Duration cooldown;
   final int perDay;
   final String noun;
@@ -39,7 +40,8 @@ class RateLimits {
     final last = data?['last'];
     final count = (data?['count'] as num?)?.toInt() ?? 0;
 
-    final inWindow = windowStart is Timestamp && now.isBefore(windowStart.toDate().add(window));
+    final inWindow = windowStart is Timestamp &&
+        now.isBefore(windowStart.toDate().add(window));
     if (!inWindow) {
       batch.set(ref, {
         'last': FieldValue.serverTimestamp(),
@@ -56,7 +58,8 @@ class RateLimits {
       );
     }
     if (last is Timestamp && now.isBefore(last.toDate().add(limit.cooldown))) {
-      throw const RateLimitException('Please wait a moment before sending again.');
+      throw const RateLimitException(
+          'Please wait a moment before sending again.',);
     }
     batch.set(ref, {
       'last': FieldValue.serverTimestamp(),

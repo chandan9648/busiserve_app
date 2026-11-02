@@ -3,8 +3,18 @@ class Formatters {
   Formatters._();
 
   static const List<String> _months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
   static String date(DateTime? d) {
@@ -50,7 +60,8 @@ class Formatters {
       if (rest.isNotEmpty) groups.insert(0, rest);
       whole = '${groups.join(',')},$last3';
     } else {
-      whole = whole.replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
+      whole =
+          whole.replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
     }
     final value = decimals == '00' ? whole : '$whole.$decimals';
     return '${negative ? '-' : ''}$symbol$value';

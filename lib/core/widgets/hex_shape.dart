@@ -37,7 +37,8 @@ class HexClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) => hexagonPath(size, cornerRadius: cornerRadius);
   @override
-  bool shouldReclip(HexClipper oldClipper) => oldClipper.cornerRadius != cornerRadius;
+  bool shouldReclip(HexClipper oldClipper) =>
+      oldClipper.cornerRadius != cornerRadius;
 }
 
 /// Icon inside a filled hexagon. Used for service icons and status marks.
@@ -95,14 +96,16 @@ class HexLatticePainter extends CustomPainter {
     for (var y = -r; y < size.height + r; y += dy, row++) {
       final offset = row.isOdd ? dx / 2 : 0.0;
       for (var x = -dx + offset; x < size.width + dx; x += dx) {
-        final hex = hexagonPath(const Size(r * 1.732, r * 2)).shift(Offset(x, y));
+        final hex =
+            hexagonPath(const Size(r * 1.732, r * 2)).shift(Offset(x, y));
         canvas.drawPath(hex, stroke);
       }
     }
     if (accent != null) {
       final trace = Paint()
-        ..shader = LinearGradient(colors: [accent!.withValues(alpha: 0), accent!])
-            .createShader(Offset.zero & size)
+        ..shader =
+            LinearGradient(colors: [accent!.withValues(alpha: 0), accent!])
+                .createShader(Offset.zero & size)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 3
         ..strokeCap = StrokeCap.round

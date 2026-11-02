@@ -29,7 +29,9 @@ class TicketsController extends GetxController {
       _sub = _repository.watchMine().listen(
             (list) => state.value = listState(list),
             onError: (Object e) => state.value = ErrorState(
-              e is AppException ? Failure.fromException(e) : const Failure('Something went wrong.', retryable: true),
+              e is AppException
+                  ? Failure.fromException(e)
+                  : const Failure('Something went wrong.', retryable: true),
             ),
           );
     } on AppException catch (e) {

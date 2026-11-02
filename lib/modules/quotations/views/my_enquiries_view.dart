@@ -19,7 +19,8 @@ class MyEnquiriesView extends GetView<MyEnquiriesController> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Enquiries and quotations'),
-          bottom: const TabBar(tabs: [Tab(text: 'Enquiries'), Tab(text: 'Quotations')]),
+          bottom: const TabBar(
+              tabs: [Tab(text: 'Enquiries'), Tab(text: 'Quotations')],),
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: controller.newEnquiry,
@@ -34,9 +35,12 @@ class MyEnquiriesView extends GetView<MyEnquiriesController> {
                   state: controller.enquiries.value,
                   onRetry: controller.loadEnquiries,
                   emptyTitle: 'No enquiries yet',
-                  emptyMessage: 'Enquiries you send while signed in appear here with their status.',
+                  emptyMessage:
+                      'Enquiries you send while signed in appear here with their status.',
                   emptyIcon: Icons.mark_chat_unread_outlined,
-                  builder: (items) => _List(children: [for (final e in items) EnquiryTile(enquiry: e)]),
+                  builder: (items) => _List(children: [
+                    for (final e in items) EnquiryTile(enquiry: e),
+                  ],),
                 ),
               ),
               Obx(
@@ -44,11 +48,15 @@ class MyEnquiriesView extends GetView<MyEnquiriesController> {
                   state: controller.quotations.value,
                   onRetry: controller.loadQuotations,
                   emptyTitle: 'No quotations yet',
-                  emptyMessage: 'When we prepare a quotation for you, it will appear here.',
+                  emptyMessage:
+                      'When we prepare a quotation for you, it will appear here.',
                   emptyIcon: Icons.request_quote_outlined,
                   builder: (items) => _List(
                     children: [
-                      for (final q in items) QuotationTile(quotation: q, onTap: () => controller.openQuotation(q)),
+                      for (final q in items)
+                        QuotationTile(
+                            quotation: q,
+                            onTap: () => controller.openQuotation(q),),
                     ],
                   ),
                 ),
@@ -68,7 +76,8 @@ class _List extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.page, AppSpacing.lg, AppSpacing.page, 96),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.page, AppSpacing.lg, AppSpacing.page, 96,),
       itemCount: children.length,
       separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (_, i) => children[i],

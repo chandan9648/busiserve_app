@@ -9,13 +9,15 @@ class SecureStorageService extends GetxService {
       : _storage = storage ??
             const FlutterSecureStorage(
               aOptions: AndroidOptions(encryptedSharedPreferences: true),
-              iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+              iOptions:
+                  IOSOptions(accessibility: KeychainAccessibility.first_unlock),
             );
 
   final FlutterSecureStorage _storage;
   static const _apiToken = 'api_access_token';
 
   Future<String?> readApiToken() => _storage.read(key: _apiToken);
-  Future<void> writeApiToken(String token) => _storage.write(key: _apiToken, value: token);
+  Future<void> writeApiToken(String token) =>
+      _storage.write(key: _apiToken, value: token);
   Future<void> clear() => _storage.deleteAll();
 }

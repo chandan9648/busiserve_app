@@ -41,7 +41,8 @@ class PortfolioController extends GetxController {
 
   void _apply() {
     final i = industry.value;
-    state.value = listState(i == null ? _all : _all.where((c) => c.industry == i).toList());
+    state.value = listState(
+        i == null ? _all : _all.where((c) => c.industry == i).toList(),);
   }
 
   void open(CaseStudyModel c) => Get.toNamed(Routes.caseStudyPath(c.id));

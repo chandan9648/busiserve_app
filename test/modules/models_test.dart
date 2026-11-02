@@ -27,13 +27,16 @@ void main() {
       final back = ServiceModel.fromMap(s.toMap());
       expect(back.id, s.id);
       expect(back.category, ServiceCategory.webAndApps);
-      expect(back.websiteUrl, 'https://www.busiserve.in/services/web-development');
+      expect(
+          back.websiteUrl, 'https://www.busiserve.in/services/web-development',);
     });
     test('missing title throws DataParsingException', () {
-      expect(() => ServiceModel.fromMap({'id': 'x'}), throwsA(isA<DataParsingException>()));
+      expect(() => ServiceModel.fromMap({'id': 'x'}),
+          throwsA(isA<DataParsingException>()),);
     });
     test('unknown category falls back safely', () {
-      final s = ServiceModel.fromMap({'title': 'T', 'category': 'nonsense'}, id: 'x');
+      final s =
+          ServiceModel.fromMap({'title': 'T', 'category': 'nonsense'}, id: 'x');
       expect(s.category, ServiceCategory.webAndApps);
       expect(s.order, 999);
     });
@@ -54,12 +57,15 @@ void main() {
 
   group('EnquiryModel', () {
     test('parses Timestamp and status', () {
-      final e = EnquiryModel.fromMap({
-        'subject': 'app-development',
-        'message': 'Need an app',
-        'status': 'in_review',
-        'createdAt': Timestamp.fromDate(DateTime.utc(2026, 1, 2)),
-      }, id: '3b241101-e2bb-4255-8caf-4136c566a962',);
+      final e = EnquiryModel.fromMap(
+        {
+          'subject': 'app-development',
+          'message': 'Need an app',
+          'status': 'in_review',
+          'createdAt': Timestamp.fromDate(DateTime.utc(2026, 1, 2)),
+        },
+        id: '3b241101-e2bb-4255-8caf-4136c566a962',
+      );
       expect(e.status, EnquiryStatus.inReview);
       expect(e.subjectLabel, 'Mobile App Development');
       expect(e.createdAt, DateTime.utc(2026, 1, 2));
@@ -84,36 +90,54 @@ void main() {
 
   group('QuotationModel', () {
     test('computes totals when missing', () {
-      final q = QuotationModel.fromMap({
-        'title': 'Website',
-        'items': [
-          {'description': 'Design', 'quantity': 1, 'unitPrice': 20000},
-          {'description': 'Pages', 'quantity': 5, 'unitPrice': 3000},
-        ],
-        'tax': 6300,
-      }, id: 'q1',);
+      final q = QuotationModel.fromMap(
+        {
+          'title': 'Website',
+          'items': [
+            {'description': 'Design', 'quantity': 1, 'unitPrice': 20000},
+            {'description': 'Pages', 'quantity': 5, 'unitPrice': 3000},
+          ],
+          'tax': 6300,
+        },
+        id: 'q1',
+      );
       expect(q.subtotal, 35000);
       expect(q.total, 41300);
       expect(q.status, QuotationStatus.sent);
     });
     test('expiry', () {
-      final q = QuotationModel.fromMap({'validUntil': DateTime(2026, 1, 1)}, id: 'q');
+      final q =
+          QuotationModel.fromMap({'validUntil': DateTime(2026, 1, 1)}, id: 'q');
       expect(q.isExpiredAt(DateTime(2026, 2, 1)), isTrue);
     });
   });
 
   test('ProjectModel clamps progress', () {
     expect(ProjectModel.fromMap({'progress': 140}, id: 'p').progress, 100);
-    expect(ProjectModel.fromMap({'progress': '45', 'status': 'in_progress'}, id: 'p').status, ProjectStatus.inProgress);
-    expect(MilestoneModel.fromMap({'status': 'done'}, id: 'm').status, MilestoneStatus.done);
+    expect(
+        ProjectModel.fromMap({'progress': '45', 'status': 'in_progress'},
+                id: 'p',)
+            .status,
+        ProjectStatus.inProgress,);
+    expect(MilestoneModel.fromMap({'status': 'done'}, id: 'm').status,
+        MilestoneStatus.done,);
   });
 
   test('TicketModel and TicketMessage', () {
-    final t = TicketModel.fromMap({'status': 'awaiting_customer', 'category': 'billing'}, id: 't');
+    final t = TicketModel.fromMap(
+        {'status': 'awaiting_customer', 'category': 'billing'},
+        id: 't',);
     expect(t.status, TicketStatus.awaitingCustomer);
     expect(t.category, TicketCategory.billing);
-    expect(TicketModel.fromMap({'status': 'closed'}, id: 't').status.acceptsReplies, isFalse);
-    expect(TicketMessage.fromMap({'authorRole': 'staff', 'text': 'Hi'}, id: 'm').fromStaff, isTrue);
+    expect(
+        TicketModel.fromMap({'status': 'closed'}, id: 't')
+            .status
+            .acceptsReplies,
+        isFalse,);
+    expect(
+        TicketMessage.fromMap({'authorRole': 'staff', 'text': 'Hi'}, id: 'm')
+            .fromStaff,
+        isTrue,);
   });
 
   test('NotificationModel defaults', () {
@@ -123,8 +147,12 @@ void main() {
   });
 
   test('CaseStudyModel and UserModel', () {
-    expect(CaseStudyModel.fromMap({'title': 'X'}, id: 'x').industry, 'Technology');
-    expect(const UserModel(uid: 'u', name: 'Chandan Kumar', email: 'c@x.in').initials, 'CK');
+    expect(
+        CaseStudyModel.fromMap({'title': 'X'}, id: 'x').industry, 'Technology',);
+    expect(
+        const UserModel(uid: 'u', name: 'Chandan Kumar', email: 'c@x.in')
+            .initials,
+        'CK',);
     expect(const UserModel(uid: 'u', name: '', email: 'c@x.in').initials, 'C');
   });
 }

@@ -9,7 +9,9 @@ class NotificationsBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut(
-      () => NotificationRepository(remote: FirestoreNotificationDataSource(), session: Get.find<AuthSession>()),
+      () => NotificationRepository(
+          remote: FirestoreNotificationDataSource(),
+          session: Get.find<AuthSession>(),),
     );
     Get.lazyPut(() => NotificationsController(Get.find()));
   }

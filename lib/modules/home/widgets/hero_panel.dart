@@ -22,7 +22,10 @@ class HeroPanel extends StatelessWidget {
         gradient: AppColors.hero,
         borderRadius: BorderRadius.circular(AppRadius.panel),
         boxShadow: [
-          BoxShadow(color: AppColors.ink.withValues(alpha: 0.28), blurRadius: 30, offset: const Offset(0, 14)),
+          BoxShadow(
+              color: AppColors.ink.withValues(alpha: 0.28),
+              blurRadius: 30,
+              offset: const Offset(0, 14),),
         ],
       ),
       clipBehavior: Clip.antiAlias,
@@ -37,26 +40,30 @@ class HeroPanel extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.xxl, AppSpacing.xl, AppSpacing.xl),
+            padding: const EdgeInsets.fromLTRB(
+                AppSpacing.xl, AppSpacing.xxl, AppSpacing.xl, AppSpacing.xl,),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Your digital development partner',
-                  style: context.text.bodyMedium?.copyWith(color: AppColors.sky, fontWeight: FontWeight.w700),
+                  style: context.text.bodyMedium?.copyWith(
+                      color: AppColors.sky, fontWeight: FontWeight.w700,),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Semantics(
                   header: true,
                   child: Text(
                     CompanyInfo.tagline,
-                    style: context.text.displaySmall?.copyWith(color: Colors.white),
+                    style: context.text.displaySmall
+                        ?.copyWith(color: Colors.white),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
                   CompanyInfo.intro,
-                  style: context.text.bodyLarge?.copyWith(color: Colors.white.withValues(alpha: 0.8)),
+                  style: context.text.bodyLarge
+                      ?.copyWith(color: Colors.white.withValues(alpha: 0.8)),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 const Wrap(
@@ -103,7 +110,8 @@ class _Pill extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: context.text.bodySmall?.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+        style: context.text.bodySmall
+            ?.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
       ),
     );
   }

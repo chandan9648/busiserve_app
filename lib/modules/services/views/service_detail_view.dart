@@ -31,7 +31,8 @@ class ServiceDetailView extends GetView<ServiceDetailController> {
             ? const SizedBox.shrink()
             : SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(AppSpacing.page, AppSpacing.sm, AppSpacing.page, AppSpacing.md),
+                  padding: const EdgeInsets.fromLTRB(AppSpacing.page,
+                      AppSpacing.sm, AppSpacing.page, AppSpacing.md,),
                   child: AppButton(
                     label: 'Discuss this service',
                     icon: Icons.chat_bubble_outline_rounded,
@@ -49,10 +50,22 @@ class _Body extends StatelessWidget {
   final ServiceModel service;
 
   static const _principles = [
-    ('Built around your business', 'Shaped around the way you work and the customers you serve.'),
-    ('Easy to use', 'Clear layouts and thoughtful interactions that make everyday tasks simpler.'),
-    ('Connected systems', 'Your website, applications and business workflows, together.'),
-    ('Room to grow', 'A considered technical foundation for your next stage of growth.'),
+    (
+      'Built around your business',
+      'Shaped around the way you work and the customers you serve.'
+    ),
+    (
+      'Easy to use',
+      'Clear layouts and thoughtful interactions that make everyday tasks simpler.'
+    ),
+    (
+      'Connected systems',
+      'Your website, applications and business workflows, together.'
+    ),
+    (
+      'Room to grow',
+      'A considered technical foundation for your next stage of growth.'
+    ),
   ];
 
   @override
@@ -60,18 +73,28 @@ class _Body extends StatelessWidget {
     final controller = Get.find<ServiceDetailController>();
     return ResponsiveBody(
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(AppSpacing.page, 0, AppSpacing.page, AppSpacing.xxl),
+        padding: const EdgeInsets.fromLTRB(
+            AppSpacing.page, 0, AppSpacing.page, AppSpacing.xxl,),
         children: [
-          HexBadge(icon: serviceIcon(service.iconKey), size: 72, gradient: AppColors.circuit),
+          HexBadge(
+              icon: serviceIcon(service.iconKey),
+              size: 72,
+              gradient: AppColors.circuit,),
           const SizedBox(height: AppSpacing.xl),
-          Semantics(header: true, child: Text(service.title, style: context.text.headlineMedium)),
+          Semantics(
+              header: true,
+              child: Text(service.title, style: context.text.headlineMedium),),
           const SizedBox(height: AppSpacing.sm),
-          Text(service.summary, style: context.text.bodyLarge?.copyWith(color: context.brand.muted)),
+          Text(service.summary,
+              style:
+                  context.text.bodyLarge?.copyWith(color: context.brand.muted),),
           const SizedBox(height: AppSpacing.lg),
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
-            children: [for (final f in service.focusAreas) Chip(label: Text(f))],
+            children: [
+              for (final f in service.focusAreas) Chip(label: Text(f)),
+            ],
           ),
           if (service.description != null) ...[
             const SizedBox(height: AppSpacing.xl),
@@ -87,7 +110,8 @@ class _Body extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.check_circle_rounded, size: 20, color: context.brand.success),
+                    Icon(Icons.check_circle_rounded,
+                        size: 20, color: context.brand.success,),
                     const SizedBox(width: AppSpacing.md),
                     Expanded(child: Text(h, style: context.text.bodyMedium)),
                   ],
@@ -118,9 +142,11 @@ class _Body extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(_principles[i].$1, style: context.text.titleSmall),
+                            Text(_principles[i].$1,
+                                style: context.text.titleSmall,),
                             const SizedBox(height: 2),
-                            Text(_principles[i].$2, style: context.text.bodySmall),
+                            Text(_principles[i].$2,
+                                style: context.text.bodySmall,),
                           ],
                         ),
                       ),

@@ -8,7 +8,9 @@ import '../repositories/auth_repository.dart';
 class LoginController extends GetxController {
   LoginController(this._repository, {String? redirect})
       : redirect = redirect ??
-            (Get.arguments is Map ? (Get.arguments as Map)['redirect'] as String? : null);
+            (Get.arguments is Map
+                ? (Get.arguments as Map)['redirect'] as String?
+                : null);
 
   final AuthRepository _repository;
   final String? redirect;
@@ -41,9 +43,10 @@ class LoginController extends GetxController {
     }
   }
 
-  void goToRegister() => Get.offNamed<void>(Routes.register, arguments: {'redirect': redirect});
-  void goToForgotPassword() =>
-      Get.toNamed<void>(Routes.forgotPassword, arguments: {'email': emailCtrl.text.trim()});
+  void goToRegister() =>
+      Get.offNamed<void>(Routes.register, arguments: {'redirect': redirect});
+  void goToForgotPassword() => Get.toNamed<void>(Routes.forgotPassword,
+      arguments: {'email': emailCtrl.text.trim()},);
 
   @override
   void onClose() {

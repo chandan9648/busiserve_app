@@ -18,7 +18,10 @@ class NotificationsView extends GetView<NotificationsController> {
         actions: [
           Obx(
             () => TextButton(
-              onPressed: controller.unreadCount == 0 || controller.isMarkingAll.value ? null : controller.markAllRead,
+              onPressed:
+                  controller.unreadCount == 0 || controller.isMarkingAll.value
+                      ? null
+                      : controller.markAllRead,
               child: const Text('Mark all read'),
             ),
           ),
@@ -30,12 +33,15 @@ class NotificationsView extends GetView<NotificationsController> {
             state: controller.state.value,
             onRetry: controller.load,
             emptyTitle: 'You are all caught up',
-            emptyMessage: 'Updates on enquiries, quotations, projects and support will appear here.',
+            emptyMessage:
+                'Updates on enquiries, quotations, projects and support will appear here.',
             emptyIcon: Icons.notifications_none_rounded,
             builder: (items) => ListView.separated(
               itemCount: items.length,
               separatorBuilder: (_, __) => const Divider(),
-              itemBuilder: (_, i) => NotificationTile(notification: items[i], onTap: () => controller.open(items[i])),
+              itemBuilder: (_, i) => NotificationTile(
+                  notification: items[i],
+                  onTap: () => controller.open(items[i]),),
             ),
           ),
         ),

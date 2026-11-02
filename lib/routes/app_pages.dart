@@ -42,44 +42,97 @@ import 'middlewares.dart';
 /// same boundary on the server.
 abstract final class AppPages {
   static List<GetPage<dynamic>> get routes => [
-        GetPage(name: Routes.splash, page: () => const SplashView(), binding: SplashBinding()),
-        GetPage(name: Routes.onboarding, page: () => const OnboardingView(), binding: OnboardingBinding()),
-        GetPage(name: Routes.main, page: () => const MainView(), binding: MainBinding()),
+        GetPage(
+            name: Routes.splash,
+            page: () => const SplashView(),
+            binding: SplashBinding(),),
+        GetPage(
+            name: Routes.onboarding,
+            page: () => const OnboardingView(),
+            binding: OnboardingBinding(),),
+        GetPage(
+            name: Routes.main,
+            page: () => const MainView(),
+            binding: MainBinding(),),
 
         // Public
-        GetPage(name: Routes.serviceDetail, page: () => const ServiceDetailView(), binding: ServiceDetailBinding()),
+        GetPage(
+            name: Routes.serviceDetail,
+            page: () => const ServiceDetailView(),
+            binding: ServiceDetailBinding(),),
         GetPage(
           name: Routes.caseStudyDetail,
           page: () => const CaseStudyDetailView(),
           binding: CaseStudyDetailBinding(),
         ),
-        GetPage(name: Routes.enquiry, page: () => const EnquiryFormView(), binding: EnquiryBinding()),
-        GetPage(name: Routes.enquirySuccess, page: () => const EnquirySuccessView()),
-        GetPage(name: Routes.login, page: () => const LoginView(), binding: LoginBinding()),
-        GetPage(name: Routes.register, page: () => const RegisterView(), binding: RegisterBinding()),
+        GetPage(
+            name: Routes.enquiry,
+            page: () => const EnquiryFormView(),
+            binding: EnquiryBinding(),),
+        GetPage(
+            name: Routes.enquirySuccess,
+            page: () => const EnquirySuccessView(),),
+        GetPage(
+            name: Routes.login,
+            page: () => const LoginView(),
+            binding: LoginBinding(),),
+        GetPage(
+            name: Routes.register,
+            page: () => const RegisterView(),
+            binding: RegisterBinding(),),
         GetPage(
           name: Routes.forgotPassword,
           page: () => const ForgotPasswordView(),
           binding: ForgotPasswordBinding(),
         ),
-        GetPage(name: Routes.privacy, page: () => const PrivacySettingsView(), binding: PrivacyBinding()),
+        GetPage(
+            name: Routes.privacy,
+            page: () => const PrivacySettingsView(),
+            binding: PrivacyBinding(),),
 
         // Signed-in only
         ..._protected([
-          GetPage(name: Routes.editProfile, page: () => const EditProfileView(), binding: EditProfileBinding()),
-          GetPage(name: Routes.myEnquiries, page: () => const MyEnquiriesView(), binding: MyEnquiriesBinding()),
+          GetPage(
+              name: Routes.editProfile,
+              page: () => const EditProfileView(),
+              binding: EditProfileBinding(),),
+          GetPage(
+              name: Routes.myEnquiries,
+              page: () => const MyEnquiriesView(),
+              binding: MyEnquiriesBinding(),),
           GetPage(
             name: Routes.quotationDetail,
             page: () => const QuotationDetailView(),
             binding: QuotationDetailBinding(),
           ),
-          GetPage(name: Routes.projects, page: () => const ProjectsView(), binding: ProjectsBinding()),
-          GetPage(name: Routes.projectDetail, page: () => const ProjectDetailView(), binding: ProjectDetailBinding()),
-          GetPage(name: Routes.notifications, page: () => const NotificationsView(), binding: NotificationsBinding()),
-          GetPage(name: Routes.tickets, page: () => const TicketsView(), binding: TicketsBinding()),
-          GetPage(name: Routes.createTicket, page: () => const CreateTicketView(), binding: CreateTicketBinding()),
-          GetPage(name: Routes.ticketDetail, page: () => const TicketDetailView(), binding: TicketDetailBinding()),
-          GetPage(name: Routes.deleteAccount, page: () => const DeleteAccountView(), binding: DeleteAccountBinding()),
+          GetPage(
+              name: Routes.projects,
+              page: () => const ProjectsView(),
+              binding: ProjectsBinding(),),
+          GetPage(
+              name: Routes.projectDetail,
+              page: () => const ProjectDetailView(),
+              binding: ProjectDetailBinding(),),
+          GetPage(
+              name: Routes.notifications,
+              page: () => const NotificationsView(),
+              binding: NotificationsBinding(),),
+          GetPage(
+              name: Routes.tickets,
+              page: () => const TicketsView(),
+              binding: TicketsBinding(),),
+          GetPage(
+              name: Routes.createTicket,
+              page: () => const CreateTicketView(),
+              binding: CreateTicketBinding(),),
+          GetPage(
+              name: Routes.ticketDetail,
+              page: () => const TicketDetailView(),
+              binding: TicketDetailBinding(),),
+          GetPage(
+              name: Routes.deleteAccount,
+              page: () => const DeleteAccountView(),
+              binding: DeleteAccountBinding(),),
         ]),
       ];
 

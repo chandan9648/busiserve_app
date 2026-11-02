@@ -16,8 +16,13 @@ class MenuGroup extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: AppSpacing.xs, bottom: AppSpacing.sm),
-            child: Semantics(header: true, child: Text(title, style: context.text.titleSmall?.copyWith(color: context.brand.muted))),
+            padding: const EdgeInsets.only(
+                left: AppSpacing.xs, bottom: AppSpacing.sm,),
+            child: Semantics(
+                header: true,
+                child: Text(title,
+                    style: context.text.titleSmall
+                        ?.copyWith(color: context.brand.muted),),),
           ),
           Card(
             clipBehavior: Clip.antiAlias,
@@ -59,9 +64,15 @@ class MenuTile extends StatelessWidget {
     final color = destructive ? context.brand.danger : null;
     return ListTile(
       leading: Icon(icon, color: color),
-      title: Text(title, style: context.text.titleSmall?.copyWith(color: color)),
-      subtitle: subtitle == null ? null : Text(subtitle!, style: context.text.bodySmall),
-      trailing: trailing ?? (onTap == null ? null : Icon(Icons.chevron_right_rounded, color: context.brand.muted)),
+      title:
+          Text(title, style: context.text.titleSmall?.copyWith(color: color)),
+      subtitle: subtitle == null
+          ? null
+          : Text(subtitle!, style: context.text.bodySmall),
+      trailing: trailing ??
+          (onTap == null
+              ? null
+              : Icon(Icons.chevron_right_rounded, color: context.brand.muted)),
       onTap: onTap,
       shape: const RoundedRectangleBorder(),
     );

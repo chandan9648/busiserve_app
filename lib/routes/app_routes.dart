@@ -26,9 +26,13 @@ abstract final class Routes {
   static const privacy = '/privacy';
   static const deleteAccount = '/delete-account';
 
-  static String serviceDetailPath(String id) => '/services/${Uri.encodeComponent(id)}';
-  static String caseStudyPath(String id) => '/case-studies/${Uri.encodeComponent(id)}';
-  static String quotationPath(String id) => '/quotations/${Uri.encodeComponent(id)}';
-  static String projectPath(String id) => '/projects/${Uri.encodeComponent(id)}';
+  static String serviceDetailPath(String id) =>
+      '/services/${Uri.encodeComponent(id)}';
+  static String caseStudyPath(String id) =>
+      '/case-studies/${Uri.encodeComponent(id)}';
+  static String quotationPath(String id) =>
+      '/quotations/${Uri.encodeComponent(id)}';
+  static String projectPath(String id) =>
+      '/projects/${Uri.encodeComponent(id)}';
   static String ticketPath(String id) => '/tickets/${Uri.encodeComponent(id)}';
 }

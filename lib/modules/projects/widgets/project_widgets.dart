@@ -22,10 +22,14 @@ class ProgressBar extends StatelessWidget {
           height: 8,
           child: Stack(
             children: [
-              Container(color: onDark ? Colors.white.withValues(alpha: 0.15) : context.brand.line),
+              Container(
+                  color: onDark
+                      ? Colors.white.withValues(alpha: 0.15)
+                      : context.brand.line,),
               FractionallySizedBox(
                 widthFactor: percent / 100,
-                child: Container(decoration: const BoxDecoration(gradient: AppColors.arrow)),
+                child: Container(
+                    decoration: const BoxDecoration(gradient: AppColors.arrow),),
               ),
             ],
           ),
@@ -44,14 +48,17 @@ class ProjectCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       onTap: onTap,
-      semanticLabel: '${project.title}, ${project.status.label}, ${project.progress} percent',
+      semanticLabel:
+          '${project.title}, ${project.status.label}, ${project.progress} percent',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Expanded(child: Text(project.title, style: context.text.titleMedium)),
-              StatusChip(label: project.status.label, tone: project.status.tone),
+              Expanded(
+                  child: Text(project.title, style: context.text.titleMedium),),
+              StatusChip(
+                  label: project.status.label, tone: project.status.tone,),
             ],
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -59,10 +66,12 @@ class ProjectCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Row(
             children: [
-              Text('${project.progress}% complete', style: context.text.bodySmall),
+              Text('${project.progress}% complete',
+                  style: context.text.bodySmall,),
               const Spacer(),
               if (project.targetDate != null)
-                Text('Target ${Formatters.date(project.targetDate)}', style: context.text.bodySmall),
+                Text('Target ${Formatters.date(project.targetDate)}',
+                    style: context.text.bodySmall,),
             ],
           ),
         ],
@@ -81,14 +90,18 @@ class MilestoneTimeline extends StatelessWidget {
     return Column(
       children: [
         for (var i = 0; i < milestones.length; i++)
-          _MilestoneRow(milestone: milestones[i], number: i + 1, isLast: i == milestones.length - 1),
+          _MilestoneRow(
+              milestone: milestones[i],
+              number: i + 1,
+              isLast: i == milestones.length - 1,),
       ],
     );
   }
 }
 
 class _MilestoneRow extends StatelessWidget {
-  const _MilestoneRow({required this.milestone, required this.number, required this.isLast});
+  const _MilestoneRow(
+      {required this.milestone, required this.number, required this.isLast,});
   final MilestoneModel milestone;
   final int number;
   final bool isLast;
@@ -112,15 +125,22 @@ class _MilestoneRow extends StatelessWidget {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: done ? AppColors.arrow : (active ? AppColors.circuit : null),
+                    gradient: done
+                        ? AppColors.arrow
+                        : (active ? AppColors.circuit : null),
                     color: done || active ? null : context.colors.surface,
-                    border: done || active ? null : Border.all(color: line, width: 2),
+                    border: done || active
+                        ? null
+                        : Border.all(color: line, width: 2),
                   ),
                   child: done
-                      ? const Icon(Icons.check_rounded, size: 18, color: Colors.white)
+                      ? const Icon(Icons.check_rounded,
+                          size: 18, color: Colors.white,)
                       : Text(
                           '$number',
-                          style: context.text.titleSmall?.copyWith(color: active ? Colors.white : context.brand.muted),
+                          style: context.text.titleSmall?.copyWith(
+                              color:
+                                  active ? Colors.white : context.brand.muted,),
                         ),
                 ),
                 if (!isLast)
@@ -153,7 +173,8 @@ class _MilestoneRow extends StatelessWidget {
                   ),
                   if (milestone.description != null) ...[
                     const SizedBox(height: AppSpacing.sm),
-                    Text(milestone.description!, style: context.text.bodyMedium),
+                    Text(milestone.description!,
+                        style: context.text.bodyMedium,),
                   ],
                 ],
               ),

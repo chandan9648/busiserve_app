@@ -4,6 +4,7 @@ class DeletionRequest {
   final String? reason;
 
   Map<String, dynamic> toPayload() => {
-        if (reason != null && reason!.trim().isNotEmpty) 'reason': reason!.trim(),
+        if (reason != null && reason!.trim().isNotEmpty)
+          'reason': reason!.trim(),
       };
 }

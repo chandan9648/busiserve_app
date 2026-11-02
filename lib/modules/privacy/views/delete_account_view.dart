@@ -28,7 +28,8 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                 'Deleting your account signs you out everywhere and removes your profile, saved devices '
                 'and notifications. Enquiries, quotations, projects and support history are kept only '
                 'where we must keep business records, with your name and contact details removed.',
-                style: context.text.bodyMedium?.copyWith(color: context.brand.muted),
+                style: context.text.bodyMedium
+                    ?.copyWith(color: context.brand.muted),
               ),
               const SizedBox(height: AppSpacing.xl),
               Obx(
@@ -36,7 +37,9 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                     ? const SizedBox.shrink()
                     : Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                        child: InlineNotice(message: controller.errorMessage.value!, isError: true),
+                        child: InlineNotice(
+                            message: controller.errorMessage.value!,
+                            isError: true,),
                       ),
               ),
               AppTextField(
@@ -61,18 +64,23 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                   onChanged: (v) => controller.confirmed.value = v ?? false,
                   controlAffinity: ListTileControlAffinity.leading,
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('I understand my account will be permanently deleted.'),
+                  title: const Text(
+                      'I understand my account will be permanently deleted.',),
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
               Obx(
                 () => FilledButton.icon(
-                  style: FilledButton.styleFrom(backgroundColor: danger, foregroundColor: Colors.white),
-                  onPressed: controller.isDeleting.value ? null : controller.deleteAccount,
+                  style: FilledButton.styleFrom(
+                      backgroundColor: danger, foregroundColor: Colors.white,),
+                  onPressed: controller.isDeleting.value
+                      ? null
+                      : controller.deleteAccount,
                   icon: controller.isDeleting.value
                       ? const SizedBox.square(
                           dimension: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white,),
                         )
                       : const Icon(Icons.delete_forever_rounded),
                   label: const Text('Delete my account'),

@@ -9,7 +9,8 @@ import '../repositories/project_repository.dart';
 void _registerProjectRepository() {
   if (Get.isRegistered<ProjectRepository>()) return;
   Get.lazyPut(
-    () => ProjectRepository(remote: FirestoreProjectDataSource(), session: Get.find<AuthSession>()),
+    () => ProjectRepository(
+        remote: FirestoreProjectDataSource(), session: Get.find<AuthSession>(),),
     fenix: true,
   );
 }

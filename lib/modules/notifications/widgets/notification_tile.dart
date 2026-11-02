@@ -14,7 +14,8 @@ IconData _iconFor(NotificationType t) => switch (t) {
     };
 
 class NotificationTile extends StatelessWidget {
-  const NotificationTile({super.key, required this.notification, required this.onTap});
+  const NotificationTile(
+      {super.key, required this.notification, required this.onTap,});
   final NotificationModel notification;
   final VoidCallback onTap;
 
@@ -23,20 +24,25 @@ class NotificationTile extends StatelessWidget {
     final unread = !notification.read;
     return Semantics(
       button: true,
-      label: '${unread ? 'Unread. ' : ''}${notification.title}. ${notification.body}',
+      label:
+          '${unread ? 'Unread. ' : ''}${notification.title}. ${notification.body}',
       excludeSemantics: true,
       child: InkWell(
         onTap: onTap,
         child: Container(
-          color: unread ? context.colors.primaryContainer.withValues(alpha: 0.35) : null,
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page, vertical: AppSpacing.lg),
+          color: unread
+              ? context.colors.primaryContainer.withValues(alpha: 0.35)
+              : null,
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.page, vertical: AppSpacing.lg,),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CircleAvatar(
                 radius: 20,
                 backgroundColor: context.colors.secondaryContainer,
-                child: Icon(_iconFor(notification.type), size: 20, color: context.colors.onSecondaryContainer),
+                child: Icon(_iconFor(notification.type),
+                    size: 20, color: context.colors.onSecondaryContainer,),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
@@ -49,15 +55,20 @@ class NotificationTile extends StatelessWidget {
                           child: Text(
                             notification.title,
                             style: context.text.titleSmall?.copyWith(
-                              fontWeight: unread ? FontWeight.w800 : FontWeight.w600,
+                              fontWeight:
+                                  unread ? FontWeight.w800 : FontWeight.w600,
                             ),
                           ),
                         ),
-                        Text(Formatters.relative(notification.createdAt), style: context.text.bodySmall),
+                        Text(Formatters.relative(notification.createdAt),
+                            style: context.text.bodySmall,),
                       ],
                     ),
                     const SizedBox(height: 2),
-                    Text(notification.body, style: context.text.bodyMedium, maxLines: 3, overflow: TextOverflow.ellipsis),
+                    Text(notification.body,
+                        style: context.text.bodyMedium,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,),
                   ],
                 ),
               ),
@@ -67,7 +78,8 @@ class NotificationTile extends StatelessWidget {
                   width: 8,
                   height: 8,
                   margin: const EdgeInsets.only(top: 6),
-                  decoration: BoxDecoration(color: context.colors.secondary, shape: BoxShape.circle),
+                  decoration: BoxDecoration(
+                      color: context.colors.secondary, shape: BoxShape.circle,),
                 ),
               ],
             ],

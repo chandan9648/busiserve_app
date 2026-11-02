@@ -19,14 +19,21 @@ class EnquiryTile extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(child: Text(enquiry.subjectLabel, style: context.text.titleMedium)),
-              StatusChip(label: enquiry.status.label, tone: enquiry.status.tone),
+              Expanded(
+                  child: Text(enquiry.subjectLabel,
+                      style: context.text.titleMedium,),),
+              StatusChip(
+                  label: enquiry.status.label, tone: enquiry.status.tone,),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
-          Text(enquiry.message, maxLines: 2, overflow: TextOverflow.ellipsis, style: context.text.bodyMedium),
+          Text(enquiry.message,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: context.text.bodyMedium,),
           const SizedBox(height: AppSpacing.md),
-          Text('${enquiry.reference}, ${Formatters.date(enquiry.createdAt)}', style: context.text.bodySmall),
+          Text('${enquiry.reference}, ${Formatters.date(enquiry.createdAt)}',
+              style: context.text.bodySmall,),
         ],
       ),
     );
@@ -34,7 +41,8 @@ class EnquiryTile extends StatelessWidget {
 }
 
 class QuotationTile extends StatelessWidget {
-  const QuotationTile({super.key, required this.quotation, required this.onTap});
+  const QuotationTile(
+      {super.key, required this.quotation, required this.onTap,});
   final QuotationModel quotation;
   final VoidCallback onTap;
 
@@ -43,16 +51,23 @@ class QuotationTile extends StatelessWidget {
     final expired = quotation.isExpiredAt(DateTime.now());
     return AppCard(
       onTap: onTap,
-      semanticLabel: '${quotation.title}, ${Formatters.currency(quotation.total, currency: quotation.currency)}',
+      semanticLabel:
+          '${quotation.title}, ${Formatters.currency(quotation.total, currency: quotation.currency)}',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Expanded(child: Text(quotation.title, style: context.text.titleMedium)),
+              Expanded(
+                  child:
+                      Text(quotation.title, style: context.text.titleMedium),),
               StatusChip(
-                label: expired && quotation.status == QuotationStatus.sent ? 'Expired' : quotation.status.label,
-                tone: expired && quotation.status == QuotationStatus.sent ? StatusTone.neutral : quotation.status.tone,
+                label: expired && quotation.status == QuotationStatus.sent
+                    ? 'Expired'
+                    : quotation.status.label,
+                tone: expired && quotation.status == QuotationStatus.sent
+                    ? StatusTone.neutral
+                    : quotation.status.tone,
               ),
             ],
           ),
@@ -63,7 +78,9 @@ class QuotationTile extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            quotation.validUntil == null ? 'Sent ${Formatters.date(quotation.createdAt)}' : 'Valid until ${Formatters.date(quotation.validUntil)}',
+            quotation.validUntil == null
+                ? 'Sent ${Formatters.date(quotation.createdAt)}'
+                : 'Valid until ${Formatters.date(quotation.validUntil)}',
             style: context.text.bodySmall?.copyWith(color: context.brand.muted),
           ),
         ],

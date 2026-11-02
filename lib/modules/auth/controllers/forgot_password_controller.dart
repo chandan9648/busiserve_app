@@ -18,7 +18,9 @@ class ForgotPasswordController extends GetxController {
   void onInit() {
     super.onInit();
     final args = Get.arguments;
-    if (args is Map && args['email'] is String) emailCtrl.text = args['email'] as String;
+    if (args is Map && args['email'] is String) {
+      emailCtrl.text = args['email'] as String;
+    }
   }
 
   Future<void> send() async {

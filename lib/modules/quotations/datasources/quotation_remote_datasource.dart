@@ -19,11 +19,12 @@ class FirestoreQuotationDataSource implements QuotationRemoteDataSource {
       .orderBy('createdAt', descending: true)
       .limit(50)
       .snapshots()
-      .map((s) => s.docs.map((d) => QuotationModel.fromMap(d.data(), id: d.id)).toList());
+      .map((s) => s.docs
+          .map((d) => QuotationModel.fromMap(d.data(), id: d.id))
+          .toList(),);
 
   @override
-  Stream<QuotationModel?> watchById(String id) => _store
-      .doc('quotations/$id')
-      .snapshots()
-      .map((d) => d.exists ? QuotationModel.fromMap(d.data()!, id: d.id) : null);
+  Stream<QuotationModel?> watchById(String id) =>
+      _store.doc('quotations/$id').snapshots().map(
+          (d) => d.exists ? QuotationModel.fromMap(d.data()!, id: d.id) : null,);
 }

@@ -19,7 +19,9 @@ class FirestoreNotificationDataSource implements NotificationRemoteDataSource {
       .orderBy('createdAt', descending: true)
       .limit(100)
       .snapshots()
-      .map((s) => s.docs.map((d) => NotificationModel.fromMap(d.data(), id: d.id)).toList());
+      .map((s) => s.docs
+          .map((d) => NotificationModel.fromMap(d.data(), id: d.id))
+          .toList(),);
 
   @override
   Future<void> markRead(String uid, String id) =>
@@ -31,7 +33,8 @@ class FirestoreNotificationDataSource implements NotificationRemoteDataSource {
     for (var i = 0; i < ids.length; i += 450) {
       final batch = _store.batch();
       for (final id in ids.skip(i).take(450)) {
-        batch.update(_store.doc('users/$uid/notifications/$id'), {'read': true});
+        batch
+            .update(_store.doc('users/$uid/notifications/$id'), {'read': true});
       }
       await batch.commit();
     }

@@ -10,7 +10,8 @@ import '../models/project_model.dart';
 import '../repositories/project_repository.dart';
 
 class ProjectDetailController extends GetxController {
-  ProjectDetailController(this._repository, {String? id}) : projectId = id ?? Get.parameters['id'] ?? '';
+  ProjectDetailController(this._repository, {String? id})
+      : projectId = id ?? Get.parameters['id'] ?? '';
   final ProjectRepository _repository;
   final String projectId;
 
@@ -24,8 +25,9 @@ class ProjectDetailController extends GetxController {
     load();
   }
 
-  Failure _f(Object e) =>
-      e is AppException ? Failure.fromException(e) : const Failure('Something went wrong.', retryable: true);
+  Failure _f(Object e) => e is AppException
+      ? Failure.fromException(e)
+      : const Failure('Something went wrong.', retryable: true);
 
   void load() {
     for (final s in _subs) {
@@ -36,14 +38,18 @@ class ProjectDetailController extends GetxController {
     milestones.value = const LoadingState();
     try {
       _subs
-        ..add(_repository.watch(projectId).listen(
-              (p) => project.value = SuccessState(p),
-              onError: (Object e) => project.value = ErrorState(_f(e)),
-            ),)
-        ..add(_repository.watchMilestones(projectId).listen(
-              (m) => milestones.value = listState(m),
-              onError: (Object e) => milestones.value = ErrorState(_f(e)),
-            ),);
+        ..add(
+          _repository.watch(projectId).listen(
+                (p) => project.value = SuccessState(p),
+                onError: (Object e) => project.value = ErrorState(_f(e)),
+              ),
+        )
+        ..add(
+          _repository.watchMilestones(projectId).listen(
+                (m) => milestones.value = listState(m),
+                onError: (Object e) => milestones.value = ErrorState(_f(e)),
+              ),
+        );
     } on AppException catch (e) {
       project.value = ErrorState(Failure.fromException(e));
     }
@@ -53,7 +59,11 @@ class ProjectDetailController extends GetxController {
     final p = project.value.dataOrNull;
     Get.toNamed<void>(
       Routes.createTicket,
-      arguments: {'subject': 'About project: ${p?.title ?? ''}', 'category': 'project', 'relatedId': projectId},
+      arguments: {
+        'subject': 'About project: ${p?.title ?? ''}',
+        'category': 'project',
+        'relatedId': projectId,
+      },
     );
   }
 

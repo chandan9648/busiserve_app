@@ -32,18 +32,22 @@ void main() {
   }
 
   testWidgets('guest submits an enquiry', (tester) async {
-    expect(AppEnv.useFirebaseEmulator, isTrue, reason: 'Run against the emulator only.');
+    expect(AppEnv.useFirebaseEmulator, isTrue,
+        reason: 'Run against the emulator only.',);
     await start(tester);
     await tester.tap(find.text('Get a free consultation'));
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.widgetWithText(TextFormField, 'Full name'), 'Integration Tester');
-    await tester.enterText(find.widgetWithText(TextFormField, 'Work email'), 'tester@example.com');
+    await tester.enterText(
+        find.widgetWithText(TextFormField, 'Full name'), 'Integration Tester',);
+    await tester.enterText(
+        find.widgetWithText(TextFormField, 'Work email'), 'tester@example.com',);
     await tester.tap(find.text('Subject'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('General Inquiry').last);
     await tester.pumpAndSettle();
-    await tester.enterText(find.widgetWithText(TextFormField, 'Message'), 'Integration test enquiry message.');
+    await tester.enterText(find.widgetWithText(TextFormField, 'Message'),
+        'Integration test enquiry message.',);
     await tester.ensureVisible(find.text('Send message'));
     await tester.tap(find.text('Send message'));
     await tester.pumpAndSettle(const Duration(seconds: 5));
@@ -60,10 +64,13 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Create account').first);
     await tester.pumpAndSettle();
-    await tester.enterText(find.widgetWithText(TextFormField, 'Full name'), 'Test User');
+    await tester.enterText(
+        find.widgetWithText(TextFormField, 'Full name'), 'Test User',);
     await tester.enterText(find.widgetWithText(TextFormField, 'Email'), email);
-    await tester.enterText(find.widgetWithText(TextFormField, 'Password'), 'secure1234');
-    await tester.enterText(find.widgetWithText(TextFormField, 'Confirm password'), 'secure1234');
+    await tester.enterText(
+        find.widgetWithText(TextFormField, 'Password'), 'secure1234',);
+    await tester.enterText(
+        find.widgetWithText(TextFormField, 'Confirm password'), 'secure1234',);
     await tester.tap(find.byType(Checkbox));
     await tester.ensureVisible(find.text('Create account').last);
     await tester.tap(find.text('Create account').last);
@@ -76,7 +83,8 @@ void main() {
     await tester.tap(find.text('Sign in').first);
     await tester.pumpAndSettle();
     await tester.enterText(find.widgetWithText(TextFormField, 'Email'), email);
-    await tester.enterText(find.widgetWithText(TextFormField, 'Password'), 'secure1234');
+    await tester.enterText(
+        find.widgetWithText(TextFormField, 'Password'), 'secure1234',);
     await tester.tap(find.text('Sign in').last);
     await tester.pumpAndSettle(const Duration(seconds: 5));
     expect(find.text('Your work'), findsOneWidget);

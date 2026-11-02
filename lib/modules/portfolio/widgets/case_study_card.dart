@@ -15,7 +15,11 @@ IconData industryIcon(String industry) => switch (industry.toLowerCase()) {
 
 /// Navy panel with the hex lattice; the industry sits in an orange hexagon.
 class CaseStudyCard extends StatelessWidget {
-  const CaseStudyCard({super.key, required this.study, required this.onTap, this.compact = false});
+  const CaseStudyCard(
+      {super.key,
+      required this.study,
+      required this.onTap,
+      this.compact = false,});
   final CaseStudyModel study;
   final VoidCallback onTap;
   final bool compact;
@@ -37,7 +41,8 @@ class CaseStudyCard extends StatelessWidget {
             children: [
               Positioned.fill(
                 child: CustomPaint(
-                  painter: HexLatticePainter(color: Colors.white.withValues(alpha: 0.05)),
+                  painter: HexLatticePainter(
+                      color: Colors.white.withValues(alpha: 0.05),),
                 ),
               ),
               Padding(
@@ -48,7 +53,10 @@ class CaseStudyCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        HexBadge(icon: industryIcon(study.industry), size: 36, gradient: AppColors.arrow),
+                        HexBadge(
+                            icon: industryIcon(study.industry),
+                            size: 36,
+                            gradient: AppColors.arrow,),
                         const SizedBox(width: AppSpacing.md),
                         Flexible(
                           child: Text(
@@ -68,14 +76,16 @@ class CaseStudyCard extends StatelessWidget {
                       study.title,
                       maxLines: compact ? 2 : null,
                       overflow: compact ? TextOverflow.ellipsis : null,
-                      style: context.text.titleLarge?.copyWith(color: Colors.white),
+                      style: context.text.titleLarge
+                          ?.copyWith(color: Colors.white),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
                       study.summary,
                       maxLines: compact ? 3 : 5,
                       overflow: TextOverflow.ellipsis,
-                      style: context.text.bodyMedium?.copyWith(color: Colors.white.withValues(alpha: 0.78)),
+                      style: context.text.bodyMedium?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.78),),
                     ),
                   ],
                 ),

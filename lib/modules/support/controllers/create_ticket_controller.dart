@@ -8,7 +8,10 @@ import '../repositories/support_repository.dart';
 
 class CreateTicketController extends GetxController {
   CreateTicketController(this._repository, {Map<String, dynamic>? arguments})
-      : _args = arguments ?? (Get.arguments is Map<String, dynamic> ? Get.arguments as Map<String, dynamic> : const {});
+      : _args = arguments ??
+            (Get.arguments is Map<String, dynamic>
+                ? Get.arguments as Map<String, dynamic>
+                : const {});
 
   final SupportRepository _repository;
   final Map<String, dynamic> _args;

@@ -21,7 +21,10 @@ class ServiceCard extends StatelessWidget {
       semanticLabel: '${service.title}. ${service.summary}',
       child: Row(
         children: [
-          HexBadge(icon: serviceIcon(service.iconKey), size: 48, gradient: AppColors.circuit),
+          HexBadge(
+              icon: serviceIcon(service.iconKey),
+              size: 48,
+              gradient: AppColors.circuit,),
           const SizedBox(width: AppSpacing.lg),
           Expanded(
             child: Column(
@@ -61,7 +64,10 @@ class ServiceTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          HexBadge(icon: serviceIcon(service.iconKey), size: 38, gradient: AppColors.circuit),
+          HexBadge(
+              icon: serviceIcon(service.iconKey),
+              size: 38,
+              gradient: AppColors.circuit,),
           const SizedBox(height: AppSpacing.sm),
           Flexible(
             child: Text(

@@ -13,7 +13,8 @@ class UserModel {
     this.createdAt,
   });
 
-  factory UserModel.fromMap(Map<String, dynamic> map, {required String uid}) => UserModel(
+  factory UserModel.fromMap(Map<String, dynamic> map, {required String uid}) =>
+      UserModel(
         uid: uid,
         name: Parse.string(map, 'name'),
         email: Parse.string(map, 'email'),
@@ -30,9 +31,11 @@ class UserModel {
   final DateTime? createdAt;
 
   String get initials {
-    final parts = name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    final parts =
+        name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
     if (parts.isEmpty) return email.isNotEmpty ? email[0].toUpperCase() : '?';
-    return (parts.first[0] + (parts.length > 1 ? parts.last[0] : '')).toUpperCase();
+    return (parts.first[0] + (parts.length > 1 ? parts.last[0] : ''))
+        .toUpperCase();
   }
 
   /// Fields the owner may write (mirrors firestore.rules).

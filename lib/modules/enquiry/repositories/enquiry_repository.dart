@@ -5,7 +5,8 @@ import '../datasources/enquiry_remote_datasource.dart';
 import '../models/enquiry_model.dart';
 
 class EnquiryRepository {
-  EnquiryRepository({required EnquiryRemoteDataSource remote, required AuthSession session})
+  EnquiryRepository(
+      {required EnquiryRemoteDataSource remote, required AuthSession session,})
       : _remote = remote,
         _session = session;
 
@@ -22,7 +23,9 @@ class EnquiryRepository {
     }
     return guard(
       () async {
-        if (!await _session.refreshEmailVerified()) throw const EmailNotVerifiedException();
+        if (!await _session.refreshEmailVerified()) {
+          throw const EmailNotVerifiedException();
+        }
         return _remote.create(request);
       },
       context: 'createEnquiry',
@@ -31,6 +34,7 @@ class EnquiryRepository {
 
   Stream<List<EnquiryModel>> watchMine() {
     final uid = _session.requireUid();
-    return guardStream(_remote.watchForCustomer(uid), context: 'watch enquiries');
+    return guardStream(_remote.watchForCustomer(uid),
+        context: 'watch enquiries',);
   }
 }

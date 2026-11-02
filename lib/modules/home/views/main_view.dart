@@ -10,7 +10,12 @@ import 'home_view.dart';
 class MainView extends GetView<MainController> {
   const MainView({super.key});
 
-  static const _tabs = <Widget>[HomeView(), ServicesView(), PortfolioView(), ProfileView()];
+  static const _tabs = <Widget>[
+    HomeView(),
+    ServicesView(),
+    PortfolioView(),
+    ProfileView(),
+  ];
 
   @override
   Widget build(BuildContext context) {

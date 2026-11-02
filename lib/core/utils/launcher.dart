@@ -8,13 +8,16 @@ import 'app_logger.dart';
 class Launcher {
   Launcher._();
 
-  static Future<void> call() => _open(Uri(scheme: 'tel', path: CompanyInfo.phoneDial));
+  static Future<void> call() =>
+      _open(Uri(scheme: 'tel', path: CompanyInfo.phoneDial));
 
   static Future<void> email({String? subject}) => _open(
         Uri(
           scheme: 'mailto',
           path: CompanyInfo.email,
-          query: subject == null ? null : 'subject=${Uri.encodeComponent(subject)}',
+          query: subject == null
+              ? null
+              : 'subject=${Uri.encodeComponent(subject)}',
         ),
       );
 
@@ -35,7 +38,8 @@ class Launcher {
       final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!ok) _fail();
     } catch (e, st) {
-      AppLogger.error('launch failed for scheme ${uri.scheme}', error: e, stackTrace: st);
+      AppLogger.error('launch failed for scheme ${uri.scheme}',
+          error: e, stackTrace: st,);
       _fail();
     }
   }

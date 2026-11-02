@@ -24,7 +24,8 @@ class DeleteAccountController extends GetxController {
     errorMessage.value = null;
     if (!(formKey.currentState?.validate() ?? false)) return;
     if (!confirmed.value) {
-      errorMessage.value = 'Tick the box to confirm you understand this cannot be undone.';
+      errorMessage.value =
+          'Tick the box to confirm you understand this cannot be undone.';
       return;
     }
     isDeleting.value = true;
@@ -34,7 +35,8 @@ class DeleteAccountController extends GetxController {
       passwordCtrl.clear();
       await _auth.signOut().catchError((Object _) {});
       await Get.offAllNamed<void>(Routes.main);
-      Get.snackbar('Account deleted', 'Your account and personal data have been removed.');
+      Get.snackbar('Account deleted',
+          'Your account and personal data have been removed.',);
     } on AppException catch (e) {
       errorMessage.value = e.message;
     } finally {

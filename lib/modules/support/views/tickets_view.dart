@@ -26,15 +26,19 @@ class TicketsView extends GetView<TicketsController> {
             state: controller.state.value,
             onRetry: controller.load,
             emptyTitle: 'No support requests',
-            emptyMessage: 'Have a question about a project, quotation or invoice? Send us a request.',
+            emptyMessage:
+                'Have a question about a project, quotation or invoice? Send us a request.',
             emptyIcon: Icons.support_agent_rounded,
             emptyActionLabel: 'New request',
             onEmptyAction: controller.create,
             builder: (items) => ListView.separated(
-              padding: const EdgeInsets.fromLTRB(AppSpacing.page, AppSpacing.sm, AppSpacing.page, 96),
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.page, AppSpacing.sm, AppSpacing.page, 96,),
               itemCount: items.length,
-              separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
-              itemBuilder: (_, i) => TicketCard(ticket: items[i], onTap: () => controller.open(items[i])),
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: AppSpacing.md),
+              itemBuilder: (_, i) => TicketCard(
+                  ticket: items[i], onTap: () => controller.open(items[i]),),
             ),
           ),
         ),

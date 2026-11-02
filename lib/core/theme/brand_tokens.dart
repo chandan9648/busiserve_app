@@ -86,7 +86,8 @@ class BrandTokens extends ThemeExtension<BrandTokens> {
 }
 
 extension BrandTokensX on BuildContext {
-  BrandTokens get brand => Theme.of(this).extension<BrandTokens>() ?? BrandTokens.light;
+  BrandTokens get brand =>
+      Theme.of(this).extension<BrandTokens>() ?? BrandTokens.light;
   TextTheme get text => Theme.of(this).textTheme;
   ColorScheme get colors => Theme.of(this).colorScheme;
 }

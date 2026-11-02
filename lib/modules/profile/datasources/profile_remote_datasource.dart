@@ -9,7 +9,9 @@ abstract class ProfileRemoteDataSource {
 }
 
 class FirestoreProfileDataSource implements ProfileRemoteDataSource {
-  FirestoreProfileDataSource({FirebaseFirestore? db, FirebaseAuth? auth}) : _db = db, _auth = auth;
+  FirestoreProfileDataSource({FirebaseFirestore? db, FirebaseAuth? auth})
+      : _db = db,
+        _auth = auth;
   final FirebaseFirestore? _db;
   final FirebaseAuth? _auth;
 
@@ -22,9 +24,11 @@ class FirestoreProfileDataSource implements ProfileRemoteDataSource {
   @override
   Future<void> update(UserModel profile) async {
     await (_db ?? FirebaseFirestore.instance).doc('users/${profile.uid}').set(
-          {...profile.toEditableMap(), 'updatedAt': FieldValue.serverTimestamp()},
-          SetOptions(merge: true),
-        );
-    await (_auth ?? FirebaseAuth.instance).currentUser?.updateDisplayName(profile.name.trim());
+      {...profile.toEditableMap(), 'updatedAt': FieldValue.serverTimestamp()},
+      SetOptions(merge: true),
+    );
+    await (_auth ?? FirebaseAuth.instance)
+        .currentUser
+        ?.updateDisplayName(profile.name.trim());
   }
 }

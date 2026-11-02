@@ -24,24 +24,33 @@ class CreateTicketView extends GetView<CreateTicketController> {
           child: ListView(
             padding: const EdgeInsets.all(AppSpacing.page),
             children: [
-              const EmailVerificationNotice(padding: EdgeInsets.only(bottom: AppSpacing.lg)),
+              const EmailVerificationNotice(
+                  padding: EdgeInsets.only(bottom: AppSpacing.lg),),
               Obx(
                 () => controller.errorMessage.value == null
                     ? const SizedBox.shrink()
                     : Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                        child: InlineNotice(message: controller.errorMessage.value!, isError: true),
+                        child: InlineNotice(
+                            message: controller.errorMessage.value!,
+                            isError: true,),
                       ),
               ),
               Obx(
                 () => DropdownButtonFormField<TicketCategory>(
                   initialValue: controller.category.value,
                   isExpanded: true,
-                  decoration: const InputDecoration(labelText: 'Topic', prefixIcon: Icon(Icons.label_outline, size: 20)),
+                  decoration: const InputDecoration(
+                      labelText: 'Topic',
+                      prefixIcon: Icon(Icons.label_outline, size: 20),),
                   items: [
-                    for (final c in TicketCategory.values) DropdownMenuItem(value: c, child: Text(c.label)),
+                    for (final c in TicketCategory.values)
+                      DropdownMenuItem(value: c, child: Text(c.label)),
                   ],
-                  onChanged: controller.isSubmitting.value ? null : (c) => controller.category.value = c ?? TicketCategory.general,
+                  onChanged: controller.isSubmitting.value
+                      ? null
+                      : (c) => controller.category.value =
+                          c ?? TicketCategory.general,
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -52,7 +61,8 @@ class CreateTicketView extends GetView<CreateTicketController> {
                 textCapitalization: TextCapitalization.sentences,
                 validator: (v) =>
                     Validators.minLength(v, 4, field: 'Subject') ??
-                    Validators.maxLength(v, AppLimits.ticketSubjectMax, field: 'Subject'),
+                    Validators.maxLength(v, AppLimits.ticketSubjectMax,
+                        field: 'Subject',),
               ),
               const SizedBox(height: AppSpacing.md),
               AppTextField(
@@ -65,8 +75,10 @@ class CreateTicketView extends GetView<CreateTicketController> {
                 textInputAction: TextInputAction.newline,
                 textCapitalization: TextCapitalization.sentences,
                 validator: (v) =>
-                    Validators.minLength(v, AppLimits.messageMin, field: 'Message') ??
-                    Validators.maxLength(v, AppLimits.chatMessageMax, field: 'Message'),
+                    Validators.minLength(v, AppLimits.messageMin,
+                        field: 'Message',) ??
+                    Validators.maxLength(v, AppLimits.chatMessageMax,
+                        field: 'Message',),
               ),
               const SizedBox(height: AppSpacing.lg),
               Obx(

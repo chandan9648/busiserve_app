@@ -51,9 +51,11 @@ class PushNotificationService extends GetxService {
     _authWorker = ever<String?>(session.currentUid, (uid) {
       if (uid != null && prefs.pushEnabled) unawaited(register(uid));
     });
-    unawaited(_messaging.getInitialMessage().then((m) {
-      if (m != null) _openFrom(m);
-    }),);
+    unawaited(
+      _messaging.getInitialMessage().then((m) {
+        if (m != null) _openFrom(m);
+      }),
+    );
     if (prefs.pushEnabled) unawaited(subscribeToBroadcasts());
     final uid = session.uid;
     if (uid != null && prefs.pushEnabled) unawaited(register(uid));
@@ -62,7 +64,8 @@ class PushNotificationService extends GetxService {
   /// Concurrent callers share one system prompt.
   Future<bool> requestPermission() {
     if (!_supported) return Future.value(false);
-    return _permissionRequest ??= _askPermission().whenComplete(() => _permissionRequest = null);
+    return _permissionRequest ??=
+        _askPermission().whenComplete(() => _permissionRequest = null);
   }
 
   Future<bool> _askPermission() async {
@@ -89,10 +92,12 @@ class PushNotificationService extends GetxService {
       final token = await _messaging.getToken();
       if (token == null) return;
       await _saveToken(uid, token);
-      _subs.add(_messaging.onTokenRefresh.listen((t) {
-        final current = session.uid;
-        if (current != null) unawaited(_saveToken(current, t));
-      }),);
+      _subs.add(
+        _messaging.onTokenRefresh.listen((t) {
+          final current = session.uid;
+          if (current != null) unawaited(_saveToken(current, t));
+        }),
+      );
     } catch (e, st) {
       AppLogger.error('push registration failed', error: e, stackTrace: st);
     }
@@ -107,7 +112,9 @@ class PushNotificationService extends GetxService {
     final token = _registeredToken;
     try {
       if (uid != null && token != null) {
-        await FirebaseFirestore.instance.doc('users/$uid/devices/$token').delete();
+        await FirebaseFirestore.instance
+            .doc('users/$uid/devices/$token')
+            .delete();
       }
       await _messaging.deleteToken();
     } catch (e, st) {
@@ -149,7 +156,9 @@ class PushNotificationService extends GetxService {
   static bool isAllowedRoute(String route) {
     if (route.contains('..') || route.contains('://')) return false;
     return allowedRoutePrefixes.any(
-      (p) => p.endsWith('/') ? route.startsWith(p) && route.length > p.length : route == p,
+      (p) => p.endsWith('/')
+          ? route.startsWith(p) && route.length > p.length
+          : route == p,
     );
   }
 

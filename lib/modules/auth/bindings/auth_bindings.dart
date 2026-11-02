@@ -18,5 +18,6 @@ class RegisterBinding extends Bindings {
 
 class ForgotPasswordBinding extends Bindings {
   @override
-  void dependencies() => Get.lazyPut(() => ForgotPasswordController(Get.find()));
+  void dependencies() =>
+      Get.lazyPut(() => ForgotPasswordController(Get.find()));
 }

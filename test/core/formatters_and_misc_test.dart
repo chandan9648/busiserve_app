@@ -17,9 +17,15 @@ void main() {
 
   test('relative time', () {
     final now = DateTime(2026, 10, 27, 12);
-    expect(Formatters.relative(now.subtract(const Duration(seconds: 10)), now: now), 'Just now');
-    expect(Formatters.relative(now.subtract(const Duration(minutes: 5)), now: now), '5 min ago');
-    expect(Formatters.relative(now.subtract(const Duration(days: 2)), now: now), '2 d ago');
+    expect(
+        Formatters.relative(now.subtract(const Duration(seconds: 10)),
+            now: now,),
+        'Just now',);
+    expect(
+        Formatters.relative(now.subtract(const Duration(minutes: 5)), now: now),
+        '5 min ago',);
+    expect(Formatters.relative(now.subtract(const Duration(days: 2)), now: now),
+        '2 d ago',);
   });
 
   test('idempotency keys are v4 and unique', () {
@@ -30,7 +36,8 @@ void main() {
   });
 
   test('logger redacts personal data', () {
-    final out = AppLogger.redact('user asha@example.com called +91 97944 24169 token abcdefghijklmnopqrstuvwxyz0123456789');
+    final out = AppLogger.redact(
+        'user asha@example.com called +91 97944 24169 token abcdefghijklmnopqrstuvwxyz0123456789',);
     expect(out.contains('asha@example.com'), isFalse);
     expect(out.contains('97944'), isFalse);
     expect(out.contains('abcdefghijklmnopqrstuvwxyz'), isFalse);
@@ -42,7 +49,10 @@ void main() {
     expect(PushNotificationService.isAllowedRoute('/notifications'), isTrue);
     expect(PushNotificationService.isAllowedRoute('/delete-account'), isFalse);
     expect(PushNotificationService.isAllowedRoute('/tickets/'), isFalse);
-    expect(PushNotificationService.isAllowedRoute('https://evil.example'), isFalse);
-    expect(PushNotificationService.isAllowedRoute('/projects/../delete-account'), isFalse);
+    expect(PushNotificationService.isAllowedRoute('https://evil.example'),
+        isFalse,);
+    expect(
+        PushNotificationService.isAllowedRoute('/projects/../delete-account'),
+        isFalse,);
   });
 }

@@ -61,10 +61,12 @@ class MyEnquiriesController extends GetxController {
     }
   }
 
-  Failure _failure(Object e) =>
-      e is AppException ? Failure.fromException(e) : const Failure('Something went wrong. Try again.', retryable: true);
+  Failure _failure(Object e) => e is AppException
+      ? Failure.fromException(e)
+      : const Failure('Something went wrong. Try again.', retryable: true);
 
-  void openQuotation(QuotationModel q) => Get.toNamed<void>(Routes.quotationPath(q.id));
+  void openQuotation(QuotationModel q) =>
+      Get.toNamed<void>(Routes.quotationPath(q.id));
   void newEnquiry() => Get.toNamed<void>(Routes.enquiry);
 
   @override

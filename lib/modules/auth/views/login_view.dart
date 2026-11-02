@@ -16,7 +16,8 @@ class LoginView extends GetView<LoginController> {
   Widget build(BuildContext context) {
     return AuthScaffold(
       title: 'Sign in',
-      subtitle: 'Track your enquiries, quotations, projects and support requests.',
+      subtitle:
+          'Track your enquiries, quotations, projects and support requests.',
       children: [
         Obx(() => FormError(message: controller.errorMessage.value)),
         Form(
@@ -29,7 +30,10 @@ class LoginView extends GetView<LoginController> {
                   label: 'Email',
                   prefixIcon: Icons.mail_outline_rounded,
                   keyboardType: TextInputType.emailAddress,
-                  autofillHints: const [AutofillHints.email, AutofillHints.username],
+                  autofillHints: const [
+                    AutofillHints.email,
+                    AutofillHints.username,
+                  ],
                   validator: Validators.email,
                   onSubmitted: (_) => controller.passwordFocus.requestFocus(),
                 ),
@@ -51,18 +55,27 @@ class LoginView extends GetView<LoginController> {
         ),
         Align(
           alignment: Alignment.centerRight,
-          child: TextButton(onPressed: controller.goToForgotPassword, child: const Text('Forgot password?')),
+          child: TextButton(
+              onPressed: controller.goToForgotPassword,
+              child: const Text('Forgot password?'),),
         ),
         const SizedBox(height: AppSpacing.sm),
         Obx(
-          () => AppButton(label: 'Sign in', isLoading: controller.isLoading.value, onPressed: controller.signIn),
+          () => AppButton(
+              label: 'Sign in',
+              isLoading: controller.isLoading.value,
+              onPressed: controller.signIn,),
         ),
         const SizedBox(height: AppSpacing.xl),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('New to Busiserve?', style: context.text.bodyMedium?.copyWith(color: context.brand.muted)),
-            TextButton(onPressed: controller.goToRegister, child: const Text('Create account')),
+            Text('New to Busiserve?',
+                style: context.text.bodyMedium
+                    ?.copyWith(color: context.brand.muted),),
+            TextButton(
+                onPressed: controller.goToRegister,
+                child: const Text('Create account'),),
           ],
         ),
       ],

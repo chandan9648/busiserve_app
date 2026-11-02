@@ -25,7 +25,8 @@ class RegisterView extends GetView<RegisterController> {
     );
     return AuthScaffold(
       title: 'Create your account',
-      subtitle: 'Follow quotations, project milestones and support conversations in one place.',
+      subtitle:
+          'Follow quotations, project milestones and support conversations in one place.',
       children: [
         Obx(() => FormError(message: controller.errorMessage.value)),
         Form(
@@ -67,7 +68,8 @@ class RegisterView extends GetView<RegisterController> {
                   prefixIcon: Icons.lock_outline_rounded,
                   isPassword: true,
                   autofillHints: const [AutofillHints.newPassword],
-                  helperText: 'At least 8 characters, with a letter and a number.',
+                  helperText:
+                      'At least 8 characters, with a letter and a number.',
                   validator: Validators.password,
                 ),
                 const SizedBox(height: AppSpacing.lg),
@@ -77,7 +79,8 @@ class RegisterView extends GetView<RegisterController> {
                   prefixIcon: Icons.lock_outline_rounded,
                   isPassword: true,
                   textInputAction: TextInputAction.done,
-                  validator: (v) => Validators.confirmPassword(v, controller.passwordCtrl.text),
+                  validator: (v) => Validators.confirmPassword(
+                      v, controller.passwordCtrl.text,),
                 ),
               ],
             ),
@@ -98,13 +101,15 @@ class RegisterView extends GetView<RegisterController> {
                   TextSpan(
                     text: 'Terms of Service',
                     style: link,
-                    recognizer: TapGestureRecognizer()..onTap = () => Launcher.web(CompanyInfo.termsUrl),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => Launcher.web(CompanyInfo.termsUrl),
                   ),
                   const TextSpan(text: ' and '),
                   TextSpan(
                     text: 'Privacy Policy',
                     style: link,
-                    recognizer: TapGestureRecognizer()..onTap = () => Launcher.web(CompanyInfo.privacyUrl),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => Launcher.web(CompanyInfo.privacyUrl),
                   ),
                   const TextSpan(text: '.'),
                 ],
@@ -124,8 +129,11 @@ class RegisterView extends GetView<RegisterController> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Already have an account?', style: context.text.bodyMedium?.copyWith(color: context.brand.muted)),
-            TextButton(onPressed: controller.goToLogin, child: const Text('Sign in')),
+            Text('Already have an account?',
+                style: context.text.bodyMedium
+                    ?.copyWith(color: context.brand.muted),),
+            TextButton(
+                onPressed: controller.goToLogin, child: const Text('Sign in'),),
           ],
         ),
       ],

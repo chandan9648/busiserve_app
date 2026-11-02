@@ -19,7 +19,8 @@ class PortfolioRepository {
         final fetched = await remote!.fetchCaseStudies();
         if (fetched.isNotEmpty) items = fetched;
       } catch (e, st) {
-        ErrorHandler.handle(e, st, context: 'case studies remote (falling back)');
+        ErrorHandler.handle(e, st,
+            context: 'case studies remote (falling back)',);
       }
     }
     items ??= local.getCaseStudies();

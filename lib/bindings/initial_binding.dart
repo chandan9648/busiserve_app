@@ -16,8 +16,11 @@ class InitialBinding extends Bindings {
     final prefs = Get.put(PrefsService(), permanent: true);
     final secure = Get.put(SecureStorageService(), permanent: true);
 
-    final AuthSession session = Get.put<AuthSession>(AuthService(), permanent: true);
-    final push = Get.put(PushNotificationService(session: session, prefs: prefs), permanent: true);
+    final AuthSession session =
+        Get.put<AuthSession>(AuthService(), permanent: true);
+    final push = Get.put(
+        PushNotificationService(session: session, prefs: prefs),
+        permanent: true,);
 
     Get.put(
       AuthRepository(

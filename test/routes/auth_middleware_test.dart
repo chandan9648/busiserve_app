@@ -26,8 +26,10 @@ void main() {
 
   test('every customer-data route is protected in the route table', () {
     for (final page in AppPages.routes) {
-      final protected = page.middlewares?.whereType<AuthMiddleware>().isNotEmpty ?? false;
-      expect(protected, AppPages.protectedRouteNames.contains(page.name), reason: page.name);
+      final protected =
+          page.middlewares?.whereType<AuthMiddleware>().isNotEmpty ?? false;
+      expect(protected, AppPages.protectedRouteNames.contains(page.name),
+          reason: page.name,);
     }
   });
 
@@ -40,10 +42,15 @@ void main() {
           GetPage(
             name: '/',
             page: () => Scaffold(
-              body: TextButton(onPressed: () => Get.toNamed<void>(Routes.projects), child: const Text('Go')),
+              body: TextButton(
+                  onPressed: () => Get.toNamed<void>(Routes.projects),
+                  child: const Text('Go'),),
             ),
           ),
-          GetPage(name: Routes.projects, page: () => const Text('PROJECTS'), middlewares: [AuthMiddleware()]),
+          GetPage(
+              name: Routes.projects,
+              page: () => const Text('PROJECTS'),
+              middlewares: [AuthMiddleware()],),
           GetPage(name: Routes.login, page: () => const Text('LOGIN')),
         ],
       ),

@@ -34,7 +34,8 @@ void main() {
   testWidgets('retryable error shows retry and calls it', (tester) async {
     var retried = 0;
     await tester.pumpWidget(
-      view(const ErrorState(Failure('Offline', retryable: true)), onRetry: () => retried++),
+      view(const ErrorState(Failure('Offline', retryable: true)),
+          onRetry: () => retried++,),
     );
     expect(find.text('Offline'), findsOneWidget);
     await tester.tap(find.text('Try again'));
@@ -42,7 +43,8 @@ void main() {
   });
 
   testWidgets('non-retryable error hides retry', (tester) async {
-    await tester.pumpWidget(view(const ErrorState(Failure('No access')), onRetry: () {}));
+    await tester.pumpWidget(
+        view(const ErrorState(Failure('No access')), onRetry: () {}),);
     expect(find.text('No access'), findsOneWidget);
     expect(find.text('Try again'), findsNothing);
   });

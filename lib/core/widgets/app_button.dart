@@ -61,7 +61,8 @@ class AppButton extends StatelessWidget {
 
     switch (variant) {
       case AppButtonVariant.secondary:
-        return OutlinedButton(onPressed: enabled ? onPressed : null, child: child);
+        return OutlinedButton(
+            onPressed: enabled ? onPressed : null, child: child,);
       case AppButtonVariant.text:
         return TextButton(onPressed: enabled ? onPressed : null, child: child);
       case AppButtonVariant.primary:
@@ -80,7 +81,8 @@ class AppButton extends StatelessWidget {
                 boxShadow: enabled
                     ? [
                         BoxShadow(
-                          color: const Color(0xFFF24E12).withValues(alpha: 0.28),
+                          color:
+                              const Color(0xFFF24E12).withValues(alpha: 0.28),
                           blurRadius: 18,
                           offset: const Offset(0, 8),
                         ),
@@ -93,9 +95,11 @@ class AppButton extends StatelessWidget {
                   borderRadius: radius,
                   onTap: enabled ? onPressed : null,
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(minHeight: AppSpacing.touchTarget + 4),
+                    constraints: const BoxConstraints(
+                        minHeight: AppSpacing.touchTarget + 4,),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
                       child: DefaultTextStyle.merge(
                         style: Theme.of(context)
                             .textTheme

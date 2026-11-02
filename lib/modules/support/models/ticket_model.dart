@@ -11,8 +11,8 @@ enum TicketCategory {
   const TicketCategory(this.label);
   final String label;
 
-  static TicketCategory fromKey(String? key) =>
-      TicketCategory.values.firstWhere((c) => c.name == key, orElse: () => TicketCategory.general);
+  static TicketCategory fromKey(String? key) => TicketCategory.values
+      .firstWhere((c) => c.name == key, orElse: () => TicketCategory.general);
 }
 
 enum TicketStatus {
@@ -48,7 +48,8 @@ class TicketModel {
     this.updatedAt,
   });
 
-  factory TicketModel.fromMap(Map<String, dynamic> map, {required String id}) => TicketModel(
+  factory TicketModel.fromMap(Map<String, dynamic> map, {required String id}) =>
+      TicketModel(
         id: id,
         subject: Parse.string(map, 'subject', 'Support request'),
         category: TicketCategory.fromKey(Parse.optString(map, 'category')),
@@ -79,7 +80,9 @@ class TicketMessage {
     this.createdAt,
   });
 
-  factory TicketMessage.fromMap(Map<String, dynamic> map, {required String id}) => TicketMessage(
+  factory TicketMessage.fromMap(Map<String, dynamic> map,
+          {required String id,}) =>
+      TicketMessage(
         id: id,
         text: Parse.string(map, 'text'),
         fromStaff: Parse.string(map, 'authorRole') == 'staff',

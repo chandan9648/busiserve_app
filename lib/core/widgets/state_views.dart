@@ -19,7 +19,8 @@ class LoadingView extends StatelessWidget {
         liveRegion: true,
         child: const SizedBox.square(
           dimension: 32,
-          child: CircularProgressIndicator(strokeWidth: 3, color: AppColors.blue),
+          child:
+              CircularProgressIndicator(strokeWidth: 3, color: AppColors.blue),
         ),
       ),
     );
@@ -108,11 +109,13 @@ class _CenteredMessage extends StatelessWidget {
             children: [
               badge,
               const SizedBox(height: AppSpacing.xl),
-              Text(title, style: context.text.titleLarge, textAlign: TextAlign.center),
+              Text(title,
+                  style: context.text.titleLarge, textAlign: TextAlign.center,),
               const SizedBox(height: AppSpacing.sm),
               Text(
                 message,
-                style: context.text.bodyMedium?.copyWith(color: context.brand.muted),
+                style: context.text.bodyMedium
+                    ?.copyWith(color: context.brand.muted),
                 textAlign: TextAlign.center,
               ),
               if (action != null) ...[

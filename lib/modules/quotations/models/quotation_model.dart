@@ -17,7 +17,10 @@ enum QuotationStatus {
 }
 
 class QuotationItem {
-  const QuotationItem({required this.description, required this.quantity, required this.unitPrice});
+  const QuotationItem(
+      {required this.description,
+      required this.quantity,
+      required this.unitPrice,});
 
   factory QuotationItem.fromMap(Map<String, dynamic> map) => QuotationItem(
         description: Parse.string(map, 'description'),
@@ -48,8 +51,10 @@ class QuotationModel {
     this.createdAt,
   });
 
-  factory QuotationModel.fromMap(Map<String, dynamic> map, {required String id}) {
-    final items = Parse.mapList(map, 'items').map(QuotationItem.fromMap).toList();
+  factory QuotationModel.fromMap(Map<String, dynamic> map,
+      {required String id,}) {
+    final items =
+        Parse.mapList(map, 'items').map(QuotationItem.fromMap).toList();
     final subtotal = map.containsKey('subtotal')
         ? Parse.number(map, 'subtotal')
         : items.fold<double>(0, (sum, i) => sum + i.amount);
@@ -61,7 +66,9 @@ class QuotationModel {
       items: items,
       subtotal: subtotal,
       tax: tax,
-      total: map.containsKey('total') ? Parse.number(map, 'total') : subtotal + tax,
+      total: map.containsKey('total')
+          ? Parse.number(map, 'total')
+          : subtotal + tax,
       currency: Parse.string(map, 'currency', 'INR'),
       enquiryId: Parse.optString(map, 'enquiryId'),
       notes: Parse.optString(map, 'notes'),
@@ -84,5 +91,6 @@ class QuotationModel {
   final DateTime? createdAt;
 
   bool isExpiredAt(DateTime now) =>
-      status == QuotationStatus.expired || (validUntil != null && validUntil!.isBefore(now));
+      status == QuotationStatus.expired ||
+      (validUntil != null && validUntil!.isBefore(now));
 }

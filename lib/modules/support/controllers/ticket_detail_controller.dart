@@ -11,7 +11,8 @@ import '../models/ticket_model.dart';
 import '../repositories/support_repository.dart';
 
 class TicketDetailController extends GetxController {
-  TicketDetailController(this._repository, {String? id}) : ticketId = id ?? Get.parameters['id'] ?? '';
+  TicketDetailController(this._repository, {String? id})
+      : ticketId = id ?? Get.parameters['id'] ?? '';
   final SupportRepository _repository;
   final String ticketId;
 
@@ -39,8 +40,9 @@ class TicketDetailController extends GetxController {
     canSend.value = t.isNotEmpty && t.length <= AppLimits.chatMessageMax;
   }
 
-  Failure _f(Object e) =>
-      e is AppException ? Failure.fromException(e) : const Failure('Something went wrong.', retryable: true);
+  Failure _f(Object e) => e is AppException
+      ? Failure.fromException(e)
+      : const Failure('Something went wrong.', retryable: true);
 
   void load() {
     for (final s in _subs) {
@@ -51,17 +53,21 @@ class TicketDetailController extends GetxController {
     messages.value = const LoadingState();
     try {
       _subs
-        ..add(_repository.watch(ticketId).listen(
-              (t) => ticket.value = SuccessState(t),
-              onError: (Object e) => ticket.value = ErrorState(_f(e)),
-            ),)
-        ..add(_repository.watchMessages(ticketId).listen(
-              (m) {
-                messages.value = listState(m);
-                _scrollToEnd();
-              },
-              onError: (Object e) => messages.value = ErrorState(_f(e)),
-            ),);
+        ..add(
+          _repository.watch(ticketId).listen(
+                (t) => ticket.value = SuccessState(t),
+                onError: (Object e) => ticket.value = ErrorState(_f(e)),
+              ),
+        )
+        ..add(
+          _repository.watchMessages(ticketId).listen(
+            (m) {
+              messages.value = listState(m);
+              _scrollToEnd();
+            },
+            onError: (Object e) => messages.value = ErrorState(_f(e)),
+          ),
+        );
     } on AppException catch (e) {
       ticket.value = ErrorState(Failure.fromException(e));
     }
@@ -69,14 +75,19 @@ class TicketDetailController extends GetxController {
 
   Future<void> send() async {
     final text = replyCtrl.text.trim();
-    if (isSending.value || text.isEmpty || text.length > AppLimits.chatMessageMax) return;
+    if (isSending.value ||
+        text.isEmpty ||
+        text.length > AppLimits.chatMessageMax) {
+      return;
+    }
     if (_pendingText != text) {
       _pendingText = text;
       _pendingMessageId = _repository.newMessageId(ticketId);
     }
     isSending.value = true;
     try {
-      await _repository.send(ticketId: ticketId, messageId: _pendingMessageId!, text: text);
+      await _repository.send(
+          ticketId: ticketId, messageId: _pendingMessageId!, text: text,);
       replyCtrl.clear();
       _pendingText = null;
       _pendingMessageId = null;

@@ -9,7 +9,8 @@ import '../models/case_study_model.dart';
 import '../repositories/portfolio_repository.dart';
 
 class CaseStudyDetailController extends GetxController {
-  CaseStudyDetailController(this._repository, {String? id}) : _id = id ?? Get.parameters['id'] ?? '';
+  CaseStudyDetailController(this._repository, {String? id})
+      : _id = id ?? Get.parameters['id'] ?? '';
   final PortfolioRepository _repository;
   final String _id;
 

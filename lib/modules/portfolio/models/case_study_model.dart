@@ -13,7 +13,8 @@ class CaseStudyModel {
     this.technologies = const [],
   });
 
-  factory CaseStudyModel.fromMap(Map<String, dynamic> map, {String? id}) => CaseStudyModel(
+  factory CaseStudyModel.fromMap(Map<String, dynamic> map, {String? id}) =>
+      CaseStudyModel(
         id: id ?? Parse.requireString(map, 'id'),
         title: Parse.requireString(map, 'title'),
         industry: Parse.string(map, 'industry', 'Technology'),

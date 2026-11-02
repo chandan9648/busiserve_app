@@ -6,7 +6,11 @@ import '../../../core/widgets/common.dart';
 
 /// Shared layout for sign-in, register and password reset.
 class AuthScaffold extends StatelessWidget {
-  const AuthScaffold({super.key, required this.title, required this.subtitle, required this.children});
+  const AuthScaffold(
+      {super.key,
+      required this.title,
+      required this.subtitle,
+      required this.children,});
   final String title;
   final String subtitle;
   final List<Widget> children;
@@ -20,13 +24,20 @@ class AuthScaffold extends StatelessWidget {
         child: ResponsiveBody(
           maxWidth: 480,
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.page + 4, 0, AppSpacing.page + 4, AppSpacing.xxl),
+            padding: const EdgeInsets.fromLTRB(
+                AppSpacing.page + 4, 0, AppSpacing.page + 4, AppSpacing.xxl,),
             children: [
-              const Align(alignment: Alignment.centerLeft, child: BrandLogo(height: 64)),
+              const Align(
+                  alignment: Alignment.centerLeft,
+                  child: BrandLogo(height: 64),),
               const SizedBox(height: AppSpacing.xl),
-              Semantics(header: true, child: Text(title, style: context.text.headlineMedium)),
+              Semantics(
+                  header: true,
+                  child: Text(title, style: context.text.headlineMedium),),
               const SizedBox(height: AppSpacing.sm),
-              Text(subtitle, style: context.text.bodyLarge?.copyWith(color: context.brand.muted)),
+              Text(subtitle,
+                  style: context.text.bodyLarge
+                      ?.copyWith(color: context.brand.muted),),
               const SizedBox(height: AppSpacing.xl),
               ...children,
             ],
@@ -46,7 +57,8 @@ class FormError extends StatelessWidget {
     if (message == null) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-      child: InlineNotice(message: message!, icon: Icons.error_outline_rounded, isError: true),
+      child: InlineNotice(
+          message: message!, icon: Icons.error_outline_rounded, isError: true,),
     );
   }
 }
