@@ -13,7 +13,8 @@ class Parse {
     throw DataParsingException(cause: 'Missing string "$key"');
   }
 
-  static String string(Map<String, dynamic> map, String key, [String fallback = '']) {
+  static String string(Map<String, dynamic> map, String key,
+      [String fallback = '']) {
     final v = map[key];
     return v is String ? v : fallback;
   }
@@ -31,14 +32,16 @@ class Parse {
     return fallback;
   }
 
-  static double number(Map<String, dynamic> map, String key, [double fallback = 0]) {
+  static double number(Map<String, dynamic> map, String key,
+      [double fallback = 0]) {
     final v = map[key];
     if (v is num) return v.toDouble();
     if (v is String) return double.tryParse(v) ?? fallback;
     return fallback;
   }
 
-  static bool boolean(Map<String, dynamic> map, String key, [bool fallback = false]) {
+  static bool boolean(Map<String, dynamic> map, String key,
+      [bool fallback = false]) {
     final v = map[key];
     return v is bool ? v : fallback;
   }
@@ -53,7 +56,8 @@ class Parse {
     final v = map[key];
     if (v is Timestamp) return _utc(v.toDate());
     if (v is DateTime) return _utc(v);
-    if (v is num) return DateTime.fromMillisecondsSinceEpoch(v.toInt(), isUtc: true);
+    if (v is num)
+      return DateTime.fromMillisecondsSinceEpoch(v.toInt(), isUtc: true);
     if (v is String) {
       final parsed = DateTime.tryParse(v);
       return parsed == null ? null : _utc(parsed);
@@ -62,9 +66,11 @@ class Parse {
   }
 
   static DateTime _utc(DateTime value) =>
-      DateTime.fromMillisecondsSinceEpoch(value.millisecondsSinceEpoch, isUtc: true);
+      DateTime.fromMillisecondsSinceEpoch(value.millisecondsSinceEpoch,
+          isUtc: true);
 
-  static List<Map<String, dynamic>> mapList(Map<String, dynamic> map, String key) {
+  static List<Map<String, dynamic>> mapList(
+      Map<String, dynamic> map, String key) {
     final v = map[key];
     if (v is List) {
       return v

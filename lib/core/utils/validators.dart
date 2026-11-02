@@ -13,7 +13,8 @@ class Validators {
   // Dart's RegExp does not implement Unicode property escapes such as
   // `\p{L}`. Permit ASCII name punctuation and letters, plus non-ASCII
   // characters (needed for names written in other scripts).
-  static final RegExp _name = RegExp(r"^[A-Za-z\u0080-\uFFFF][A-Za-z\u0080-\uFFFF .'\-]*$");
+  static final RegExp _name =
+      RegExp(r"^[A-Za-z\u0080-\uFFFF][A-Za-z\u0080-\uFFFF .'\-]*$");
   static final RegExp _phoneAllowed = RegExp(r'^\+?[0-9 \-()]+$');
   static final RegExp _letter = RegExp(r'[A-Za-z]');
   static final RegExp _digit = RegExp(r'\d');
@@ -26,7 +27,8 @@ class Validators {
   static String? email(String? value) {
     final v = value?.trim() ?? '';
     if (v.isEmpty) return 'Email is required.';
-    if (v.length > 254 || !_email.hasMatch(v)) return 'Enter a valid email address.';
+    if (v.length > 254 || !_email.hasMatch(v))
+      return 'Enter a valid email address.';
     return null;
   }
 
@@ -37,7 +39,8 @@ class Validators {
     if (v.length > AppLimits.nameMax) {
       return 'Name must be ${AppLimits.nameMax} characters or fewer.';
     }
-    if (!_name.hasMatch(v)) return 'Use letters, spaces, dots, apostrophes or hyphens.';
+    if (!_name.hasMatch(v))
+      return 'Use letters, spaces, dots, apostrophes or hyphens.';
     return null;
   }
 
@@ -46,11 +49,14 @@ class Validators {
   static String? phone(String? value, {bool isRequired = false}) {
     final v = value?.trim() ?? '';
     if (v.isEmpty) return isRequired ? 'Phone number is required.' : null;
-    if (!_phoneAllowed.hasMatch(v)) return 'Use digits only, with an optional +.';
+    if (!_phoneAllowed.hasMatch(v))
+      return 'Use digits only, with an optional +.';
     final digits = v.replaceAll(RegExp(r'\D'), '');
     if (v.startsWith('+')) {
-      if (digits.length < 8 || digits.length > 15) return 'Enter a valid phone number.';
-      if (digits.startsWith('91') && !RegExp(r'^91[6-9]\d{9}$').hasMatch(digits)) {
+      if (digits.length < 8 || digits.length > 15)
+        return 'Enter a valid phone number.';
+      if (digits.startsWith('91') &&
+          !RegExp(r'^91[6-9]\d{9}$').hasMatch(digits)) {
         return 'Enter a valid Indian mobile number.';
       }
       return null;
@@ -62,14 +68,16 @@ class Validators {
     return null;
   }
 
-  static String? minLength(String? value, int min, {String field = 'This field'}) {
+  static String? minLength(String? value, int min,
+      {String field = 'This field'}) {
     final v = value?.trim() ?? '';
     if (v.isEmpty) return '$field is required.';
     if (v.length < min) return '$field must be at least $min characters.';
     return null;
   }
 
-  static String? maxLength(String? value, int max, {String field = 'This field'}) {
+  static String? maxLength(String? value, int max,
+      {String field = 'This field'}) {
     if ((value?.trim().length ?? 0) > max) {
       return '$field must be $max characters or fewer.';
     }
@@ -99,7 +107,8 @@ class Validators {
   }
 
   /// Runs validators in order and returns the first error.
-  static FormFieldValidator<String> compose(List<FormFieldValidator<String>> validators) {
+  static FormFieldValidator<String> compose(
+      List<FormFieldValidator<String>> validators) {
     return (value) {
       for (final validator in validators) {
         final result = validator(value);
