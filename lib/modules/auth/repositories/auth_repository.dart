@@ -8,11 +8,11 @@ import '../datasources/auth_remote_datasource.dart';
 typedef BeforeSignOut = Future<void> Function();
 
 class AuthRepository {
-  AuthRepository(
-      {required AuthRemoteDataSource remote,
-      required AuthSession session,
-      this.beforeSignOut,})
-      : _remote = remote,
+  AuthRepository({
+    required AuthRemoteDataSource remote,
+    required AuthSession session,
+    this.beforeSignOut,
+  })  : _remote = remote,
         _session = session;
 
   final AuthRemoteDataSource _remote;
@@ -32,29 +32,38 @@ class AuthRepository {
     return guard(() => _remote.signIn(email, password), context: 'signIn');
   }
 
-  Future<void> register(
-      {required String name,
-      required String email,
-      required String password,
-      String? phone,}) async {
+  Future<void> register({
+    required String name,
+    required String email,
+    required String password,
+    String? phone,
+  }) async {
     _ensureAvailable();
     return guard(
       () => _remote.register(
-          name: name, email: email, password: password, phone: phone,),
+        name: name,
+        email: email,
+        password: password,
+        phone: phone,
+      ),
       context: 'register',
     );
   }
 
   Future<void> sendPasswordReset(String email) async {
     _ensureAvailable();
-    return guard(() => _remote.sendPasswordReset(email),
-        context: 'passwordReset',);
+    return guard(
+      () => _remote.sendPasswordReset(email),
+      context: 'passwordReset',
+    );
   }
 
   Future<void> reauthenticate(String password) async {
     _ensureAvailable();
-    return guard(() => _remote.reauthenticate(password),
-        context: 'reauthenticate',);
+    return guard(
+      () => _remote.reauthenticate(password),
+      context: 'reauthenticate',
+    );
   }
 
   Future<void> signOut() async {

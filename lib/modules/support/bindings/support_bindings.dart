@@ -11,7 +11,9 @@ void _registerSupportRepository() {
   if (Get.isRegistered<SupportRepository>()) return;
   Get.lazyPut(
     () => SupportRepository(
-        remote: FirestoreSupportDataSource(), session: Get.find<AuthSession>(),),
+      remote: FirestoreSupportDataSource(),
+      session: Get.find<AuthSession>(),
+    ),
     fenix: true,
   );
 }

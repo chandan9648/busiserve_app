@@ -10,8 +10,10 @@ enum ServiceCategory {
   final String label;
 
   static ServiceCategory fromKey(String? key) =>
-      ServiceCategory.values.firstWhere((c) => c.name == key,
-          orElse: () => ServiceCategory.webAndApps,);
+      ServiceCategory.values.firstWhere(
+        (c) => c.name == key,
+        orElse: () => ServiceCategory.webAndApps,
+      );
 }
 
 /// A Busiserve service. `id` equals the slug used on `busiserve.in/services/<id>`.

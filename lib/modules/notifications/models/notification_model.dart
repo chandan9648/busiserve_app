@@ -14,8 +14,10 @@ class NotificationModel {
     this.createdAt,
   });
 
-  factory NotificationModel.fromMap(Map<String, dynamic> map,
-          {required String id,}) =>
+  factory NotificationModel.fromMap(
+    Map<String, dynamic> map, {
+    required String id,
+  }) =>
       NotificationModel(
         id: id,
         title: Parse.string(map, 'title', 'Update from Busiserve'),

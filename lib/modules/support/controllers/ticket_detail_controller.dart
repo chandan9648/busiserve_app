@@ -87,7 +87,10 @@ class TicketDetailController extends GetxController {
     isSending.value = true;
     try {
       await _repository.send(
-          ticketId: ticketId, messageId: _pendingMessageId!, text: text,);
+        ticketId: ticketId,
+        messageId: _pendingMessageId!,
+        text: text,
+      );
       replyCtrl.clear();
       _pendingText = null;
       _pendingMessageId = null;

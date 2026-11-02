@@ -23,13 +23,15 @@ class ProgressBar extends StatelessWidget {
           child: Stack(
             children: [
               Container(
-                  color: onDark
-                      ? Colors.white.withValues(alpha: 0.15)
-                      : context.brand.line,),
+                color: onDark
+                    ? Colors.white.withValues(alpha: 0.15)
+                    : context.brand.line,
+              ),
               FractionallySizedBox(
                 widthFactor: percent / 100,
                 child: Container(
-                    decoration: const BoxDecoration(gradient: AppColors.arrow),),
+                  decoration: const BoxDecoration(gradient: AppColors.arrow),
+                ),
               ),
             ],
           ),
@@ -56,9 +58,12 @@ class ProjectCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                  child: Text(project.title, style: context.text.titleMedium),),
+                child: Text(project.title, style: context.text.titleMedium),
+              ),
               StatusChip(
-                  label: project.status.label, tone: project.status.tone,),
+                label: project.status.label,
+                tone: project.status.tone,
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -66,12 +71,16 @@ class ProjectCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Row(
             children: [
-              Text('${project.progress}% complete',
-                  style: context.text.bodySmall,),
+              Text(
+                '${project.progress}% complete',
+                style: context.text.bodySmall,
+              ),
               const Spacer(),
               if (project.targetDate != null)
-                Text('Target ${Formatters.date(project.targetDate)}',
-                    style: context.text.bodySmall,),
+                Text(
+                  'Target ${Formatters.date(project.targetDate)}',
+                  style: context.text.bodySmall,
+                ),
             ],
           ),
         ],
@@ -91,17 +100,21 @@ class MilestoneTimeline extends StatelessWidget {
       children: [
         for (var i = 0; i < milestones.length; i++)
           _MilestoneRow(
-              milestone: milestones[i],
-              number: i + 1,
-              isLast: i == milestones.length - 1,),
+            milestone: milestones[i],
+            number: i + 1,
+            isLast: i == milestones.length - 1,
+          ),
       ],
     );
   }
 }
 
 class _MilestoneRow extends StatelessWidget {
-  const _MilestoneRow(
-      {required this.milestone, required this.number, required this.isLast,});
+  const _MilestoneRow({
+    required this.milestone,
+    required this.number,
+    required this.isLast,
+  });
   final MilestoneModel milestone;
   final int number;
   final bool isLast;
@@ -134,13 +147,16 @@ class _MilestoneRow extends StatelessWidget {
                         : Border.all(color: line, width: 2),
                   ),
                   child: done
-                      ? const Icon(Icons.check_rounded,
-                          size: 18, color: Colors.white,)
+                      ? const Icon(
+                          Icons.check_rounded,
+                          size: 18,
+                          color: Colors.white,
+                        )
                       : Text(
                           '$number',
                           style: context.text.titleSmall?.copyWith(
-                              color:
-                                  active ? Colors.white : context.brand.muted,),
+                            color: active ? Colors.white : context.brand.muted,
+                          ),
                         ),
                 ),
                 if (!isLast)
@@ -173,8 +189,10 @@ class _MilestoneRow extends StatelessWidget {
                   ),
                   if (milestone.description != null) ...[
                     const SizedBox(height: AppSpacing.sm),
-                    Text(milestone.description!,
-                        style: context.text.bodyMedium,),
+                    Text(
+                      milestone.description!,
+                      style: context.text.bodyMedium,
+                    ),
                   ],
                 ],
               ),

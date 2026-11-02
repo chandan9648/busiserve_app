@@ -21,7 +21,11 @@ class OnboardingView extends GetView<OnboardingController> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.page, AppSpacing.md, AppSpacing.sm, 0,),
+                AppSpacing.page,
+                AppSpacing.md,
+                AppSpacing.sm,
+                0,
+              ),
               child: Row(
                 children: [
                   const BrandLogo(height: 44),
@@ -49,7 +53,11 @@ class OnboardingView extends GetView<OnboardingController> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.page, 0, AppSpacing.page, AppSpacing.xl,),
+                AppSpacing.page,
+                0,
+                AppSpacing.page,
+                AppSpacing.xl,
+              ),
               child: Obx(
                 () => Column(
                   children: [
@@ -115,23 +123,28 @@ class _PageContent extends StatelessWidget {
                   left: 0,
                   top: 10,
                   child: HexBadge(
-                      icon: page.icon, size: 150, gradient: AppColors.hero,),
+                    icon: page.icon,
+                    size: 150,
+                    gradient: AppColors.hero,
+                  ),
                 ),
                 const Positioned(
                   left: 118,
                   top: 0,
                   child: HexBadge(
-                      icon: Icons.north_east_rounded,
-                      size: 64,
-                      gradient: AppColors.arrow,),
+                    icon: Icons.north_east_rounded,
+                    size: 64,
+                    gradient: AppColors.arrow,
+                  ),
                 ),
                 const Positioned(
                   left: 128,
                   top: 140,
                   child: HexBadge(
-                      icon: Icons.bolt_rounded,
-                      size: 46,
-                      gradient: AppColors.circuit,),
+                    icon: Icons.bolt_rounded,
+                    size: 46,
+                    gradient: AppColors.circuit,
+                  ),
                 ),
               ],
             ),
@@ -139,9 +152,10 @@ class _PageContent extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
           Text(page.title, style: context.text.displaySmall),
           const SizedBox(height: AppSpacing.lg),
-          Text(page.body,
-              style:
-                  context.text.bodyLarge?.copyWith(color: context.brand.muted),),
+          Text(
+            page.body,
+            style: context.text.bodyLarge?.copyWith(color: context.brand.muted),
+          ),
         ],
       ),
     );

@@ -27,13 +27,19 @@ class ProjectsView extends GetView<ProjectsController> {
             emptyActionLabel: 'Start a project',
             onEmptyAction: controller.startProject,
             builder: (items) => ListView.separated(
-              padding: const EdgeInsets.fromLTRB(AppSpacing.page, AppSpacing.sm,
-                  AppSpacing.page, AppSpacing.xxl,),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.page,
+                AppSpacing.sm,
+                AppSpacing.page,
+                AppSpacing.xxl,
+              ),
               itemCount: items.length,
               separatorBuilder: (_, __) =>
                   const SizedBox(height: AppSpacing.md),
               itemBuilder: (_, i) => ProjectCard(
-                  project: items[i], onTap: () => controller.open(items[i]),),
+                project: items[i],
+                onTap: () => controller.open(items[i]),
+              ),
             ),
           ),
         ),

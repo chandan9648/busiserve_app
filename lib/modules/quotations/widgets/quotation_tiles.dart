@@ -20,20 +20,29 @@ class EnquiryTile extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                  child: Text(enquiry.subjectLabel,
-                      style: context.text.titleMedium,),),
+                child: Text(
+                  enquiry.subjectLabel,
+                  style: context.text.titleMedium,
+                ),
+              ),
               StatusChip(
-                  label: enquiry.status.label, tone: enquiry.status.tone,),
+                label: enquiry.status.label,
+                tone: enquiry.status.tone,
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
-          Text(enquiry.message,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: context.text.bodyMedium,),
+          Text(
+            enquiry.message,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: context.text.bodyMedium,
+          ),
           const SizedBox(height: AppSpacing.md),
-          Text('${enquiry.reference}, ${Formatters.date(enquiry.createdAt)}',
-              style: context.text.bodySmall,),
+          Text(
+            '${enquiry.reference}, ${Formatters.date(enquiry.createdAt)}',
+            style: context.text.bodySmall,
+          ),
         ],
       ),
     );
@@ -41,8 +50,11 @@ class EnquiryTile extends StatelessWidget {
 }
 
 class QuotationTile extends StatelessWidget {
-  const QuotationTile(
-      {super.key, required this.quotation, required this.onTap,});
+  const QuotationTile({
+    super.key,
+    required this.quotation,
+    required this.onTap,
+  });
   final QuotationModel quotation;
   final VoidCallback onTap;
 
@@ -59,8 +71,8 @@ class QuotationTile extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                  child:
-                      Text(quotation.title, style: context.text.titleMedium),),
+                child: Text(quotation.title, style: context.text.titleMedium),
+              ),
               StatusChip(
                 label: expired && quotation.status == QuotationStatus.sent
                     ? 'Expired'

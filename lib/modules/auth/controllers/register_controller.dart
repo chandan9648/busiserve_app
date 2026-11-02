@@ -46,8 +46,10 @@ class RegisterController extends GetxController {
       );
       passwordCtrl.clear();
       confirmCtrl.clear();
-      Get.snackbar('Account created',
-          'We sent a verification link to ${emailCtrl.text.trim()}.',);
+      Get.snackbar(
+        'Account created',
+        'We sent a verification link to ${emailCtrl.text.trim()}.',
+      );
       final target = redirect;
       if (target != null && target != Routes.register) {
         await Get.offNamed<void>(target);

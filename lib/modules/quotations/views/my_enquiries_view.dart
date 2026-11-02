@@ -20,7 +20,8 @@ class MyEnquiriesView extends GetView<MyEnquiriesController> {
         appBar: AppBar(
           title: const Text('Enquiries and quotations'),
           bottom: const TabBar(
-              tabs: [Tab(text: 'Enquiries'), Tab(text: 'Quotations')],),
+            tabs: [Tab(text: 'Enquiries'), Tab(text: 'Quotations')],
+          ),
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: controller.newEnquiry,
@@ -38,9 +39,11 @@ class MyEnquiriesView extends GetView<MyEnquiriesController> {
                   emptyMessage:
                       'Enquiries you send while signed in appear here with their status.',
                   emptyIcon: Icons.mark_chat_unread_outlined,
-                  builder: (items) => _List(children: [
-                    for (final e in items) EnquiryTile(enquiry: e),
-                  ],),
+                  builder: (items) => _List(
+                    children: [
+                      for (final e in items) EnquiryTile(enquiry: e),
+                    ],
+                  ),
                 ),
               ),
               Obx(
@@ -55,8 +58,9 @@ class MyEnquiriesView extends GetView<MyEnquiriesController> {
                     children: [
                       for (final q in items)
                         QuotationTile(
-                            quotation: q,
-                            onTap: () => controller.openQuotation(q),),
+                          quotation: q,
+                          onTap: () => controller.openQuotation(q),
+                        ),
                     ],
                   ),
                 ),
@@ -77,7 +81,11 @@ class _List extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(
-          AppSpacing.page, AppSpacing.lg, AppSpacing.page, 96,),
+        AppSpacing.page,
+        AppSpacing.lg,
+        AppSpacing.page,
+        96,
+      ),
       itemCount: children.length,
       separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (_, i) => children[i],

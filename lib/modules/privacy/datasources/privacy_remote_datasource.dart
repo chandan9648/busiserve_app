@@ -32,7 +32,8 @@ class FirebasePrivacyDataSource implements PrivacyRemoteDataSource {
     final user = _signIn.currentUser;
     if (user == null) {
       throw const AuthenticationException(
-          'Sign in again to delete your account.',);
+        'Sign in again to delete your account.',
+      );
     }
     final profile = _store.doc('users/${user.uid}');
 

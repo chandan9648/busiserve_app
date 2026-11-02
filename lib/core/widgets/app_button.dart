@@ -62,7 +62,9 @@ class AppButton extends StatelessWidget {
     switch (variant) {
       case AppButtonVariant.secondary:
         return OutlinedButton(
-            onPressed: enabled ? onPressed : null, child: child,);
+          onPressed: enabled ? onPressed : null,
+          child: child,
+        );
       case AppButtonVariant.text:
         return TextButton(onPressed: enabled ? onPressed : null, child: child);
       case AppButtonVariant.primary:
@@ -96,7 +98,8 @@ class AppButton extends StatelessWidget {
                   onTap: enabled ? onPressed : null,
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(
-                        minHeight: AppSpacing.touchTarget + 4,),
+                      minHeight: AppSpacing.touchTarget + 4,
+                    ),
                     child: Padding(
                       padding:
                           const EdgeInsets.symmetric(horizontal: AppSpacing.xl),

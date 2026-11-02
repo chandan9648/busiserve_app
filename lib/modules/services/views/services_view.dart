@@ -21,7 +21,11 @@ class ServicesView extends GetView<ServicesController> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.page, 0, AppSpacing.page, AppSpacing.md,),
+                AppSpacing.page,
+                0,
+                AppSpacing.page,
+                AppSpacing.md,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -82,14 +86,19 @@ class ServicesView extends GetView<ServicesController> {
                   builder: (items) => RefreshIndicator(
                     onRefresh: () => controller.load(refresh: true),
                     child: ListView.separated(
-                      padding: const EdgeInsets.fromLTRB(AppSpacing.page,
-                          AppSpacing.sm, AppSpacing.page, AppSpacing.xxl,),
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.page,
+                        AppSpacing.sm,
+                        AppSpacing.page,
+                        AppSpacing.xxl,
+                      ),
                       itemCount: items.length,
                       separatorBuilder: (_, __) =>
                           const SizedBox(height: AppSpacing.md),
                       itemBuilder: (_, i) => ServiceCard(
-                          service: items[i],
-                          onTap: () => controller.open(items[i]),),
+                        service: items[i],
+                        onTap: () => controller.open(items[i]),
+                      ),
                     ),
                   ),
                 ),

@@ -28,8 +28,11 @@ void main() {
     for (final page in AppPages.routes) {
       final protected =
           page.middlewares?.whereType<AuthMiddleware>().isNotEmpty ?? false;
-      expect(protected, AppPages.protectedRouteNames.contains(page.name),
-          reason: page.name,);
+      expect(
+        protected,
+        AppPages.protectedRouteNames.contains(page.name),
+        reason: page.name,
+      );
     }
   });
 
@@ -43,14 +46,16 @@ void main() {
             name: '/',
             page: () => Scaffold(
               body: TextButton(
-                  onPressed: () => Get.toNamed<void>(Routes.projects),
-                  child: const Text('Go'),),
+                onPressed: () => Get.toNamed<void>(Routes.projects),
+                child: const Text('Go'),
+              ),
             ),
           ),
           GetPage(
-              name: Routes.projects,
-              page: () => const Text('PROJECTS'),
-              middlewares: [AuthMiddleware()],),
+            name: Routes.projects,
+            page: () => const Text('PROJECTS'),
+            middlewares: [AuthMiddleware()],
+          ),
           GetPage(name: Routes.login, page: () => const Text('LOGIN')),
         ],
       ),

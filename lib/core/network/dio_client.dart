@@ -39,8 +39,11 @@ class DioClient {
   }) =>
       guard(
         () async {
-          final res = await _dio.get<Object?>(path,
-              queryParameters: query, cancelToken: cancelToken,);
+          final res = await _dio.get<Object?>(
+            path,
+            queryParameters: query,
+            cancelToken: cancelToken,
+          );
           return parse(_asMap(res.data));
         },
         context: 'GET $path',
@@ -76,7 +79,8 @@ class DioClient {
     if (data is Map<String, dynamic>) return data;
     if (data is Map) return data.map((k, v) => MapEntry(k.toString(), v));
     throw const DataParsingException(
-        cause: 'Response body is not a JSON object',);
+      cause: 'Response body is not a JSON object',
+    );
   }
 }
 
@@ -86,7 +90,9 @@ class _AuthInterceptor extends Interceptor {
 
   @override
   Future<void> onRequest(
-      RequestOptions options, RequestInterceptorHandler handler,) async {
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     final token = await _storage.readApiToken();
     if (token != null) options.headers['Authorization'] = 'Bearer $token';
     handler.next(options);
@@ -97,16 +103,20 @@ class _AuthInterceptor extends Interceptor {
 class _SafeLogInterceptor extends Interceptor {
   @override
   void onResponse(
-      Response<dynamic> response, ResponseInterceptorHandler handler,) {
+    Response<dynamic> response,
+    ResponseInterceptorHandler handler,
+  ) {
     AppLogger.debug(
-        '${response.requestOptions.method} ${response.requestOptions.path} -> ${response.statusCode}',);
+      '${response.requestOptions.method} ${response.requestOptions.path} -> ${response.statusCode}',
+    );
     handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     AppLogger.debug(
-        '${err.requestOptions.method} ${err.requestOptions.path} -> ${err.response?.statusCode ?? err.type.name}',);
+      '${err.requestOptions.method} ${err.requestOptions.path} -> ${err.response?.statusCode ?? err.type.name}',
+    );
     handler.next(err);
   }
 }

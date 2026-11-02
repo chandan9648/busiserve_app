@@ -30,7 +30,8 @@ class HomeController extends GetxController {
   }
 
   Future<void> refreshAll() => Future.wait(
-      [loadServices(refresh: true), loadCaseStudies(refresh: true)],);
+        [loadServices(refresh: true), loadCaseStudies(refresh: true)],
+      );
 
   Future<void> loadServices({bool refresh = false}) async {
     if (services.value.isLoading) return;

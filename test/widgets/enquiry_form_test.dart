@@ -36,8 +36,9 @@ void main() {
         getPages: [
           GetPage(name: Routes.enquiry, page: () => const EnquiryFormView()),
           GetPage(
-              name: Routes.enquirySuccess,
-              page: () => const Scaffold(body: Text('SUCCESS')),),
+            name: Routes.enquirySuccess,
+            page: () => const Scaffold(body: Text('SUCCESS')),
+          ),
         ],
       ),
     );
@@ -46,11 +47,17 @@ void main() {
 
   Future<void> fillValid(WidgetTester tester) async {
     await tester.enterText(
-        find.widgetWithText(TextFormField, 'Full name'), 'Asha Verma',);
+      find.widgetWithText(TextFormField, 'Full name'),
+      'Asha Verma',
+    );
     await tester.enterText(
-        find.widgetWithText(TextFormField, 'Work email'), 'asha@example.com',);
-    await tester.enterText(find.widgetWithText(TextFormField, 'Message'),
-        'We need a clinic booking app.',);
+      find.widgetWithText(TextFormField, 'Work email'),
+      'asha@example.com',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Message'),
+      'We need a clinic booking app.',
+    );
   }
 
   tearDown(Get.reset);
@@ -73,8 +80,10 @@ void main() {
 
   testWidgets('double tap submits once and navigates to success',
       (tester) async {
-    await pumpForm(tester,
-        fake: FakeEnquiryRemote(delay: const Duration(milliseconds: 300)),);
+    await pumpForm(
+      tester,
+      fake: FakeEnquiryRemote(delay: const Duration(milliseconds: 300)),
+    );
     await fillValid(tester);
     await tester.tap(find.text('Send message'));
     await tester.pump(const Duration(milliseconds: 10));
@@ -88,9 +97,13 @@ void main() {
   testWidgets(
       'retry after a failure reuses the same idempotency key and keeps input',
       (tester) async {
-    await pumpForm(tester,
-        fake: FakeEnquiryRemote(
-            failuresBeforeSuccess: 1, failure: const NetworkException(),),);
+    await pumpForm(
+      tester,
+      fake: FakeEnquiryRemote(
+        failuresBeforeSuccess: 1,
+        failure: const NetworkException(),
+      ),
+    );
     await fillValid(tester);
     await tester.tap(find.text('Send message'));
     await tester.pumpAndSettle();
@@ -101,7 +114,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(remote.requests.length, 2);
     expect(
-        remote.requests[0].idempotencyKey, remote.requests[1].idempotencyKey,);
+      remote.requests[0].idempotencyKey,
+      remote.requests[1].idempotencyKey,
+    );
     expect(find.text('SUCCESS'), findsOneWidget);
   });
 }

@@ -27,10 +27,16 @@ class PortfolioView extends GetView<PortfolioController> {
               onRefresh: () => controller.load(refresh: true),
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.page, 0, AppSpacing.page, AppSpacing.xxl,),
+                  AppSpacing.page,
+                  0,
+                  AppSpacing.page,
+                  AppSpacing.xxl,
+                ),
                 children: [
-                  Text('Proven results. Measurable impact.',
-                      style: context.text.headlineSmall,),
+                  Text(
+                    'Proven results. Measurable impact.',
+                    style: context.text.headlineSmall,
+                  ),
                   const SizedBox(height: AppSpacing.sm),
                   Text(
                     'How we have helped organisations overcome complex challenges, streamline '

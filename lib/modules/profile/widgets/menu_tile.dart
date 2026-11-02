@@ -17,12 +17,17 @@ class MenuGroup extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(
-                left: AppSpacing.xs, bottom: AppSpacing.sm,),
+              left: AppSpacing.xs,
+              bottom: AppSpacing.sm,
+            ),
             child: Semantics(
-                header: true,
-                child: Text(title,
-                    style: context.text.titleSmall
-                        ?.copyWith(color: context.brand.muted),),),
+              header: true,
+              child: Text(
+                title,
+                style: context.text.titleSmall
+                    ?.copyWith(color: context.brand.muted),
+              ),
+            ),
           ),
           Card(
             clipBehavior: Clip.antiAlias,

@@ -45,8 +45,10 @@ class LoginController extends GetxController {
 
   void goToRegister() =>
       Get.offNamed<void>(Routes.register, arguments: {'redirect': redirect});
-  void goToForgotPassword() => Get.toNamed<void>(Routes.forgotPassword,
-      arguments: {'email': emailCtrl.text.trim()},);
+  void goToForgotPassword() => Get.toNamed<void>(
+        Routes.forgotPassword,
+        arguments: {'email': emailCtrl.text.trim()},
+      );
 
   @override
   void onClose() {

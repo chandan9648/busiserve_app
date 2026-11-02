@@ -3,11 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class AuthRemoteDataSource {
   Future<void> signIn(String email, String password);
-  Future<void> register(
-      {required String name,
-      required String email,
-      required String password,
-      String? phone,});
+  Future<void> register({
+    required String name,
+    required String email,
+    required String password,
+    String? phone,
+  });
   Future<void> sendPasswordReset(String email);
   Future<void> reauthenticate(String password);
   Future<void> signOut();
@@ -35,7 +36,9 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
     String? phone,
   }) async {
     final cred = await _auth.createUserWithEmailAndPassword(
-        email: email.trim(), password: password,);
+      email: email.trim(),
+      password: password,
+    );
     final user = cred.user!;
     await user.updateDisplayName(name.trim());
     await _db.doc('users/${user.uid}').set({

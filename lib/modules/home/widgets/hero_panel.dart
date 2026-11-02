@@ -23,9 +23,10 @@ class HeroPanel extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.panel),
         boxShadow: [
           BoxShadow(
-              color: AppColors.ink.withValues(alpha: 0.28),
-              blurRadius: 30,
-              offset: const Offset(0, 14),),
+            color: AppColors.ink.withValues(alpha: 0.28),
+            blurRadius: 30,
+            offset: const Offset(0, 14),
+          ),
         ],
       ),
       clipBehavior: Clip.antiAlias,
@@ -41,14 +42,20 @@ class HeroPanel extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(
-                AppSpacing.xl, AppSpacing.xxl, AppSpacing.xl, AppSpacing.xl,),
+              AppSpacing.xl,
+              AppSpacing.xxl,
+              AppSpacing.xl,
+              AppSpacing.xl,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Your digital development partner',
                   style: context.text.bodyMedium?.copyWith(
-                      color: AppColors.sky, fontWeight: FontWeight.w700,),
+                    color: AppColors.sky,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Semantics(

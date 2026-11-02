@@ -19,9 +19,11 @@ class FirestoreNotificationDataSource implements NotificationRemoteDataSource {
       .orderBy('createdAt', descending: true)
       .limit(100)
       .snapshots()
-      .map((s) => s.docs
-          .map((d) => NotificationModel.fromMap(d.data(), id: d.id))
-          .toList(),);
+      .map(
+        (s) => s.docs
+            .map((d) => NotificationModel.fromMap(d.data(), id: d.id))
+            .toList(),
+      );
 
   @override
   Future<void> markRead(String uid, String id) =>

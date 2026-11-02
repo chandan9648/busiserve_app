@@ -43,19 +43,28 @@ class AppTheme {
     );
 
     final base = ThemeData(
-        useMaterial3: true, colorScheme: scheme, brightness: brightness,);
+      useMaterial3: true,
+      colorScheme: scheme,
+      brightness: brightness,
+    );
     final body = GoogleFonts.manropeTextTheme(base.textTheme).apply(
       bodyColor: scheme.onSurface,
       displayColor: scheme.onSurface,
     );
-    TextStyle? sora(TextStyle? s, double size, FontWeight w,
-            {double ls = -0.3, double h = 1.15,}) =>
+    TextStyle? sora(
+      TextStyle? s,
+      double size,
+      FontWeight w, {
+      double ls = -0.3,
+      double h = 1.15,
+    }) =>
         GoogleFonts.sora(
-            textStyle: s,
-            fontSize: size,
-            fontWeight: w,
-            letterSpacing: ls,
-            height: h,);
+          textStyle: s,
+          fontSize: size,
+          fontWeight: w,
+          letterSpacing: ls,
+          height: h,
+        );
 
     final textTheme = body.copyWith(
       displaySmall:
@@ -67,13 +76,20 @@ class AppTheme {
       titleMedium:
           sora(body.titleMedium, 16, FontWeight.w600, ls: -0.1, h: 1.3),
       titleSmall: GoogleFonts.manrope(
-          textStyle: body.titleSmall,
-          fontSize: 14,
-          fontWeight: FontWeight.w700,),
+        textStyle: body.titleSmall,
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+      ),
       bodyLarge: GoogleFonts.manrope(
-          textStyle: body.bodyLarge, fontSize: 16, height: 1.55,),
+        textStyle: body.bodyLarge,
+        fontSize: 16,
+        height: 1.55,
+      ),
       bodyMedium: GoogleFonts.manrope(
-          textStyle: body.bodyMedium, fontSize: 14.5, height: 1.5,),
+        textStyle: body.bodyMedium,
+        fontSize: 14.5,
+        height: 1.5,
+      ),
       bodySmall: GoogleFonts.manrope(
         textStyle: body.bodySmall,
         fontSize: 12.5,
@@ -81,9 +97,10 @@ class AppTheme {
         color: scheme.onSurfaceVariant,
       ),
       labelLarge: GoogleFonts.manrope(
-          textStyle: body.labelLarge,
-          fontSize: 15,
-          fontWeight: FontWeight.w700,),
+        textStyle: body.labelLarge,
+        fontSize: 15,
+        fontWeight: FontWeight.w700,
+      ),
     );
 
     final fieldBorder = OutlineInputBorder(
@@ -123,12 +140,15 @@ class AppTheme {
         enabledBorder: fieldBorder,
         focusedBorder: fieldBorder.copyWith(
           borderSide: BorderSide(
-              color: isDark ? AppColors.sky : AppColors.blue, width: 2,),
+            color: isDark ? AppColors.sky : AppColors.blue,
+            width: 2,
+          ),
         ),
         errorBorder:
             fieldBorder.copyWith(borderSide: BorderSide(color: scheme.error)),
         focusedErrorBorder: fieldBorder.copyWith(
-            borderSide: BorderSide(color: scheme.error, width: 2),),
+          borderSide: BorderSide(color: scheme.error, width: 2),
+        ),
         labelStyle:
             textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
         floatingLabelStyle: textTheme.bodyMedium?.copyWith(
@@ -141,7 +161,8 @@ class AppTheme {
         style: FilledButton.styleFrom(
           minimumSize: const Size.fromHeight(AppSpacing.touchTarget + 4),
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.field),),
+            borderRadius: BorderRadius.circular(AppRadius.field),
+          ),
           textStyle: textTheme.labelLarge,
         ),
       ),
@@ -150,9 +171,12 @@ class AppTheme {
           minimumSize: const Size.fromHeight(AppSpacing.touchTarget + 4),
           foregroundColor: scheme.primary,
           side: BorderSide(
-              color: scheme.primary.withValues(alpha: 0.45), width: 1.4,),
+            color: scheme.primary.withValues(alpha: 0.45),
+            width: 1.4,
+          ),
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.field),),
+            borderRadius: BorderRadius.circular(AppRadius.field),
+          ),
           textStyle: textTheme.labelLarge,
         ),
       ),
@@ -166,7 +190,8 @@ class AppTheme {
       ),
       chipTheme: ChipThemeData(
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.chip),),
+          borderRadius: BorderRadius.circular(AppRadius.chip),
+        ),
         side: BorderSide(color: scheme.outline),
         labelStyle: textTheme.bodySmall
             ?.copyWith(fontWeight: FontWeight.w600, color: scheme.onSurface),
@@ -188,13 +213,15 @@ class AppTheme {
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.field),),
+          borderRadius: BorderRadius.circular(AppRadius.field),
+        ),
       ),
       listTileTheme: ListTileThemeData(
         minVerticalPadding: 12,
         iconColor: scheme.primary,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.field),),
+          borderRadius: BorderRadius.circular(AppRadius.field),
+        ),
       ),
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {

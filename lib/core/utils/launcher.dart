@@ -38,8 +38,11 @@ class Launcher {
       final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!ok) _fail();
     } catch (e, st) {
-      AppLogger.error('launch failed for scheme ${uri.scheme}',
-          error: e, stackTrace: st,);
+      AppLogger.error(
+        'launch failed for scheme ${uri.scheme}',
+        error: e,
+        stackTrace: st,
+      );
       _fail();
     }
   }

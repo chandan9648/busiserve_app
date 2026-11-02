@@ -5,9 +5,10 @@ import '../datasources/support_remote_datasource.dart';
 import '../models/ticket_model.dart';
 
 class SupportRepository {
-  SupportRepository(
-      {required SupportRemoteDataSource remote, required AuthSession session,})
-      : _remote = remote,
+  SupportRepository({
+    required SupportRemoteDataSource remote,
+    required AuthSession session,
+  })  : _remote = remote,
         _session = session;
 
   final SupportRemoteDataSource _remote;
@@ -20,25 +21,31 @@ class SupportRepository {
       ? _session.displayName!.trim()
       : 'Customer';
 
-  Stream<List<TicketModel>> watchMine() =>
-      guardStream(_remote.watchForCustomer(_session.requireUid()),
-          context: 'watch tickets',);
+  Stream<List<TicketModel>> watchMine() => guardStream(
+        _remote.watchForCustomer(_session.requireUid()),
+        context: 'watch tickets',
+      );
 
   Stream<TicketModel> watch(String id) {
     _session.requireUid();
     return guardStream(
-      _remote.watchById(id).map((t) =>
-          t ??
-          (throw const NotFoundException(
-              'This ticket is no longer available.',)),),
+      _remote.watchById(id).map(
+            (t) =>
+                t ??
+                (throw const NotFoundException(
+                  'This ticket is no longer available.',
+                )),
+          ),
       context: 'watch ticket',
     );
   }
 
   Stream<List<TicketMessage>> watchMessages(String ticketId) {
     _session.requireUid();
-    return guardStream(_remote.watchMessages(ticketId),
-        context: 'watch messages',);
+    return guardStream(
+      _remote.watchMessages(ticketId),
+      context: 'watch messages',
+    );
   }
 
   Future<void> create(NewTicket ticket) async {
@@ -52,10 +59,11 @@ class SupportRepository {
     );
   }
 
-  Future<void> send(
-      {required String ticketId,
-      required String messageId,
-      required String text,}) async {
+  Future<void> send({
+    required String ticketId,
+    required String messageId,
+    required String text,
+  }) async {
     final uid = _session.requireUid();
     return guard(
       () async {

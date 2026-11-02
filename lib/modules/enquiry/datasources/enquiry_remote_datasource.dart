@@ -36,8 +36,13 @@ class FirebaseEnquiryDataSource implements EnquiryRemoteDataSource {
       return EnquiryResult(enquiryId: ref.id, duplicate: true);
     }
     final batch = _store.batch();
-    await RateLimits.spend(_store, batch,
-        uid: uid, limit: RateLimit.enquiry, docId: ref.id,);
+    await RateLimits.spend(
+      _store,
+      batch,
+      uid: uid,
+      limit: RateLimit.enquiry,
+      docId: ref.id,
+    );
     batch.set(ref, {
       ...request.toPayload(),
       'customerId': uid,
@@ -65,6 +70,9 @@ class FirebaseEnquiryDataSource implements EnquiryRemoteDataSource {
       .orderBy('createdAt', descending: true)
       .limit(50)
       .snapshots()
-      .map((s) =>
-          s.docs.map((d) => EnquiryModel.fromMap(d.data(), id: d.id)).toList(),);
+      .map(
+        (s) => s.docs
+            .map((d) => EnquiryModel.fromMap(d.data(), id: d.id))
+            .toList(),
+      );
 }

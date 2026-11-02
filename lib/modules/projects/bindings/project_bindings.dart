@@ -10,7 +10,9 @@ void _registerProjectRepository() {
   if (Get.isRegistered<ProjectRepository>()) return;
   Get.lazyPut(
     () => ProjectRepository(
-        remote: FirestoreProjectDataSource(), session: Get.find<AuthSession>(),),
+      remote: FirestoreProjectDataSource(),
+      session: Get.find<AuthSession>(),
+    ),
     fenix: true,
   );
 }

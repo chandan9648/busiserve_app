@@ -28,10 +28,16 @@ class EnquiryFormView extends GetView<EnquiryController> {
             key: controller.formKey,
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.page, 0, AppSpacing.page, AppSpacing.xxl,),
+                AppSpacing.page,
+                0,
+                AppSpacing.page,
+                AppSpacing.xxl,
+              ),
               children: [
-                Text('A rough idea is enough to start.',
-                    style: context.text.headlineSmall,),
+                Text(
+                  'A rough idea is enough to start.',
+                  style: context.text.headlineSmall,
+                ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
                   'Describe the problem you want to solve. If you already have a website, a target '
@@ -41,7 +47,8 @@ class EnquiryFormView extends GetView<EnquiryController> {
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 const EmailVerificationNotice(
-                    padding: EdgeInsets.only(bottom: AppSpacing.lg),),
+                  padding: EdgeInsets.only(bottom: AppSpacing.lg),
+                ),
                 Obx(
                   () => controller.errorMessage.value == null
                       ? const SizedBox.shrink()
@@ -92,8 +99,10 @@ class EnquiryFormView extends GetView<EnquiryController> {
                   textCapitalization: TextCapitalization.words,
                   autofillHints: const [AutofillHints.organizationName],
                   validator: (v) => Validators.maxLength(
-                      v, AppLimits.companyMax,
-                      field: 'Company',),
+                    v,
+                    AppLimits.companyMax,
+                    field: 'Company',
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 Obx(

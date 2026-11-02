@@ -17,7 +17,11 @@ class PrivacySettingsView extends GetView<PrivacyController> {
         child: Obx(
           () => ListView(
             padding: const EdgeInsets.fromLTRB(
-                AppSpacing.page, 0, AppSpacing.page, AppSpacing.xxl,),
+              AppSpacing.page,
+              0,
+              AppSpacing.page,
+              AppSpacing.xxl,
+            ),
             children: [
               MenuGroup(
                 title: 'Diagnostics',
@@ -43,7 +47,8 @@ class PrivacySettingsView extends GetView<PrivacyController> {
                       onChanged: controller.setPushEnabled,
                       title: const Text('Push notifications'),
                       subtitle: const Text(
-                          'Quotations, project updates and support replies.',),
+                        'Quotations, project updates and support replies.',
+                      ),
                     ),
                   ],
                 ),
@@ -51,13 +56,15 @@ class PrivacySettingsView extends GetView<PrivacyController> {
                 title: 'Policies',
                 children: [
                   MenuTile(
-                      icon: Icons.policy_outlined,
-                      title: 'Privacy policy',
-                      onTap: controller.openPrivacyPolicy,),
+                    icon: Icons.policy_outlined,
+                    title: 'Privacy policy',
+                    onTap: controller.openPrivacyPolicy,
+                  ),
                   MenuTile(
-                      icon: Icons.gavel_outlined,
-                      title: 'Terms of service',
-                      onTap: controller.openTerms,),
+                    icon: Icons.gavel_outlined,
+                    title: 'Terms of service',
+                    onTap: controller.openTerms,
+                  ),
                   MenuTile(
                     icon: Icons.currency_rupee_rounded,
                     title: 'Refund and cancellation policy',

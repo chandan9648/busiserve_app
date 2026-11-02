@@ -22,8 +22,9 @@ class OnboardingController extends GetxController {
       finish();
     } else {
       pageController.nextPage(
-          duration: const Duration(milliseconds: 320),
-          curve: Curves.easeOutCubic,);
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeOutCubic,
+      );
     }
   }
 

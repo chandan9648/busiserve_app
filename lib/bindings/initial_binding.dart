@@ -19,8 +19,9 @@ class InitialBinding extends Bindings {
     final AuthSession session =
         Get.put<AuthSession>(AuthService(), permanent: true);
     final push = Get.put(
-        PushNotificationService(session: session, prefs: prefs),
-        permanent: true,);
+      PushNotificationService(session: session, prefs: prefs),
+      permanent: true,
+    );
 
     Get.put(
       AuthRepository(

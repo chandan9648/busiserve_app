@@ -33,12 +33,18 @@ class TicketsView extends GetView<TicketsController> {
             onEmptyAction: controller.create,
             builder: (items) => ListView.separated(
               padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.page, AppSpacing.sm, AppSpacing.page, 96,),
+                AppSpacing.page,
+                AppSpacing.sm,
+                AppSpacing.page,
+                96,
+              ),
               itemCount: items.length,
               separatorBuilder: (_, __) =>
                   const SizedBox(height: AppSpacing.md),
               itemBuilder: (_, i) => TicketCard(
-                  ticket: items[i], onTap: () => controller.open(items[i]),),
+                ticket: items[i],
+                onTap: () => controller.open(items[i]),
+              ),
             ),
           ),
         ),

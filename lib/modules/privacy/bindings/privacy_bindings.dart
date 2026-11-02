@@ -26,8 +26,12 @@ class PrivacyBinding extends Bindings {
 class DeleteAccountBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => PrivacyRepository(
-        remote: FirebasePrivacyDataSource(), session: Get.find<AuthSession>(),),);
+    Get.lazyPut(
+      () => PrivacyRepository(
+        remote: FirebasePrivacyDataSource(),
+        session: Get.find<AuthSession>(),
+      ),
+    );
     Get.lazyPut(() => DeleteAccountController(Get.find(), Get.find()));
   }
 }

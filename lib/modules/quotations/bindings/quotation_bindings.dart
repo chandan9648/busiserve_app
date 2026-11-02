@@ -11,8 +11,9 @@ void _registerQuotationRepository() {
   if (Get.isRegistered<QuotationRepository>()) return;
   Get.lazyPut(
     () => QuotationRepository(
-        remote: FirestoreQuotationDataSource(),
-        session: Get.find<AuthSession>(),),
+      remote: FirestoreQuotationDataSource(),
+      session: Get.find<AuthSession>(),
+    ),
     fenix: true,
   );
 }

@@ -40,8 +40,9 @@ class NotificationsView extends GetView<NotificationsController> {
               itemCount: items.length,
               separatorBuilder: (_, __) => const Divider(),
               itemBuilder: (_, i) => NotificationTile(
-                  notification: items[i],
-                  onTap: () => controller.open(items[i]),),
+                notification: items[i],
+                onTap: () => controller.open(items[i]),
+              ),
             ),
           ),
         ),

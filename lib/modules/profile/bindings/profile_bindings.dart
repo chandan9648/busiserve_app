@@ -9,7 +9,9 @@ void registerProfileRepository() {
   if (Get.isRegistered<ProfileRepository>()) return;
   Get.lazyPut(
     () => ProfileRepository(
-        remote: FirestoreProfileDataSource(), session: Get.find<AuthSession>(),),
+      remote: FirestoreProfileDataSource(),
+      session: Get.find<AuthSession>(),
+    ),
     fenix: true,
   );
 }

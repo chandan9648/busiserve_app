@@ -4,9 +4,10 @@ import '../datasources/privacy_remote_datasource.dart';
 import '../models/deletion_request_model.dart';
 
 class PrivacyRepository {
-  PrivacyRepository(
-      {required PrivacyRemoteDataSource remote, required AuthSession session,})
-      : _remote = remote,
+  PrivacyRepository({
+    required PrivacyRemoteDataSource remote,
+    required AuthSession session,
+  })  : _remote = remote,
         _session = session;
 
   final PrivacyRemoteDataSource _remote;
@@ -15,7 +16,9 @@ class PrivacyRepository {
   /// Not retried automatically: deletion is not something to repeat blindly.
   Future<void> deleteAccount(DeletionRequest request) async {
     _session.requireUid();
-    return guard(() => _remote.deleteAccount(request),
-        context: 'deleteAccount',);
+    return guard(
+      () => _remote.deleteAccount(request),
+      context: 'deleteAccount',
+    );
   }
 }

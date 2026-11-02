@@ -80,8 +80,10 @@ class TicketMessage {
     this.createdAt,
   });
 
-  factory TicketMessage.fromMap(Map<String, dynamic> map,
-          {required String id,}) =>
+  factory TicketMessage.fromMap(
+    Map<String, dynamic> map, {
+    required String id,
+  }) =>
       TicketMessage(
         id: id,
         text: Parse.string(map, 'text'),

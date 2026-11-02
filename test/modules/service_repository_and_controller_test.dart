@@ -16,8 +16,9 @@ void main() {
   group('ServiceRepository', () {
     test('uses remote catalogue when available', () async {
       final repo = ServiceRepository(
-          local: const ServiceLocalDataSource(),
-          remote: FakeServiceRemote(items: [sampleService]),);
+        local: const ServiceLocalDataSource(),
+        remote: FakeServiceRemote(items: [sampleService]),
+      );
       final items = await repo.getServices();
       expect(items.single.id, 'remote-service');
     });
@@ -33,7 +34,9 @@ void main() {
     test('falls back when remote is empty, and caches', () async {
       final remote = FakeServiceRemote();
       final repo = ServiceRepository(
-          local: const ServiceLocalDataSource(), remote: remote,);
+        local: const ServiceLocalDataSource(),
+        remote: remote,
+      );
       await repo.getServices();
       await repo.getServices();
       expect(remote.calls, 1);
@@ -44,16 +47,21 @@ void main() {
     test('getService throws NotFound for unknown id', () async {
       final repo = ServiceRepository(local: const ServiceLocalDataSource());
       await expectLater(
-          repo.getService('nope'), throwsA(isA<NotFoundException>()),);
+        repo.getService('nope'),
+        throwsA(isA<NotFoundException>()),
+      );
       expect(
-          (await repo.getService('app-development')).title, 'App Development',);
+        (await repo.getService('app-development')).title,
+        'App Development',
+      );
     });
   });
 
   group('ServicesController', () {
     test('initial -> loading -> success, then filters', () async {
       final c = ServicesController(
-          ServiceRepository(local: const ServiceLocalDataSource()),);
+        ServiceRepository(local: const ServiceLocalDataSource()),
+      );
       expect(c.state.value, isA<InitialState<List<ServiceModel>>>());
       Get.put(c);
       expect(c.state.value, isA<LoadingState<List<ServiceModel>>>());
@@ -62,8 +70,10 @@ void main() {
 
       c.selectCategory(ServiceCategory.aiAutomation);
       await Future<void>.delayed(Duration.zero);
-      expect(c.state.value.dataOrNull!.map((s) => s.id),
-          ['ai-agent-development', 'automation-n8n'],);
+      expect(
+        c.state.value.dataOrNull!.map((s) => s.id),
+        ['ai-agent-development', 'automation-n8n'],
+      );
 
       c.search('zzz');
       await Future<void>.delayed(Duration.zero);

@@ -26,24 +26,32 @@ class CaseStudyDetailView extends GetView<CaseStudyDetailController> {
           builder: (c) => ResponsiveBody(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.page, 0, AppSpacing.page, AppSpacing.xxl,),
+                AppSpacing.page,
+                0,
+                AppSpacing.page,
+                AppSpacing.xxl,
+              ),
               children: [
                 Row(
                   children: [
                     HexBadge(
-                        icon: industryIcon(c.industry),
-                        size: 44,
-                        gradient: AppColors.arrow,),
+                      icon: industryIcon(c.industry),
+                      size: 44,
+                      gradient: AppColors.arrow,
+                    ),
                     const SizedBox(width: AppSpacing.md),
-                    Text(c.industry,
-                        style: context.text.titleSmall
-                            ?.copyWith(color: AppColors.flame),),
+                    Text(
+                      c.industry,
+                      style: context.text.titleSmall
+                          ?.copyWith(color: AppColors.flame),
+                    ),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 Semantics(
-                    header: true,
-                    child: Text(c.title, style: context.text.headlineMedium),),
+                  header: true,
+                  child: Text(c.title, style: context.text.headlineMedium),
+                ),
                 const SizedBox(height: AppSpacing.md),
                 Text(c.summary, style: context.text.bodyLarge),
                 if (c.challenge != null)
@@ -60,11 +68,15 @@ class CaseStudyDetailView extends GetView<CaseStudyDetailController> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.trending_up_rounded,
-                              size: 20, color: AppColors.flame,),
+                          const Icon(
+                            Icons.trending_up_rounded,
+                            size: 20,
+                            color: AppColors.flame,
+                          ),
                           const SizedBox(width: AppSpacing.md),
                           Expanded(
-                              child: Text(r, style: context.text.bodyMedium),),
+                            child: Text(r, style: context.text.bodyMedium),
+                          ),
                         ],
                       ),
                     ),
@@ -81,8 +93,9 @@ class CaseStudyDetailView extends GetView<CaseStudyDetailController> {
                 ],
                 const SizedBox(height: AppSpacing.xxl),
                 AppButton(
-                    label: 'Start a similar project',
-                    onPressed: controller.startSimilarProject,),
+                  label: 'Start a similar project',
+                  onPressed: controller.startSimilarProject,
+                ),
                 const SizedBox(height: AppSpacing.sm),
                 TextButton.icon(
                   onPressed: controller.openWebsite,
@@ -112,9 +125,10 @@ class _Section extends StatelessWidget {
         children: [
           Text(title, style: context.text.titleLarge),
           const SizedBox(height: AppSpacing.sm),
-          Text(body,
-              style:
-                  context.text.bodyLarge?.copyWith(color: context.brand.muted),),
+          Text(
+            body,
+            style: context.text.bodyLarge?.copyWith(color: context.brand.muted),
+          ),
         ],
       ),
     );

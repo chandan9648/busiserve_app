@@ -17,9 +17,12 @@ class TicketDetailView extends GetView<TicketDetailController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Obx(() => Text(
+        title: Obx(
+          () => Text(
             controller.ticket.value.dataOrNull?.subject ?? 'Support request',
-            overflow: TextOverflow.ellipsis,),),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ),
       body: Obx(
         () => StateView<TicketModel>(
@@ -29,7 +32,11 @@ class TicketDetailView extends GetView<TicketDetailController> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.page, 0, AppSpacing.page, AppSpacing.sm,),
+                  AppSpacing.page,
+                  0,
+                  AppSpacing.page,
+                  AppSpacing.sm,
+                ),
                 child: Row(
                   children: [
                     StatusChip(label: t.status.label, tone: t.status.tone),
@@ -78,7 +85,11 @@ class _Composer extends GetView<TicketDetailController> {
         top: false,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md, AppSpacing.sm, AppSpacing.sm, AppSpacing.sm,),
+            AppSpacing.md,
+            AppSpacing.sm,
+            AppSpacing.sm,
+            AppSpacing.sm,
+          ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -90,7 +101,9 @@ class _Composer extends GetView<TicketDetailController> {
                   maxLength: AppLimits.chatMessageMax,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: const InputDecoration(
-                      hintText: 'Write a reply', counterText: '',),
+                    hintText: 'Write a reply',
+                    counterText: '',
+                  ),
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -104,7 +117,8 @@ class _Composer extends GetView<TicketDetailController> {
                   icon: controller.isSending.value
                       ? const SizedBox.square(
                           dimension: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),)
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
                       : const Icon(Icons.send_rounded),
                 ),
               ),

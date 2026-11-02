@@ -19,7 +19,8 @@ class MainBinding extends Bindings {
     registerProfileRepository();
     Get.lazyPut(MainController.new);
     Get.lazyPut(
-        () => HomeController(Get.find(), Get.find(), Get.find<AuthSession>()),);
+      () => HomeController(Get.find(), Get.find(), Get.find<AuthSession>()),
+    );
     Get.lazyPut(() => ServicesController(Get.find()));
     Get.lazyPut(() => PortfolioController(Get.find()));
     Get.lazyPut(

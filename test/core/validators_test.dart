@@ -17,15 +17,19 @@ void main() {
 
   group('phone', () {
     test('optional by default', () => expect(Validators.phone(''), isNull));
-    test('required when asked',
-        () => expect(Validators.phone('', isRequired: true), isNotNull),);
+    test(
+      'required when asked',
+      () => expect(Validators.phone('', isRequired: true), isNotNull),
+    );
     test('accepts Indian mobiles in common formats', () {
       expect(Validators.phone('9794424169'), isNull);
       expect(Validators.phone('09794424169'), isNull);
       expect(Validators.phone('+91 97944 24169'), isNull);
     });
-    test('accepts international numbers',
-        () => expect(Validators.phone('+44 20 7946 0958'), isNull),);
+    test(
+      'accepts international numbers',
+      () => expect(Validators.phone('+44 20 7946 0958'), isNull),
+    );
     test('rejects invalid', () {
       expect(Validators.phone('12345'), isNotNull);
       expect(Validators.phone('+91 12345 67890'), isNotNull);

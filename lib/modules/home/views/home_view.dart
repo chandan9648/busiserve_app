@@ -28,8 +28,12 @@ class HomeView extends GetView<HomeController> {
             slivers: [
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(AppSpacing.page,
-                      AppSpacing.sm, AppSpacing.sm, AppSpacing.lg,),
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.page,
+                    AppSpacing.sm,
+                    AppSpacing.sm,
+                    AppSpacing.lg,
+                  ),
                   child: Row(
                     children: [
                       const BrandLogo(height: 46),
@@ -45,8 +49,9 @@ class HomeView extends GetView<HomeController> {
               ),
               SliverToBoxAdapter(
                 child: HeroPanel(
-                    onStart: controller.startProject,
-                    onExplore: controller.showAllServices,),
+                  onStart: controller.startProject,
+                  onExplore: controller.showAllServices,
+                ),
               ),
               SliverToBoxAdapter(
                 child: SectionHeader(
@@ -62,8 +67,9 @@ class HomeView extends GetView<HomeController> {
                     onRetry: controller.loadServices,
                     loading: const SizedBox(height: 220, child: LoadingView()),
                     builder: (items) => _ServiceGrid(
-                        items: items.take(6).toList(),
-                        onTap: controller.openService,),
+                      items: items.take(6).toList(),
+                      onTap: controller.openService,
+                    ),
                   ),
                 ),
               ),
@@ -116,17 +122,24 @@ class HomeView extends GetView<HomeController> {
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(AppSpacing.page,
-                      AppSpacing.xxl, AppSpacing.page, AppSpacing.xxxl,),
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.page,
+                    AppSpacing.xxl,
+                    AppSpacing.page,
+                    AppSpacing.xxxl,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(CompanyInfo.footerLine,
-                          style: context.text.bodySmall,),
+                      Text(
+                        CompanyInfo.footerLine,
+                        style: context.text.bodySmall,
+                      ),
                       const SizedBox(height: AppSpacing.xs),
                       Text(
-                          '© ${DateTime.now().year} Busiserve. All rights reserved.',
-                          style: context.text.bodySmall,),
+                        '© ${DateTime.now().year} Busiserve. All rights reserved.',
+                        style: context.text.bodySmall,
+                      ),
                     ],
                   ),
                 ),
@@ -207,14 +220,21 @@ class _WhyBusiserve extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-          AppSpacing.page, AppSpacing.xxl, AppSpacing.page, 0,),
+        AppSpacing.page,
+        AppSpacing.xxl,
+        AppSpacing.page,
+        0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Semantics(
-              header: true,
-              child: Text('Good technology. A clear purpose.',
-                  style: context.text.headlineSmall,),),
+            header: true,
+            child: Text(
+              'Good technology. A clear purpose.',
+              style: context.text.headlineSmall,
+            ),
+          ),
           const SizedBox(height: AppSpacing.sm),
           Text(
             'Your digital tools should make business easier. We bring design and development '
@@ -236,8 +256,11 @@ class _WhyBusiserve extends StatelessWidget {
                       color: context.colors.secondaryContainer,
                       borderRadius: BorderRadius.circular(AppRadius.chip),
                     ),
-                    child: Icon(icon,
-                        size: 20, color: context.colors.onSecondaryContainer,),
+                    child: Icon(
+                      icon,
+                      size: 20,
+                      color: context.colors.onSecondaryContainer,
+                    ),
                   ),
                   const SizedBox(width: AppSpacing.lg),
                   Expanded(
@@ -246,9 +269,11 @@ class _WhyBusiserve extends StatelessWidget {
                       children: [
                         Text(title, style: context.text.titleMedium),
                         const SizedBox(height: 2),
-                        Text(body,
-                            style: context.text.bodyMedium
-                                ?.copyWith(color: context.brand.muted),),
+                        Text(
+                          body,
+                          style: context.text.bodyMedium
+                              ?.copyWith(color: context.brand.muted),
+                        ),
                       ],
                     ),
                   ),

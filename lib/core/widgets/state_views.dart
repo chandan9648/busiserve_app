@@ -109,8 +109,11 @@ class _CenteredMessage extends StatelessWidget {
             children: [
               badge,
               const SizedBox(height: AppSpacing.xl),
-              Text(title,
-                  style: context.text.titleLarge, textAlign: TextAlign.center,),
+              Text(
+                title,
+                style: context.text.titleLarge,
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: AppSpacing.sm),
               Text(
                 message,

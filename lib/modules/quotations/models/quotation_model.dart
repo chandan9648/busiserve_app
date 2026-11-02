@@ -17,10 +17,11 @@ enum QuotationStatus {
 }
 
 class QuotationItem {
-  const QuotationItem(
-      {required this.description,
-      required this.quantity,
-      required this.unitPrice,});
+  const QuotationItem({
+    required this.description,
+    required this.quantity,
+    required this.unitPrice,
+  });
 
   factory QuotationItem.fromMap(Map<String, dynamic> map) => QuotationItem(
         description: Parse.string(map, 'description'),
@@ -51,8 +52,10 @@ class QuotationModel {
     this.createdAt,
   });
 
-  factory QuotationModel.fromMap(Map<String, dynamic> map,
-      {required String id,}) {
+  factory QuotationModel.fromMap(
+    Map<String, dynamic> map, {
+    required String id,
+  }) {
     final items =
         Parse.mapList(map, 'items').map(QuotationItem.fromMap).toList();
     final subtotal = map.containsKey('subtotal')

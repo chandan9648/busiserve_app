@@ -28,7 +28,11 @@ class QuotationDetailView extends GetView<QuotationDetailController> {
             return ResponsiveBody(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.page, 0, AppSpacing.page, AppSpacing.xxl,),
+                  AppSpacing.page,
+                  0,
+                  AppSpacing.page,
+                  AppSpacing.xxl,
+                ),
                 children: [
                   Container(
                     padding: const EdgeInsets.all(AppSpacing.xl),
@@ -39,13 +43,17 @@ class QuotationDetailView extends GetView<QuotationDetailController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(q.title,
-                            style: context.text.titleLarge
-                                ?.copyWith(color: Colors.white),),
+                        Text(
+                          q.title,
+                          style: context.text.titleLarge
+                              ?.copyWith(color: Colors.white),
+                        ),
                         const SizedBox(height: AppSpacing.lg),
-                        Text(money(q.total),
-                            style: context.text.displaySmall
-                                ?.copyWith(color: Colors.white),),
+                        Text(
+                          money(q.total),
+                          style: context.text.displaySmall
+                              ?.copyWith(color: Colors.white),
+                        ),
                         const SizedBox(height: AppSpacing.xs),
                         Text(
                           q.validUntil == null
@@ -71,8 +79,10 @@ class QuotationDetailView extends GetView<QuotationDetailController> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(item.description,
-                                        style: context.text.bodyMedium,),
+                                    Text(
+                                      item.description,
+                                      style: context.text.bodyMedium,
+                                    ),
                                     if (item.quantity != 1)
                                       Text(
                                         '${item.quantity % 1 == 0 ? item.quantity.toInt() : item.quantity} × ${money(item.unitPrice)}',
@@ -82,8 +92,10 @@ class QuotationDetailView extends GetView<QuotationDetailController> {
                                 ),
                               ),
                               const SizedBox(width: AppSpacing.md),
-                              Text(money(item.amount),
-                                  style: context.text.titleSmall,),
+                              Text(
+                                money(item.amount),
+                                style: context.text.titleSmall,
+                              ),
                             ],
                           ),
                           const Divider(height: AppSpacing.xl),
@@ -92,9 +104,10 @@ class QuotationDetailView extends GetView<QuotationDetailController> {
                         if (q.tax > 0)
                           _TotalRow(label: 'Tax', value: money(q.tax)),
                         _TotalRow(
-                            label: 'Total',
-                            value: money(q.total),
-                            strong: true,),
+                          label: 'Total',
+                          value: money(q.total),
+                          strong: true,
+                        ),
                       ],
                     ),
                   ),
@@ -102,9 +115,11 @@ class QuotationDetailView extends GetView<QuotationDetailController> {
                     const SizedBox(height: AppSpacing.xl),
                     Text('Notes', style: context.text.titleLarge),
                     const SizedBox(height: AppSpacing.sm),
-                    Text(q.notes!,
-                        style: context.text.bodyMedium
-                            ?.copyWith(color: context.brand.muted),),
+                    Text(
+                      q.notes!,
+                      style: context.text.bodyMedium
+                          ?.copyWith(color: context.brand.muted),
+                    ),
                   ],
                   const SizedBox(height: AppSpacing.xxl),
                   AppButton(
@@ -129,8 +144,11 @@ class QuotationDetailView extends GetView<QuotationDetailController> {
 }
 
 class _TotalRow extends StatelessWidget {
-  const _TotalRow(
-      {required this.label, required this.value, this.strong = false,});
+  const _TotalRow({
+    required this.label,
+    required this.value,
+    this.strong = false,
+  });
   final String label;
   final String value;
   final bool strong;
@@ -140,10 +158,12 @@ class _TotalRow extends StatelessWidget {
     final style = strong ? context.text.titleMedium : context.text.bodyMedium;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-      child: Row(children: [
-        Expanded(child: Text(label, style: style)),
-        Text(value, style: style),
-      ],),
+      child: Row(
+        children: [
+          Expanded(child: Text(label, style: style)),
+          Text(value, style: style),
+        ],
+      ),
     );
   }
 }

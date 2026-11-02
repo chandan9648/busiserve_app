@@ -31,8 +31,9 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 AppButton.secondary(
-                    label: 'Back to sign in',
-                    onPressed: () => Get.back<void>(),),
+                  label: 'Back to sign in',
+                  onPressed: () => Get.back<void>(),
+                ),
               ],
             );
           }
@@ -54,9 +55,10 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
               ),
               const SizedBox(height: AppSpacing.xl),
               AppButton(
-                  label: 'Send reset link',
-                  isLoading: controller.isLoading.value,
-                  onPressed: controller.send,),
+                label: 'Send reset link',
+                isLoading: controller.isLoading.value,
+                onPressed: controller.send,
+              ),
             ],
           );
         }),

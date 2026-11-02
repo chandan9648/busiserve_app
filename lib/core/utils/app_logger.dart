@@ -34,9 +34,11 @@ class AppLogger {
 
   static void error(String message, {Object? error, StackTrace? stackTrace}) {
     final safe = redact(message);
-    _logger.e(safe,
-        error: error == null ? null : redact(error.toString()),
-        stackTrace: stackTrace,);
+    _logger.e(
+      safe,
+      error: error == null ? null : redact(error.toString()),
+      stackTrace: stackTrace,
+    );
     if (crashlyticsEnabled && error != null) {
       FirebaseCrashlytics.instance
           .recordError(redact(error.toString()), stackTrace, reason: safe)

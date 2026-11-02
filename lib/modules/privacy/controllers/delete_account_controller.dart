@@ -35,8 +35,10 @@ class DeleteAccountController extends GetxController {
       passwordCtrl.clear();
       await _auth.signOut().catchError((Object _) {});
       await Get.offAllNamed<void>(Routes.main);
-      Get.snackbar('Account deleted',
-          'Your account and personal data have been removed.',);
+      Get.snackbar(
+        'Account deleted',
+        'Your account and personal data have been removed.',
+      );
     } on AppException catch (e) {
       errorMessage.value = e.message;
     } finally {

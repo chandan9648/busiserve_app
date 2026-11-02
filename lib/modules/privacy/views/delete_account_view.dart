@@ -38,8 +38,9 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                     : Padding(
                         padding: const EdgeInsets.only(bottom: AppSpacing.lg),
                         child: InlineNotice(
-                            message: controller.errorMessage.value!,
-                            isError: true,),
+                          message: controller.errorMessage.value!,
+                          isError: true,
+                        ),
                       ),
               ),
               AppTextField(
@@ -65,14 +66,17 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                   controlAffinity: ListTileControlAffinity.leading,
                   contentPadding: EdgeInsets.zero,
                   title: const Text(
-                      'I understand my account will be permanently deleted.',),
+                    'I understand my account will be permanently deleted.',
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
               Obx(
                 () => FilledButton.icon(
                   style: FilledButton.styleFrom(
-                      backgroundColor: danger, foregroundColor: Colors.white,),
+                    backgroundColor: danger,
+                    foregroundColor: Colors.white,
+                  ),
                   onPressed: controller.isDeleting.value
                       ? null
                       : controller.deleteAccount,
@@ -80,7 +84,9 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                       ? const SizedBox.square(
                           dimension: 18,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white,),
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
                         )
                       : const Icon(Icons.delete_forever_rounded),
                   label: const Text('Delete my account'),

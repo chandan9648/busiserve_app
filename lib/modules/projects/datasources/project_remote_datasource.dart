@@ -19,8 +19,11 @@ class FirestoreProjectDataSource implements ProjectRemoteDataSource {
       .where('customerId', isEqualTo: uid)
       .orderBy('updatedAt', descending: true)
       .snapshots()
-      .map((s) =>
-          s.docs.map((d) => ProjectModel.fromMap(d.data(), id: d.id)).toList(),);
+      .map(
+        (s) => s.docs
+            .map((d) => ProjectModel.fromMap(d.data(), id: d.id))
+            .toList(),
+      );
 
   @override
   Stream<ProjectModel?> watchById(String id) => _store
@@ -33,7 +36,9 @@ class FirestoreProjectDataSource implements ProjectRemoteDataSource {
       .collection('projects/$projectId/milestones')
       .orderBy('order')
       .snapshots()
-      .map((s) => s.docs
-          .map((d) => MilestoneModel.fromMap(d.data(), id: d.id))
-          .toList(),);
+      .map(
+        (s) => s.docs
+            .map((d) => MilestoneModel.fromMap(d.data(), id: d.id))
+            .toList(),
+      );
 }

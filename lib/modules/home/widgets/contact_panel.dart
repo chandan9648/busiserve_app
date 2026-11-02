@@ -33,8 +33,10 @@ class ContactPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('What would you like to build?',
-              style: context.text.headlineSmall,),
+          Text(
+            'What would you like to build?',
+            style: context.text.headlineSmall,
+          ),
           const SizedBox(height: AppSpacing.sm),
           Text(
             'Tell us about your goals, your challenges and where you want to go next.',
@@ -43,25 +45,29 @@ class ContactPanel extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           _ContactRow(
-              icon: Icons.call_outlined,
-              label: CompanyInfo.phoneDisplay,
-              hint: 'Call us',
-              onTap: onCall,),
+            icon: Icons.call_outlined,
+            label: CompanyInfo.phoneDisplay,
+            hint: 'Call us',
+            onTap: onCall,
+          ),
           _ContactRow(
-              icon: Icons.mail_outline_rounded,
-              label: CompanyInfo.email,
-              hint: 'Email us',
-              onTap: onEmail,),
+            icon: Icons.mail_outline_rounded,
+            label: CompanyInfo.email,
+            hint: 'Email us',
+            onTap: onEmail,
+          ),
           _ContactRow(
-              icon: Icons.place_outlined,
-              label: CompanyInfo.address,
-              hint: 'Open in maps',
-              onTap: onMap,),
+            icon: Icons.place_outlined,
+            label: CompanyInfo.address,
+            hint: 'Open in maps',
+            onTap: onMap,
+          ),
           const SizedBox(height: AppSpacing.lg),
           AppButton(
-              label: 'Start a conversation',
-              icon: Icons.chat_bubble_outline_rounded,
-              onPressed: onStart,),
+            label: 'Start a conversation',
+            icon: Icons.chat_bubble_outline_rounded,
+            onPressed: onStart,
+          ),
         ],
       ),
     );
@@ -69,11 +75,12 @@ class ContactPanel extends StatelessWidget {
 }
 
 class _ContactRow extends StatelessWidget {
-  const _ContactRow(
-      {required this.icon,
-      required this.label,
-      required this.hint,
-      required this.onTap,});
+  const _ContactRow({
+    required this.icon,
+    required this.label,
+    required this.hint,
+    required this.onTap,
+  });
   final IconData icon;
   final String label;
   final String hint;
@@ -97,9 +104,12 @@ class _ContactRow extends StatelessWidget {
                 Icon(icon, size: 20, color: context.colors.tertiary),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
-                    child: Text(label,
-                        style: context.text.bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w600),),),
+                  child: Text(
+                    label,
+                    style: context.text.bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                ),
               ],
             ),
           ),

@@ -6,11 +6,12 @@ import '../../../core/widgets/common.dart';
 
 /// Shared layout for sign-in, register and password reset.
 class AuthScaffold extends StatelessWidget {
-  const AuthScaffold(
-      {super.key,
-      required this.title,
-      required this.subtitle,
-      required this.children,});
+  const AuthScaffold({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.children,
+  });
   final String title;
   final String subtitle;
   final List<Widget> children;
@@ -25,19 +26,27 @@ class AuthScaffold extends StatelessWidget {
           maxWidth: 480,
           child: ListView(
             padding: const EdgeInsets.fromLTRB(
-                AppSpacing.page + 4, 0, AppSpacing.page + 4, AppSpacing.xxl,),
+              AppSpacing.page + 4,
+              0,
+              AppSpacing.page + 4,
+              AppSpacing.xxl,
+            ),
             children: [
               const Align(
-                  alignment: Alignment.centerLeft,
-                  child: BrandLogo(height: 64),),
+                alignment: Alignment.centerLeft,
+                child: BrandLogo(height: 64),
+              ),
               const SizedBox(height: AppSpacing.xl),
               Semantics(
-                  header: true,
-                  child: Text(title, style: context.text.headlineMedium),),
+                header: true,
+                child: Text(title, style: context.text.headlineMedium),
+              ),
               const SizedBox(height: AppSpacing.sm),
-              Text(subtitle,
-                  style: context.text.bodyLarge
-                      ?.copyWith(color: context.brand.muted),),
+              Text(
+                subtitle,
+                style: context.text.bodyLarge
+                    ?.copyWith(color: context.brand.muted),
+              ),
               const SizedBox(height: AppSpacing.xl),
               ...children,
             ],
@@ -58,7 +67,10 @@ class FormError extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.lg),
       child: InlineNotice(
-          message: message!, icon: Icons.error_outline_rounded, isError: true,),
+        message: message!,
+        icon: Icons.error_outline_rounded,
+        isError: true,
+      ),
     );
   }
 }

@@ -5,9 +5,10 @@ import '../datasources/enquiry_remote_datasource.dart';
 import '../models/enquiry_model.dart';
 
 class EnquiryRepository {
-  EnquiryRepository(
-      {required EnquiryRemoteDataSource remote, required AuthSession session,})
-      : _remote = remote,
+  EnquiryRepository({
+    required EnquiryRemoteDataSource remote,
+    required AuthSession session,
+  })  : _remote = remote,
         _session = session;
 
   final EnquiryRemoteDataSource _remote;
@@ -34,7 +35,9 @@ class EnquiryRepository {
 
   Stream<List<EnquiryModel>> watchMine() {
     final uid = _session.requireUid();
-    return guardStream(_remote.watchForCustomer(uid),
-        context: 'watch enquiries',);
+    return guardStream(
+      _remote.watchForCustomer(uid),
+      context: 'watch enquiries',
+    );
   }
 }

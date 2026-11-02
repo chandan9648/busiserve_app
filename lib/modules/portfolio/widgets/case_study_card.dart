@@ -15,11 +15,12 @@ IconData industryIcon(String industry) => switch (industry.toLowerCase()) {
 
 /// Navy panel with the hex lattice; the industry sits in an orange hexagon.
 class CaseStudyCard extends StatelessWidget {
-  const CaseStudyCard(
-      {super.key,
-      required this.study,
-      required this.onTap,
-      this.compact = false,});
+  const CaseStudyCard({
+    super.key,
+    required this.study,
+    required this.onTap,
+    this.compact = false,
+  });
   final CaseStudyModel study;
   final VoidCallback onTap;
   final bool compact;
@@ -42,7 +43,8 @@ class CaseStudyCard extends StatelessWidget {
               Positioned.fill(
                 child: CustomPaint(
                   painter: HexLatticePainter(
-                      color: Colors.white.withValues(alpha: 0.05),),
+                    color: Colors.white.withValues(alpha: 0.05),
+                  ),
                 ),
               ),
               Padding(
@@ -54,9 +56,10 @@ class CaseStudyCard extends StatelessWidget {
                     Row(
                       children: [
                         HexBadge(
-                            icon: industryIcon(study.industry),
-                            size: 36,
-                            gradient: AppColors.arrow,),
+                          icon: industryIcon(study.industry),
+                          size: 36,
+                          gradient: AppColors.arrow,
+                        ),
                         const SizedBox(width: AppSpacing.md),
                         Flexible(
                           child: Text(
@@ -85,7 +88,8 @@ class CaseStudyCard extends StatelessWidget {
                       maxLines: compact ? 3 : 5,
                       overflow: TextOverflow.ellipsis,
                       style: context.text.bodyMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.78),),
+                        color: Colors.white.withValues(alpha: 0.78),
+                      ),
                     ),
                   ],
                 ),

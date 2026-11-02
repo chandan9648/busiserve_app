@@ -22,9 +22,10 @@ class ServiceCard extends StatelessWidget {
       child: Row(
         children: [
           HexBadge(
-              icon: serviceIcon(service.iconKey),
-              size: 48,
-              gradient: AppColors.circuit,),
+            icon: serviceIcon(service.iconKey),
+            size: 48,
+            gradient: AppColors.circuit,
+          ),
           const SizedBox(width: AppSpacing.lg),
           Expanded(
             child: Column(
@@ -65,9 +66,10 @@ class ServiceTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           HexBadge(
-              icon: serviceIcon(service.iconKey),
-              size: 38,
-              gradient: AppColors.circuit,),
+            icon: serviceIcon(service.iconKey),
+            size: 38,
+            gradient: AppColors.circuit,
+          ),
           const SizedBox(height: AppSpacing.sm),
           Flexible(
             child: Text(

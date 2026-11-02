@@ -28,8 +28,9 @@ class EditProfileView extends GetView<EditProfileController> {
                     children: [
                       if (controller.errorMessage.value != null) ...[
                         InlineNotice(
-                            message: controller.errorMessage.value!,
-                            isError: true,),
+                          message: controller.errorMessage.value!,
+                          isError: true,
+                        ),
                         const SizedBox(height: AppSpacing.lg),
                       ],
                       AppTextField(
@@ -55,12 +56,16 @@ class EditProfileView extends GetView<EditProfileController> {
                         prefixIcon: Icons.business_outlined,
                         textInputAction: TextInputAction.done,
                         validator: (v) => Validators.maxLength(
-                            v, AppLimits.companyMax,
-                            field: 'Company',),
+                          v,
+                          AppLimits.companyMax,
+                          field: 'Company',
+                        ),
                       ),
                       const SizedBox(height: AppSpacing.lg),
-                      Text('Email: ${controller.email}',
-                          style: Theme.of(context).textTheme.bodySmall,),
+                      Text(
+                        'Email: ${controller.email}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                       const SizedBox(height: AppSpacing.xl),
                       AppButton(
                         label: 'Save changes',

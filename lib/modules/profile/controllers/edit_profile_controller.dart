@@ -52,9 +52,10 @@ class EditProfileController extends GetxController {
     isSaving.value = true;
     try {
       await _repository.update(
-          name: nameCtrl.text,
-          phone: phoneCtrl.text,
-          company: companyCtrl.text,);
+        name: nameCtrl.text,
+        phone: phoneCtrl.text,
+        company: companyCtrl.text,
+      );
       Get.back<void>();
       Get.snackbar('Profile updated', 'Your details have been saved.');
     } on AppException catch (e) {

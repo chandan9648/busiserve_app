@@ -25,8 +25,12 @@ class BrandLogo extends StatelessWidget {
 }
 
 class SectionHeader extends StatelessWidget {
-  const SectionHeader(
-      {super.key, required this.title, this.actionLabel, this.onAction,});
+  const SectionHeader({
+    super.key,
+    required this.title,
+    this.actionLabel,
+    this.onAction,
+  });
   final String title;
   final String? actionLabel;
   final VoidCallback? onAction;
@@ -35,13 +39,18 @@ class SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-          AppSpacing.page, AppSpacing.xxl, AppSpacing.sm, AppSpacing.md,),
+        AppSpacing.page,
+        AppSpacing.xxl,
+        AppSpacing.sm,
+        AppSpacing.md,
+      ),
       child: Row(
         children: [
           Expanded(
             child: Semantics(
-                header: true,
-                child: Text(title, style: context.text.headlineSmall),),
+              header: true,
+              child: Text(title, style: context.text.headlineSmall),
+            ),
           ),
           if (actionLabel != null)
             TextButton(onPressed: onAction, child: Text(actionLabel!)),
@@ -83,8 +92,11 @@ class AppCard extends StatelessWidget {
 }
 
 class StatusChip extends StatelessWidget {
-  const StatusChip(
-      {super.key, required this.label, this.tone = StatusTone.neutral,});
+  const StatusChip({
+    super.key,
+    required this.label,
+    this.tone = StatusTone.neutral,
+  });
   final String label;
   final StatusTone tone;
 
@@ -115,11 +127,12 @@ class StatusChip extends StatelessWidget {
 
 /// Shows a soft notice above forms (for example when a feature is unavailable).
 class InlineNotice extends StatelessWidget {
-  const InlineNotice(
-      {super.key,
-      required this.message,
-      this.icon = Icons.info_outline_rounded,
-      this.isError = false,});
+  const InlineNotice({
+    super.key,
+    required this.message,
+    this.icon = Icons.info_outline_rounded,
+    this.isError = false,
+  });
   final String message;
   final IconData icon;
   final bool isError;
@@ -160,7 +173,9 @@ class ResponsiveBody extends StatelessWidget {
     return Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxWidth), child: child,),
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: child,
+      ),
     );
   }
 }

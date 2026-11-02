@@ -33,8 +33,10 @@ class EnquiryModel {
     this.email,
   });
 
-  factory EnquiryModel.fromMap(Map<String, dynamic> map,
-          {required String id,}) =>
+  factory EnquiryModel.fromMap(
+    Map<String, dynamic> map, {
+    required String id,
+  }) =>
       EnquiryModel(
         id: id,
         subjectId: Parse.string(map, 'subject', 'general'),

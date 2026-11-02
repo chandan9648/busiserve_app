@@ -56,26 +56,31 @@ class LoginView extends GetView<LoginController> {
         Align(
           alignment: Alignment.centerRight,
           child: TextButton(
-              onPressed: controller.goToForgotPassword,
-              child: const Text('Forgot password?'),),
+            onPressed: controller.goToForgotPassword,
+            child: const Text('Forgot password?'),
+          ),
         ),
         const SizedBox(height: AppSpacing.sm),
         Obx(
           () => AppButton(
-              label: 'Sign in',
-              isLoading: controller.isLoading.value,
-              onPressed: controller.signIn,),
+            label: 'Sign in',
+            isLoading: controller.isLoading.value,
+            onPressed: controller.signIn,
+          ),
         ),
         const SizedBox(height: AppSpacing.xl),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('New to Busiserve?',
-                style: context.text.bodyMedium
-                    ?.copyWith(color: context.brand.muted),),
+            Text(
+              'New to Busiserve?',
+              style:
+                  context.text.bodyMedium?.copyWith(color: context.brand.muted),
+            ),
             TextButton(
-                onPressed: controller.goToRegister,
-                child: const Text('Create account'),),
+              onPressed: controller.goToRegister,
+              child: const Text('Create account'),
+            ),
           ],
         ),
       ],

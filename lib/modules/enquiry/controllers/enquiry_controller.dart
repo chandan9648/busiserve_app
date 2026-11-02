@@ -10,9 +10,11 @@ import '../models/enquiry_subject.dart';
 import '../repositories/enquiry_repository.dart';
 
 class EnquiryController extends GetxController {
-  EnquiryController(this._repository, this._session,
-      {Map<String, dynamic>? arguments,})
-      : _arguments = arguments ??
+  EnquiryController(
+    this._repository,
+    this._session, {
+    Map<String, dynamic>? arguments,
+  }) : _arguments = arguments ??
             (Get.arguments is Map<String, dynamic>
                 ? Get.arguments as Map<String, dynamic>
                 : null);

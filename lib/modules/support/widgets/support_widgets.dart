@@ -23,22 +23,29 @@ class TicketCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                  child: Text(ticket.subject,
-                      style: context.text.titleMedium, maxLines: 2,),),
+                child: Text(
+                  ticket.subject,
+                  style: context.text.titleMedium,
+                  maxLines: 2,
+                ),
+              ),
               StatusChip(label: ticket.status.label, tone: ticket.status.tone),
             ],
           ),
           if (ticket.lastMessage != null) ...[
             const SizedBox(height: AppSpacing.sm),
-            Text(ticket.lastMessage!,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: context.text.bodyMedium,),
+            Text(
+              ticket.lastMessage!,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: context.text.bodyMedium,
+            ),
           ],
           const SizedBox(height: AppSpacing.md),
           Text(
-              '${ticket.category.label}, ${Formatters.relative(ticket.updatedAt)}',
-              style: context.text.bodySmall,),
+            '${ticket.category.label}, ${Formatters.relative(ticket.updatedAt)}',
+            style: context.text.bodySmall,
+          ),
         ],
       ),
     );

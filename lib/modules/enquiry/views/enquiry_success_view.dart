@@ -29,15 +29,18 @@ class EnquirySuccessView extends StatelessWidget {
               child: Column(
                 children: [
                   const HexBadge(
-                      icon: Icons.check_rounded,
-                      size: 96,
-                      gradient: AppColors.arrow,),
+                    icon: Icons.check_rounded,
+                    size: 96,
+                    gradient: AppColors.arrow,
+                  ),
                   const SizedBox(height: AppSpacing.xl),
                   Semantics(
                     liveRegion: true,
-                    child: Text('Message sent',
-                        style: context.text.headlineMedium,
-                        textAlign: TextAlign.center,),
+                    child: Text(
+                      'Message sent',
+                      style: context.text.headlineMedium,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
@@ -52,7 +55,9 @@ class EnquirySuccessView extends StatelessWidget {
                     const SizedBox(height: AppSpacing.xl),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xl, vertical: AppSpacing.md,),
+                        horizontal: AppSpacing.xl,
+                        vertical: AppSpacing.md,
+                      ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(AppRadius.field),
                         border: Border.all(color: context.brand.line),
@@ -61,8 +66,10 @@ class EnquirySuccessView extends StatelessWidget {
                         children: [
                           Text('Reference', style: context.text.bodySmall),
                           const SizedBox(height: 2),
-                          SelectableText(reference,
-                              style: context.text.titleLarge,),
+                          SelectableText(
+                            reference,
+                            style: context.text.titleLarge,
+                          ),
                         ],
                       ),
                     ),
@@ -82,7 +89,8 @@ class EnquirySuccessView extends StatelessWidget {
                   AppButton.secondary(
                     label: 'Back to home',
                     onPressed: () => Get.until(
-                        (r) => r.settings.name == Routes.main || r.isFirst,),
+                      (r) => r.settings.name == Routes.main || r.isFirst,
+                    ),
                   ),
                 ],
               ),

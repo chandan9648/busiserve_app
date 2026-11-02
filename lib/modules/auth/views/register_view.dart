@@ -80,7 +80,9 @@ class RegisterView extends GetView<RegisterController> {
                   isPassword: true,
                   textInputAction: TextInputAction.done,
                   validator: (v) => Validators.confirmPassword(
-                      v, controller.passwordCtrl.text,),
+                    v,
+                    controller.passwordCtrl.text,
+                  ),
                 ),
               ],
             ),
@@ -129,11 +131,15 @@ class RegisterView extends GetView<RegisterController> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Already have an account?',
-                style: context.text.bodyMedium
-                    ?.copyWith(color: context.brand.muted),),
+            Text(
+              'Already have an account?',
+              style:
+                  context.text.bodyMedium?.copyWith(color: context.brand.muted),
+            ),
             TextButton(
-                onPressed: controller.goToLogin, child: const Text('Sign in'),),
+              onPressed: controller.goToLogin,
+              child: const Text('Sign in'),
+            ),
           ],
         ),
       ],

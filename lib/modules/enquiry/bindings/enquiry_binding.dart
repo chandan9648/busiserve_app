@@ -9,7 +9,9 @@ void registerEnquiryRepository() {
   if (Get.isRegistered<EnquiryRepository>()) return;
   Get.lazyPut(
     () => EnquiryRepository(
-        remote: FirebaseEnquiryDataSource(), session: Get.find<AuthSession>(),),
+      remote: FirebaseEnquiryDataSource(),
+      session: Get.find<AuthSession>(),
+    ),
     fenix: true,
   );
 }

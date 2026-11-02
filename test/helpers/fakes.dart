@@ -9,8 +9,12 @@ import 'package:busiserve_app/modules/services/models/service_model.dart';
 import 'package:get/get.dart';
 
 class FakeAuthSession implements AuthSession {
-  FakeAuthSession(
-      {String? uid, this.isAvailable = true, this.email, this.displayName,}) {
+  FakeAuthSession({
+    String? uid,
+    this.isAvailable = true,
+    this.email,
+    this.displayName,
+  }) {
     currentUid.value = uid;
   }
 
@@ -37,8 +41,10 @@ class FakeAuthSession implements AuthSession {
   String requireUid() {
     final id = uid;
     if (id == null) {
-      throw const AuthenticationException('Sign in to continue.',
-          code: 'unauthenticated',);
+      throw const AuthenticationException(
+        'Sign in to continue.',
+        code: 'unauthenticated',
+      );
     }
     return id;
   }
@@ -60,10 +66,11 @@ class FakeServiceRemote implements ServiceRemoteDataSource {
 
 /// Records every submission; can fail a set number of times first.
 class FakeEnquiryRemote implements EnquiryRemoteDataSource {
-  FakeEnquiryRemote(
-      {this.failuresBeforeSuccess = 0,
-      this.failure = const NetworkException(),
-      this.delay,});
+  FakeEnquiryRemote({
+    this.failuresBeforeSuccess = 0,
+    this.failure = const NetworkException(),
+    this.delay,
+  });
   int failuresBeforeSuccess;
   final AppException failure;
   final Duration? delay;

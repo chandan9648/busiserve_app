@@ -14,8 +14,11 @@ IconData _iconFor(NotificationType t) => switch (t) {
     };
 
 class NotificationTile extends StatelessWidget {
-  const NotificationTile(
-      {super.key, required this.notification, required this.onTap,});
+  const NotificationTile({
+    super.key,
+    required this.notification,
+    required this.onTap,
+  });
   final NotificationModel notification;
   final VoidCallback onTap;
 
@@ -34,15 +37,20 @@ class NotificationTile extends StatelessWidget {
               ? context.colors.primaryContainer.withValues(alpha: 0.35)
               : null,
           padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.page, vertical: AppSpacing.lg,),
+            horizontal: AppSpacing.page,
+            vertical: AppSpacing.lg,
+          ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CircleAvatar(
                 radius: 20,
                 backgroundColor: context.colors.secondaryContainer,
-                child: Icon(_iconFor(notification.type),
-                    size: 20, color: context.colors.onSecondaryContainer,),
+                child: Icon(
+                  _iconFor(notification.type),
+                  size: 20,
+                  color: context.colors.onSecondaryContainer,
+                ),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
@@ -60,15 +68,19 @@ class NotificationTile extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Text(Formatters.relative(notification.createdAt),
-                            style: context.text.bodySmall,),
+                        Text(
+                          Formatters.relative(notification.createdAt),
+                          style: context.text.bodySmall,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 2),
-                    Text(notification.body,
-                        style: context.text.bodyMedium,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,),
+                    Text(
+                      notification.body,
+                      style: context.text.bodyMedium,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
                 ),
               ),
@@ -79,7 +91,9 @@ class NotificationTile extends StatelessWidget {
                   height: 8,
                   margin: const EdgeInsets.only(top: 6),
                   decoration: BoxDecoration(
-                      color: context.colors.secondary, shape: BoxShape.circle,),
+                    color: context.colors.secondary,
+                    shape: BoxShape.circle,
+                  ),
                 ),
               ],
             ],

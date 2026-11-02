@@ -39,8 +39,11 @@ class ErrorHandler {
   }
 
   /// Maps and logs. Use from repositories via [guard].
-  static AppException handle(Object error, StackTrace stackTrace,
-      {String? context,}) {
+  static AppException handle(
+    Object error,
+    StackTrace stackTrace, {
+    String? context,
+  }) {
     final mapped = map(error);
     final isExpected = mapped is ValidationException ||
         mapped is AuthenticationException ||
@@ -50,7 +53,8 @@ class ErrorHandler {
         mapped is EmailNotVerifiedException;
     if (isExpected) {
       AppLogger.info(
-          '${context ?? 'request'} failed: ${mapped.runtimeType}(${mapped.code})',);
+        '${context ?? 'request'} failed: ${mapped.runtimeType}(${mapped.code})',
+      );
     } else {
       AppLogger.error(
         '${context ?? 'request'} failed: ${mapped.runtimeType}(${mapped.code})',

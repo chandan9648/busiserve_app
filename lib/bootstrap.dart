@@ -21,13 +21,17 @@ Future<void> bootstrap(FlavorConfig config) async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],);
+    [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
+  );
 
   await _initFirebase(config);
 
   FlutterError.onError = (details) {
-    AppLogger.error('Flutter error',
-        error: details.exception, stackTrace: details.stack,);
+    AppLogger.error(
+      'Flutter error',
+      error: details.exception,
+      stackTrace: details.stack,
+    );
     if (kDebugMode) FlutterError.presentError(details);
   };
   PlatformDispatcher.instance.onError = (error, stack) {
@@ -46,7 +50,8 @@ Future<void> _initFirebase(FlavorConfig config) async {
     // Native platforms still need their platform-specific FlutterFire options.
     FirebaseStatus.isReady = false;
     AppLogger.warning(
-        'Firebase not initialised for ${config.flavor.name}: public mode only. $e',);
+      'Firebase not initialised for ${config.flavor.name}: public mode only. $e',
+    );
     return;
   }
 
@@ -65,7 +70,8 @@ Future<void> _initFirebase(FlavorConfig config) async {
     // The callables deploy with enforceAppCheck, so say so rather than
     // activating a web App Check that can never mint a token.
     AppLogger.warning(
-        'App Check off on web: FIREBASE_APPCHECK_RECAPTCHA_SITE_KEY is not set.',);
+      'App Check off on web: FIREBASE_APPCHECK_RECAPTCHA_SITE_KEY is not set.',
+    );
   } else {
     try {
       await FirebaseAppCheck.instance.activate(
